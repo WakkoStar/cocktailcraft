@@ -85,13 +85,13 @@ const modifyDescriptionInCocktail = ({prevDescriptions, currDescriptions}) => {
     */
     const currDescriptionsIds = currDescriptions.map(({id}) => id)
     
-    const DescriptionToDelete = prevDescriptions.filter((id) => !currDescriptionsIds.includes(id))
-    const DescriptionToCreate = currDescriptions.filter(({id}) => id === "")
-    const DescriptionsToUpdate = currDescriptions.filter((id) => id !== "")
+    const descriptionToDelete = prevDescriptions.filter((id) => !currDescriptionsIds.includes(id))
+    const descriptionToCreate = currDescriptions.filter(({id}) => id === "")
+    const descriptionsToUpdate = currDescriptions.filter((id) => id !== "")
 
-    const newDescription_array = createAndGetDescriptionOfCocktail(DescriptionToCreate)
-    const updatedDescription_array = updateDescriptionOfCocktail(DescriptionsToUpdate)
-    deleteDescriptionOfCocktail(DescriptionToDelete)
+    const newDescription_array = createAndGetDescriptionOfCocktail(descriptionToCreate)
+    const updatedDescription_array = updateDescriptionOfCocktail(descriptionsToUpdate)
+    deleteDescriptionOfCocktail(descriptionToDelete)
 
     return updatedDescription_array.concat(newDescription_array)
 
