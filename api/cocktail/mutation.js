@@ -12,15 +12,7 @@ module.exports.createCocktail = ({nom, ingredients, gout_array, descriptions, di
 }
 
 module.exports.modifyCocktail = ({nom, ingredients, gout_array, descriptions, difficulty, id}) => {
-    const cocktails = await getCocktails()
-    const currCocktail = cocktails.find((cocktail) => cocktail.id === id)
-
-    const allDescriptions = {
-        prevDescriptions: currCocktail.description_array,
-        currDescriptions: descriptions
-    }
-    
-    modifyCocktailInDb(name, allDescriptions, gout_id, description, difficulty_id, id)
+    modifyCocktailInDb(name, descriptions, gout_id, ingredients, difficulty, id)
     return `${name} modifié`
 }
 
