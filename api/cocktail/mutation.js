@@ -6,13 +6,21 @@ const {
 } = require('./data')
 
 
-module.exports.createCocktail = ({name, ingredient_id, gout_id, description, difficulty_id}) => {
-    createCocktailInDb(name, ingredient_id, gout_id, description, difficulty_id)
+module.exports.createCocktail = ({nom, ingredients, gout_array, descriptions, difficulty}) => {
+    createCocktailInDb(nom, ingredients, gout_array, description, difficulty)
     return `${name} créé`
 }
 
-module.exports.modifyCocktail = ({name, ingredient_id, gout_id, description, difficulty_id, id}) => {
-    modifyCocktailInDb(name, ingredient_id, gout_id, description, difficulty_id, id)
+module.exports.modifyCocktail = ({nom, ingredients, gout_array, descriptions, difficulty, id}) => {
+    const cocktails = await getCocktails()
+    const currCocktail = cocktails.find((cocktail) => cocktail.id === id)
+
+    const allDescriptions = {
+        prevDescriptions: currCocktail.description_array,
+        currDescriptions: descriptions
+    }
+    
+    modifyCocktailInDb(name, allDescriptions, gout_id, description, difficulty_id, id)
     return `${name} modifié`
 }
 

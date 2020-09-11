@@ -5,14 +5,12 @@ const {
     getAllIngredients: getIngredients
 } = require('./data')
 
-module.exports.createIngredient = ({name, aliases}) => {
-    createIngredientInDb(name, aliases)
-    return `${name} créé`
+module.exports.createIngredient = ({nom, alias, family_of}) => {
+    return createIngredientInDb(nom, alias, family_of)
 }
 
-module.exports.modifyIngredient = ({name,aliases, id}) => {
-    modifyIngredientInDb(name,aliases,id)
-    return `Modifié en ${name}`
+module.exports.modifyIngredient = ({nom, alias, family_of, id}) => {
+    return modifyIngredientInDb(nom, alias, family_of, id)
 }
 
 module.exports.deleteIngredient = async({id}) => {

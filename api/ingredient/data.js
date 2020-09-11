@@ -6,22 +6,26 @@ module.exports.getAllIngredients = async() => {
     return res.rows
 }
 
-module.exports.createIngredient = (name, aliases) => {
-    const text = 'INSERT INTO ingredient (name, aliases) VALUES ($1, $2)'
-    const values = [name, aliases]
+module.exports.createIngredient = (nom, alias, family_of) => {
+    const text = 'INSERT INTO ingredient (nom, alias, family_of) VALUES ($1, $2, $3)'
+    const values = [nom, alias, family_of]
 
     client.query(text, values, (err, res) => {
-        if (err) console.log(err.stack)
+        if (err) return err.stack
     })
+
+    return `${nom} vient d'être crée`
 }
 
-module.exports.modifyIngredient = (name,aliases, id) => {
-    const text =  'UPDATE ingredient SET name = $1, aliases=$2   WHERE id = $3'
-    const values = [name,aliases, id]
+module.exports.modifyIngredient = (nom, alias, family_of, id) => {
+    const text =  'UPDATE ingredient SET nom = $1, alias=$2, family_of=$3 WHERE id = $4'
+    const values = [nom, alias, family_of, id]
 
     client.query(text, values, (err, res) => {
-        if (err) console.log(err.stack)
+        if (err) return err.stack
     })
+
+    return `${nom} vient d'être modifié`
 }
 
 module.exports.deleteIngredient = (id) => {

@@ -4,8 +4,9 @@ const {createIngredient, modifyIngredient, deleteIngredient} = require('./mutati
 module.exports.schema =`
     type Ingredients {
         id: Int
-        name: String
-        aliases: [String]
+        nom: String
+        alias: [String]
+        family_of: Int
     }
 `
 

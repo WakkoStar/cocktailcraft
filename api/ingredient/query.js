@@ -1,5 +1,6 @@
 const {getAllIngredients: getIngredients} = require('./data')
 const {getAllCocktails} = require("../cocktail/data")
+
 module.exports.getAllIngredients = async() => {
     const ingredients = await getIngredients()
     return ingredients
@@ -15,10 +16,10 @@ module.exports.searchIngredient = async({search}) => {
     
     const minSearch = search.toLowerCase()
     
-    const results = ingredients.filter(({name, aliases}) => {
+    const results = ingredients.filter(({name, alias}) => {
         const withName = name.toLowerCase().includes(minSearch)
         let withAliases = false
-        if(aliases) withAliases = aliases.some((alias) => alias.toLowerCase().includes(minSearch))
+        if(alias) withAliases = alias.some((el) => el.toLowerCase().includes(minSearch))
         return withName || withAliases
     })
     return results
@@ -27,20 +28,20 @@ module.exports.searchIngredient = async({search}) => {
 //count amount of ingredients
 const getIngredientCount = (res, id) => {    
 
-    let filteredCocktails = res.filter(({ingredient_id}) => {
-        return ingredient_id.includes(id)
+    let filteredCocktails = res.filter(({ingredient_array}) => {
+        return ingredient_array.includes(id)
     })
     return filteredCocktails.length
 }
-
+//inventory = {2, 4, 5, 9} => id of ingredient
 module.exports.getBestIngredients = async({inventory}) => {
     const ingredients = await getIngredients()
     const cocktails = await getAllCocktails()
     //filter cocktails who don't have the inventory
     let res
     if(inventory.length > 0) {
-        res = cocktails.filter(({ingredient_id}) => {
-            return inventory.some((id) => ingredient_id.includes(id))
+        res = cocktails.filter(({ingredient_array}) => {
+            return inventory.some((id) => ingredient_array.includes(id))
         })
     }else{
         res = cocktails
@@ -59,12 +60,13 @@ module.exports.getBestIngredients = async({inventory}) => {
 
 //filter cocktails 
 const filterCocktails = (cocktails, filter_gout, filter_difficulty) => {
-    const filteredCocktails = cocktails.filter(({gout_id, difficulty_id}) => {
+
+    const filteredCocktails = cocktails.filter(({gout_id, difficulty}) => {
         let inGout = true
         if(filter_gout.length > 0) inGout = gout_id.some((id) => filter_gout.includes(id))
 
         let inDifficulty = true
-        if(filter_difficulty.length > 0) inDifficulty = filter_difficulty.includes(difficulty_id)
+        if(filter_difficulty.length > 0) inDifficulty = filter_difficulty.includes(difficulty)
 
         return inGout && inDifficulty
     })
@@ -81,13 +83,13 @@ module.exports.inventorySelection = async({inventory, cluster, filter_gout, filt
     const cocktails = await getAllCocktails()
     
     //select only cocktail available with the cluster
-    let clusterCocktails = cocktails.filter(({ingredient_id : ingredients}) => {
+    let clusterCocktails = cocktails.filter(({ingredient_array}) => {
             //tous les ingrédients du cluster sont dans le cocktail
             let inCluster = true
             //si le cluster est supérieur à 0, on séléctionne les cocktails avec TOUT les ingrédients séléctionnés
-            if(cluster.length > 0) inCluster = cluster.every((id) => ingredients.includes(id))
+            if(cluster.length > 0) inCluster = cluster.every((id) => ingredient_array.includes(id))
             //tous les ingrédients du cocktail sont dans l'inventaire
-            const inInventory = ingredients.every(id => inventory.includes(id))
+            const inInventory = inngredient_array.every(id => inventory.includes(id))
             return inCluster && inInventory
         })
     //redefine clusterCocktails with difficulty and gout
