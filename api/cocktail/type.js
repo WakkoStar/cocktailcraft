@@ -4,11 +4,11 @@ const {createCocktail, modifyCocktail, deleteCocktail} = require('./mutation')
 module.exports.schema = `
     type Cocktails {
         id : Int
-        name : String
-        ingredient_id : [Int]
-        gout_id : [Int]
-        description : String 
-        difficulty_id : Int
+        nom : String
+        ingredient_array : [Int]
+        gout_array : [Int]
+        description_array : [Int]
+        difficulty : String
     }
 `
 

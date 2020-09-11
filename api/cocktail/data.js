@@ -78,6 +78,25 @@ const modifyIngredientInCocktail = ({prevIngredients, currIngredients}) => {
 
 }
 
+const modifyDescriptionInCocktail = ({prevDescriptions, currDescriptions}) => {
+    /*
+    prevDescriptions = [Int]
+    currDescriptions = [{ingredient_id: Int, volume: Int}]
+    */
+    const currDescriptionsIds = currDescriptions.map(({id}) => id)
+    
+    const DescriptionToDelete = prevDescriptions.filter((id) => !currDescriptionsIds.includes(id))
+    const DescriptionToCreate = currDescriptions.filter(({id}) => id === "")
+    const DescriptionsToUpdate = currDescriptions.filter((id) => id !== "")
+
+    const newDescription_array = createAndGetDescriptionOfCocktail(DescriptionToCreate)
+    const updatedDescription_array = updateDescriptionOfCocktail(DescriptionsToUpdate)
+    deleteDescriptionOfCocktail(DescriptionToDelete)
+
+    return updatedDescription_array.concat(newDescription_array)
+
+}
+
 module.exports.deleteCocktail = (id) => {
     const text = 'DELETE FROM cocktails WHERE id = $1'
     const values = [id]
