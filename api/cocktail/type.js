@@ -2,12 +2,32 @@ const {getAllCocktails, getOneCocktails, getAvailableCocktails, getCreatedCockta
 const {createCocktail, modifyCocktail, deleteCocktail} = require('./mutation')
 
 module.exports.schema = `
+    type Description {
+        content : String
+        preparation: String
+    }
+
+    type Ingredient {
+        ingredient_id: Int
+        volume: String
+    }
+    
+    input descriptionInput {
+        content : String
+        preparation: String
+    }
+
+    input ingredientInput {
+        ingredient_id: Int
+        volume: String
+    }
+
     type Cocktails {
         id : Int
         nom : String
-        ingredient_array : [Int]
+        descriptions : [Description]
+        ingredients : [Ingredient]
         gout_array : [Int]
-        description_array : [Int]
         difficulty : String
     }
 `

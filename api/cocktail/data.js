@@ -1,15 +1,61 @@
+
+var _ = require('lodash')
 const { deleteIngredient, modifyIngredient } = require('../ingredient/data')
 const client = require('../utils/bdd')
 
 module.exports.getAllCocktails = async() => {
     const res = await client.query('SELECT * FROM cocktails c JOIN ingredient_cocktail ic ON c.id = ic.cocktail_id JOIN description_cocktail dc ON c.id = dc.cocktail_id ORDER BY c.nom')
-    return res.rows
+    const cocktails = getDescriptionsAndIngredientsOfCocktails(res.rows)
+    /*
+    schéma : 
+    {
+        id: 1,
+        nom: mojito,
+        descriptions: [
+            {
+                content: "Mettre la menthe....",
+                preparation : "Fait directement au verre"
+            },
+        ],
+        ingredients: [
+            {
+                ingredient_id : 1,
+                volume: "un trait"
+            },
+            {
+                ingredient_id: 3,
+                volume: "20 grammes"
+            }
+        ],
+        gout_array: [1, 2, 4, 8],
+        difficulty: "Facile"
+    }
+    */
+    return cocktails
 }
 
-module.exports.createCocktail = (nom, ingredients, gout_array, descriptions, difficulty) => {
+const getDescriptionsAndIngredientsOfCocktails = (cocktails) => {
+    const distinctCocktails = _.uniqWith(cocktails, _.isEqual);
+    const fullfilledCocktails = distinctCocktails.map((el) => {
+        //selection des lignes a aggreger
+        const cocktailArray = cocktails.filter(({id}) => id === el.id)
+        //aggreger les lignes en un objet
+        return cocktailArray.reduce((cocktailFull, cocktailPart) => {
+            //{id,nom,description,ingredient}
+            return {
+                ...cocktailFull,
+                descriptions: cocktailFull.description.concat(cocktailPart.description),
+                ingredients: cocktailFull.ingredients.concat(cocktailPart.ingredients)
+            }
+        }, {})
+    })
+    return fullfilledCocktails
+}
 
-    const text = 'INSERT INTO cocktails (nom,difficulty,gout_array) VALUES ($1,$2,$3,$4,$5)'
-    const values = [nom, difficulty, ingredient_array, gout_array, description_array]
+module.exports.createCocktail = (nom, descriptions, ingredients, gout_array, difficulty) => {
+
+    const text = 'INSERT INTO cocktails (nom, gout_array, difficulty) VALUES ($1,$2,$3)'
+    const values = [nom, gout_array, difficulty]
 
     client.query(text, values, (err, res) => {
         if (err) return err.stack
@@ -43,32 +89,30 @@ const createAndGetIngredientOfCocktail = (ingredients, cocktail_id) => {
 }
 
 
-module.exports.modifyCocktail = (nom, difficulty, ingredients, descriptions, gout_array, id) => {
+module.exports.modifyCocktail = (nom, descriptions, ingredients, gout_array, difficulty, id) => {
 
-    modifyInCocktail({...ingredients, db: ingredient_cocktail}, id)
-    modifyInCocktail({...descriptions, db: description_cocktail}, id)
+    modifyInCocktail({...ingredients, db: 'ingredient_cocktail'}, id)
+    modifyInCocktail({...descriptions, db: 'description_cocktail'}, id)
 
     const text =  'UPDATE cocktails SET nom = $1, gout_array = $2, difficulty = $3 WHERE id = $4'
     const values = [nom, gout_array, difficulty, id]
 
     client.query(text, values, (err, res) => {
-        if (err) console.log(err.stack)
+        if (err) return err.stack
     })
+
+    return `${nom} est modifié`
     
 }
 
 const modifyInCocktail = (object, cocktail_id) => {
     const res = await client.query(`SELECT * FROM ${object.db} WHERE cocktail_id = ${cocktail_id}`)
     const prev = res.rows
-    /*
-    prevIngredients = [{ingredient_id: Int, volume: Int}]
-    currIngredients = [{ingredient_id: Int, volume: Int}]
-    */
     const currIds = object.map(({id}) => id)
     
-    const toDelete = prev.filter(({id}) => !currIds.includes(id))
-    const toCreate = object.filter(({id}) => id === "")
-    const toUpdate = object.filter(({id}) => id !== "")
+    const toDelete = prev.filter(({id}) => !currIds.includes(id)) //pas inclus > ca dégage
+    const toCreate = object.filter(({id}) => id === "")//nouveau 
+    const toUpdate = object.filter(({id}) => id !== "")//pas nouveau
 
     if(object.db === "ingredient_cocktail"){
         createAndGetIngredientOfCocktail(toCreate)
@@ -109,16 +153,17 @@ const deleteOfCocktail = (object, db) => {
         const values = [id]
 
         client.query(text, values, (err, res) => {
-            if (err) console.log(err.stack)
+            if (err) return err.stack
         })
     })
+
+    return `${id} supprimé de ${db}`
 }
 
 module.exports.deleteCocktail = (id) => {
-    const text = 'DELETE FROM cocktails WHERE id = $1'
-    const values = [id]
-
-    client.query(text, values, (err, res) => {
-        if (err) console.log(err.stack)
-    })
+    const message = 
+    deleteOfCocktail({id}, 'ingredient_cocktail') +
+    deleteOfCocktail({id}, 'description_cocktail') +
+    deleteOfCocktail({id}, 'cocktails')
+    return message
 }

@@ -16,6 +16,7 @@
     "graphql": "^15.1.0",
     "graphql-disable-introspection": "^1.1.0",
     "graphql-tag": "^2.10.3",
+    "lodash": "^4.17.20",
     "multiselect-react-dropdown": "^1.5.0",
     "nodemon": "^2.0.4",
     "path": "^0.12.7",

@@ -17,18 +17,22 @@ module.exports.schema = buildSchema(
 
         cocktail(id : Int!): Cocktails
         cocktails : [Cocktails]
-        availCocktails(ingredient_id : [Int!]!) : [Cocktails]
+        availCocktails(ingredient_array : [Int!]!) : [Cocktails]
         createdCocktails(cluster: [Int]): [Cocktails]
     }
     type Mutation {
-        createIngredient(name: String, aliases:[String]): String
-        modifyIngredient(name: String, aliases:[String], id: Int): String
+        createIngredient(nom: String, alias:[String], family_of:Int): String
+        modifyIngredient(nom: String, alias:[String], family_of:Int, id: Int): String
         deleteIngredient(id: Int): String
         
-        createCocktail(name: String, ingredient_id:[Int], gout_id: [Int], description: String, difficulty_id : Int) : String
-        modifyCocktail(name: String, ingredient_id:[Int], gout_id: [Int], description: String, difficulty_id : Int, id: Int) : String
+        createGout(nom: String): String
+        modifyGout(nom: String, id: Int): String
+        deleteGout(id: Int): String
+
+        createCocktail(nom: String, input: [descriptionInput], input: [ingredientInput] , gout_array: [Int], difficulty : String) : String
+        modifyCocktail(nom: String, descriptions:[Description], ingredients: [Igredient], gout_array: [Int], difficulty : String, id: Int) : String
         deleteCocktail(id: Int): String
-    }
+    } 
     `
     + ingredientSchema 
     + cocktailSchema
