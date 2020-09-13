@@ -1,25 +1,47 @@
-
+var _ = require('lodash')
 const {
     createGout : createGoutInDb,
     modifyGout : modifyGoutInDb,
     deleteGout : deleteGoutInDb,
-    getAllGouts: getGouts
+    getAllGouts: getGouts,
+    modifyGout
 } = require('./data')
 
+const executeRequestInDb = (params, callback, msg) => {
+    if(_.some(params, _.isUndefined)) throw new Error("empty fields")
+    const gouts = await getAllGouts()
+    const existsGout = gouts.find((gout) => gout.id == id)
+    if(existsGout){
+        callback({...params})
+        return `${msg} (cocktail: ${existsGout.nom})`
+    }else{
+        throw new Error('no ID founded')
+    }
+}
+
 module.exports.createGout = ({nom}) => {
-    return createGoutInDb(nodemon)
+    const gouts = await getAllGouts()
+    const existsGout = gouts.find((gout) => gout.nom == nom)
+    if(existsGout){
+        throw new Error('Gout already exists')
+    }else{
+        createGoutInDb(nom)
+        return `${nom} vient d'être créé avec succès`
+    }
 }
 
 module.exports.modifyGout = ({nom, id}) => {
-    return modifyGoutInDb(nom, id)
+    return await executeRequestInDb(
+        {nom, id},
+        modifyGoutInDb,
+        "Le goût vient d'être modifié avec succès"
+    )
 }
 
 module.exports.deleteGout = async({id}) => {
-    const Gouts = await getAllGouts()
-    const checkID = Gouts.find((gout) => gout.id === id)
-    if(checkID){
-        deleteGoutInDb(id)
-        return `L'élément est supprimé`
-    }
-    return "Aucun gout avec cet ID"
+    return await executeRequestInDb(
+        {id},
+        deleteGoutInDb,
+        "Le goût vient d'être supprimé avec succès"
+    )
 }

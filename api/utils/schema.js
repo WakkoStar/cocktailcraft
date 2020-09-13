@@ -18,26 +18,29 @@ module.exports.schema = buildSchema(
         cocktail(id : Int!): Cocktails
         cocktails : [Cocktails]
         availCocktails(ingredient_array : [Int!]!) : [Cocktails]
-        createdCocktails(cluster: [Int]): [Cocktails]
+        createdCocktails(cluster: [Int!]!): [Cocktails]
     }
     type Mutation {
-        createIngredient(nom: String, alias:[String], family_of:Int): String
-        modifyIngredient(nom: String, alias:[String], family_of:Int, id: Int): String
-        deleteIngredient(id: Int): String
+        createIngredient(nom: String!, alias:[String!]!, family_of:Int!): String
+        modifyIngredient(nom: String!, alias:[String!]!, family_of:Int!, id: Int!): String
+        deleteIngredient(id: Int!): String
         
-        createGout(nom: String): String
-        modifyGout(nom: String, id: Int): String
-        deleteGout(id: Int): String
+        createGout(nom: String!): String
+        modifyGout(nom: String!, id: Int!): String
+        deleteGout(id: Int!): String
 
-        createCocktail(nom: String, gout_array: [Int], difficulty : String) : String
-        modifyCocktail(nom: String, gout_array: [Int], difficulty : String, id: Int) : String
-        deleteCocktail(id: Int): String
+        createCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!) : String
+        modifyCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, id: Int!) : String
+        deleteCocktail(id: Int!): String
 
-        createDescriptionCocktail(input: [descriptionInput], id_cocktail: Int): String
-        createIngredientCocktail(input: [ingredientInput], id_cocktail: Int):String
+        createDescriptionCocktail(input: [descriptionInput!]!, id_cocktail: Int!): String
+        createIngredientCocktail(input: [ingredientInput!]!, id_cocktail: Int!):String
 
-        modifyDescriptionCocktail(input: [descriptionInput], id: Int): String
-        modifyIngredientCocktail(input: [ingredientInput], id: Int):String
+        modifyDescriptionCocktail(input: [descriptionInput!]!, id: Int!): String
+        modifyIngredientCocktail(input: [ingredientInput!]!, id: Int!):String
+
+        deleteDescriptionCocktail(id: Int!): String
+        deleteIngredientCocktail(id: Int!): String
     } 
     `
     + ingredientSchema 
@@ -67,7 +70,9 @@ const {
     createDescriptionCocktail,
     createIngredientCocktail,
     modifyDescriptionCocktail,
-    modifyIngredientCocktail
+    modifyIngredientCocktail,
+    deleteIngredientCocktail,
+    deleteDescriptionCocktail
 } = cocktailResolvers
 
 const {
@@ -100,4 +105,6 @@ module.exports.root = {
     createIngredientCocktail,
     modifyDescriptionCocktail,
     modifyIngredientCocktail,
+    deleteIngredientCocktail,
+    deleteDescriptionCocktail
 }
