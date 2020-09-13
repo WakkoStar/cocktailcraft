@@ -29,9 +29,15 @@ module.exports.schema = buildSchema(
         modifyGout(nom: String, id: Int): String
         deleteGout(id: Int): String
 
-        createCocktail(nom: String, input: [descriptionInput], input: [ingredientInput] , gout_array: [Int], difficulty : String) : String
-        modifyCocktail(nom: String, descriptions:[Description], ingredients: [Igredient], gout_array: [Int], difficulty : String, id: Int) : String
+        createCocktail(nom: String, gout_array: [Int], difficulty : String) : String
+        modifyCocktail(nom: String, gout_array: [Int], difficulty : String, id: Int) : String
         deleteCocktail(id: Int): String
+
+        createDescriptionCocktail(input: [descriptionInput], id_cocktail: Int): String
+        createIngredientCocktail(input: [ingredientInput], id_cocktail: Int):String
+
+        modifyDescriptionCocktail(input: [descriptionInput], id: Int): String
+        modifyIngredientCocktail(input: [ingredientInput], id: Int):String
     } 
     `
     + ingredientSchema 
@@ -57,7 +63,11 @@ const {
     createdCocktails,
     createCocktail,
     modifyCocktail,
-    deleteCocktail
+    deleteCocktail,
+    createDescriptionCocktail,
+    createIngredientCocktail,
+    modifyDescriptionCocktail,
+    modifyIngredientCocktail
 } = cocktailResolvers
 
 const {
@@ -84,5 +94,10 @@ module.exports.root = {
     createdCocktails,
     createCocktail,
     modifyCocktail,
-    deleteCocktail
+    deleteCocktail,
+
+    createDescriptionCocktail,
+    createIngredientCocktail,
+    modifyDescriptionCocktail,
+    modifyIngredientCocktail,
 }

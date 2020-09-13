@@ -2,7 +2,7 @@ const client = require('../utils/bdd')
 
 
 module.exports.getAllIngredients = async() => {
-    const res = await client.query('SELECT * FROM ingredient ORDER BY name')
+    const res = await client.query('SELECT * FROM ingredient ORDER BY nom')
     return res.rows
 }
 
@@ -50,10 +50,8 @@ Schéma d'un ingrédient :
 Schéma d'un cocktail : 
 {
     nom : String,
-    ingredient_array : [{id : id, vol : int}],
     gout_array : [id],
-    difficulty_id : [id],
-    description_array : [{content : blob, preparation_id : id}],
+    difficulty : [id],
 }
 
 
@@ -61,14 +59,6 @@ Autres schémas :
 
 gout {
     id,
-    nom
-}
-difficulty {
-    id,
-    nom
-}
-preparation {
-    id, 
     nom
 }
 

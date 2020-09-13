@@ -1,17 +1,19 @@
 const {getAllCocktails, getOneCocktails, getAvailableCocktails, getCreatedCocktails} = require('./query')
-const {createCocktail, modifyCocktail, deleteCocktail} = require('./mutation')
+const {createCocktail, modifyCocktail, deleteCocktail,createDescriptionCocktail,createIngredientCocktail,modifyDescriptionCocktail,modifyIngredientCocktail} = require('./mutation')
 
 module.exports.schema = `
     type Description {
         content : String
         preparation: String
+        cocktail_id: Int
     }
 
     type Ingredient {
         ingredient_id: Int
         volume: String
+        cocktail_id: Int
     }
-    
+
     input descriptionInput {
         content : String
         preparation: String
@@ -39,5 +41,9 @@ module.exports.resolvers = {
     createdCocktails: getCreatedCocktails,
     createCocktail,
     modifyCocktail,
-    deleteCocktail
+    deleteCocktail,
+    createDescriptionCocktail,
+    createIngredientCocktail,
+    modifyDescriptionCocktail,
+    modifyIngredientCocktail
 }
