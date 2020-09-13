@@ -33,16 +33,18 @@ const getIngredientCount = (res, id) => {
     })
     return filteredCocktails.length
 }
+
 //inventory = {2, 4, 5, 9} => id of ingredient
 module.exports.getBestIngredients = async({inventory}) => {
     const ingredients = await getIngredients()
     const cocktails = await getAllCocktails()
-    //filter cocktails who don't have the inventory
     let res
+    //get cocktail includes inventory
     if(inventory.length > 0) {
         res = cocktails.filter(({ingredient_array}) => {
             return inventory.some((id) => ingredient_array.includes(id))
         })
+    //all cocktails
     }else{
         res = cocktails
     }
@@ -53,7 +55,7 @@ module.exports.getBestIngredients = async({inventory}) => {
    
     //sort by count
     let sortedIng = countedIng.sort((a, b) => b.count - a.count)
-    //filter inventory
+    //filter ingredient which already in inventory
     return sortedIng.filter((ingredient) => !inventory.includes(ingredient.id))
 }
 
@@ -61,9 +63,9 @@ module.exports.getBestIngredients = async({inventory}) => {
 //filter cocktails 
 const filterCocktails = (cocktails, filter_gout, filter_difficulty) => {
 
-    const filteredCocktails = cocktails.filter(({gout_id, difficulty}) => {
+    const filteredCocktails = cocktails.filter(({gout_array, difficulty}) => {
         let inGout = true
-        if(filter_gout.length > 0) inGout = gout_id.some((id) => filter_gout.includes(id))
+        if(filter_gout.length > 0) inGout = gout_array.some((id) => filter_gout.includes(id))
 
         let inDifficulty = true
         if(filter_difficulty.length > 0) inDifficulty = filter_difficulty.includes(difficulty)

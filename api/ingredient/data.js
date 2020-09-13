@@ -11,29 +11,25 @@ module.exports.createIngredient = (nom, alias, family_of) => {
     const values = [nom, alias, family_of]
 
     client.query(text, values, (err, res) => {
-        if (err) return err.stack
+        if (err) throw err
     })
-
-    return `${nom} vient d'être crée`
 }
 
-module.exports.modifyIngredient = (nom, alias, family_of, id) => {
+module.exports.modifyIngredient = ({nom, alias, family_of, id}) => {
     const text =  'UPDATE ingredient SET nom = $1, alias=$2, family_of=$3 WHERE id = $4'
     const values = [nom, alias, family_of, id]
 
     client.query(text, values, (err, res) => {
-        if (err) return err.stack
+        if (err) throw err
     })
-
-    return `${nom} vient d'être modifié`
 }
 
-module.exports.deleteIngredient = (id) => {
+module.exports.deleteIngredient = ({id}) => {
     const text = 'DELETE FROM ingredient WHERE id = $1'
     const values = [id]
 
     client.query(text, values, (err, res) => {
-        if (err) console.log(err.stack)
+        if (err) throw err
     })
 }
 

@@ -1,3 +1,4 @@
+var _ = require('lodash')
 const {
     createIngredient : createIngredientInDb,
     modifyIngredient : modifyIngredientInDb,
@@ -5,20 +6,41 @@ const {
     getAllIngredients: getIngredients
 } = require('./data')
 
-module.exports.createIngredient = ({nom, alias, family_of}) => {
-    return createIngredientInDb(nom, alias, family_of)
+const executeRequestInDb = async(params, callback, msg) => {
+    if(_.some(params, _.isUndefined)) throw new Error("empty fields")
+    const ingredients = await getIngredients()
+    const existsIngredients = ingredients.find((ingredient) => ingredient.id == id)
+    if(existsIngredients){
+        callback({...params})
+        return `${msg} (ingrédient: ${existsIngredients.nom})`
+    }else{
+        throw new Error('no ID founded')
+    }
 }
 
-module.exports.modifyIngredient = ({nom, alias, family_of, id}) => {
-    return modifyIngredientInDb(nom, alias, family_of, id)
+module.exports.createIngredient = ({nom, alias, family_of}) => {
+    const ingredients = await getIngredients()
+    const existsIngredients = ingredients.find((ingredient) => ingredient.nom == nom)
+    if(existsIngredients){
+        throw new Error('Ingredient already exists')
+    }else{
+        createIngredientInDb(nom, alias, family_of)
+        return `${nom} vient d'être créé avec succès`
+    }
+}
+
+module.exports.modifyIngredient = async({nom, alias, family_of, id}) => {
+    return await executeRequestInDb(
+        {nom, alias, family_of, id},
+        modifyIngredientInDb,
+        "L'ingrédient vient d'être modifié avec succès"
+    )
 }
 
 module.exports.deleteIngredient = async({id}) => {
-    const ingredients = await getIngredients()
-    const checkID = ingredients.find((ingredient) => ingredient.id === id)
-    if(checkID){
-        deleteIngredientInDb(id)
-        return `L'élément est supprimé`
-    }
-    return "Aucun ingrédient avec cet ID"
+    return await executeRequestInDb(
+        {nom, alias, family_of, id},
+        deleteIngredientInDb,
+        "L'ingrédient vient d'être supprimé avec succès"
+    )
 }

@@ -23,7 +23,7 @@ const executeRequestInDb = async(params, callback, msg) => {
     }
 }
 
-module.exports.createCocktail = ({nom, gout_array, difficulty}) => {
+module.exports.createCocktail = async({nom, gout_array, difficulty}) => {
     if(!nom || !gout_array || !difficulty) throw new Error("empty fields")
     const cocktails = await getCocktails()
     const existsCocktail = cocktails.find((cocktail) => cocktail.nom == nom)

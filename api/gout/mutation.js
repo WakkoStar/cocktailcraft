@@ -7,20 +7,20 @@ const {
     modifyGout
 } = require('./data')
 
-const executeRequestInDb = (params, callback, msg) => {
+const executeRequestInDb = async(params, callback, msg) => {
     if(_.some(params, _.isUndefined)) throw new Error("empty fields")
-    const gouts = await getAllGouts()
+    const gouts = await getGouts()
     const existsGout = gouts.find((gout) => gout.id == id)
     if(existsGout){
         callback({...params})
-        return `${msg} (cocktail: ${existsGout.nom})`
+        return `${msg} (gout: ${existsGout.nom})`
     }else{
         throw new Error('no ID founded')
     }
 }
 
-module.exports.createGout = ({nom}) => {
-    const gouts = await getAllGouts()
+module.exports.createGout = async({nom}) => {
+    const gouts = await getGouts()
     const existsGout = gouts.find((gout) => gout.nom == nom)
     if(existsGout){
         throw new Error('Gout already exists')
@@ -30,7 +30,7 @@ module.exports.createGout = ({nom}) => {
     }
 }
 
-module.exports.modifyGout = ({nom, id}) => {
+module.exports.modifyGout = async({nom, id}) => {
     return await executeRequestInDb(
         {nom, id},
         modifyGoutInDb,
