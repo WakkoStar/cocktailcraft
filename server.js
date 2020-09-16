@@ -1,11 +1,22 @@
+
+const { ApolloServer, gql} = require('apollo-server');
 const {schema, root} = require("./api/utils/schema")
 const client = require('./api/utils/bdd')
-const cors = require('cors')
-const path = require('path');
-var express = require('express');
-var graphqlHTTP = require('express-graphql');
+
 
 client.connect()
+const server = new ApolloServer({ typeDefs: gql`${schema}`, resolvers: root });
+
+
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`);
+});
+
+/*
+//const cors = require('cors')
+//const path = require('path');
+//var express = require('express');
+//var graphqlHTTP = require('express-graphql');
 var app = express();
 app.use(cors())
 // Add headers
@@ -32,11 +43,9 @@ app.use('/graphql', graphqlHTTP({
   rootValue: root,
   graphiql:true
 }));
-
 // //react
 // app.use(express.static(path.join(__dirname, 'public')));
 // app.get('/*', function(req, res) {
 //     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 // });
-
-app.listen(process.env.PORT || 4000);
+*/

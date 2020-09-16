@@ -63,19 +63,18 @@ module.exports.createIngredientOfCocktail = ({ingredients,id_cocktail}) => {
         const values = [ingredient_id, volume, id_cocktail]
 
         client.query(text,values, (err, res) => {
-            if (err) throw error
+            if (err) throw err
         })
     })
 }
 
 
 module.exports.modifyCocktail = ({nom, gout_array, difficulty, id}) => {
-    console.log(nom)
     const text =  'UPDATE cocktails SET nom = $1, gout_array = $2, difficulty = $3 WHERE id = $4'
     const values = [nom, gout_array, difficulty, id]
 
     client.query(text, values, (err, res) => {
-        if (err) throw error
+        if (err) throw err
     })
 }
 
@@ -143,4 +142,4 @@ module.exports.deleteCocktail = ({id}) => {
         gout_array: [1, 2, 4, 8],
         difficulty: "Facile"
     }
-    */
+*/

@@ -9,7 +9,7 @@ module.exports.getAllGouts = async() => {
 module.exports.createGout = (nom) => {
     const text = 'INSERT INTO gout (nom) VALUES ($1)'
     const values = [nom]
-
+    
     client.query(text, values, (err, res) => {
         if (err) throw err
     })
@@ -32,3 +32,9 @@ module.exports.deleteGout = ({id}) => {
         if (err) throw err
     })
 }
+/*
+gout {
+    id: Int
+    nom: String
+}
+*/

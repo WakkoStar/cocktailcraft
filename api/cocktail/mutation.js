@@ -19,7 +19,7 @@ const executeRequestInDb = async(params, callback, msg) => {
         callback({...params})
         return `${msg} (cocktail: ${existsCocktail.nom})`
     }else{
-        throw new Error('no ID founded')
+        throw new Error('ID no founded')
     }
 }
 

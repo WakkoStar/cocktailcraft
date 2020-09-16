@@ -9,16 +9,16 @@ const {
 const executeRequestInDb = async(params, callback, msg) => {
     if(_.some(params, _.isUndefined)) throw new Error("empty fields")
     const ingredients = await getIngredients()
-    const existsIngredients = ingredients.find((ingredient) => ingredient.id == id)
+    const existsIngredients = ingredients.find((ingredient) => ingredient.id == params.id)
     if(existsIngredients){
         callback({...params})
         return `${msg} (ingrédient: ${existsIngredients.nom})`
     }else{
-        throw new Error('no ID founded')
+        throw new Error('ID no founded')
     }
 }
 
-module.exports.createIngredient = ({nom, alias, family_of}) => {
+module.exports.createIngredient = async({nom, alias, family_of}) => {
     const ingredients = await getIngredients()
     const existsIngredients = ingredients.find((ingredient) => ingredient.nom == nom)
     if(existsIngredients){
@@ -39,7 +39,7 @@ module.exports.modifyIngredient = async({nom, alias, family_of, id}) => {
 
 module.exports.deleteIngredient = async({id}) => {
     return await executeRequestInDb(
-        {nom, alias, family_of, id},
+        {id},
         deleteIngredientInDb,
         "L'ingrédient vient d'être supprimé avec succès"
     )

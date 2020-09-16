@@ -1,10 +1,9 @@
+const { gql } = require('apollo-server')
 const {schema:ingredientSchema, resolvers:ingredientResolvers} = require("../ingredient/type")
 const {schema: cocktailSchema, resolvers: cocktailResolvers} = require("../cocktail/type")
 const {schema:goutSchema, resolvers:goutResolvers} = require("../gout/type")
-var { buildSchema } = require('graphql');
 
-module.exports.schema = buildSchema(
-    `
+module.exports.schema = `
     type Query {
         ingredient(id: Int!): Ingredients
         ingredients: [Ingredients]
@@ -42,11 +41,10 @@ module.exports.schema = buildSchema(
         deleteDescriptionCocktail(id: Int!): String
         deleteIngredientCocktail(id: Int!): String
     } 
-    `
-    + ingredientSchema 
-    + cocktailSchema
-    + goutSchema
-);
+    ${ingredientSchema}
+    ${cocktailSchema}
+    ${goutSchema}
+`;
 
 const {
     ingredient, 
@@ -77,7 +75,10 @@ const {
 
 const {
     gout,
-    gouts
+    gouts,
+    createGout,
+    modifyGout,
+    deleteGout
 } = goutResolvers
 
 module.exports.root = {
@@ -92,6 +93,9 @@ module.exports.root = {
 
     gout,
     gouts,
+    createGout,
+    modifyGout,
+    deleteGout,
 
     cocktail,
     cocktails,

@@ -7,5 +7,11 @@ module.exports.getAllGouts = async() => {
 
 module.exports.getOneGouts = async({id}) => {
     const gouts = await getGouts()
-    return gouts.filter((gout) => gout.id == id)[0]
+    const gout = gouts.filter((gout) => gout.id == id)[0]
+
+    if(gout){
+        return gout 
+    }else {
+        throw new Error("Gout no founded")
+    }
 }

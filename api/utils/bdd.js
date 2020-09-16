@@ -3,8 +3,8 @@ const {Client} = require("pg")
 const client = new Client({
     host: "localhost",
     user: "postgres",
-    password: "HUGOcrado24",
-    database: "cocktails"
+    password: "Ys4aosyev4",
+    database: "cocktailcraft"
 })
 // const client = new Client({
 //     host: "node67901-env-8002935.hidora.com",

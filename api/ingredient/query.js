@@ -28,8 +28,9 @@ module.exports.searchIngredient = async({search}) => {
 //count amount of ingredients
 const getIngredientCount = (res, id) => {    
 
-    let filteredCocktails = res.filter(({ingredient_array}) => {
-        return ingredient_array.includes(id)
+    let filteredCocktails = res.filter(({ingredients}) => {
+        const ingredientArray = ingredients.map(({ingredient_id}) => ingredient_id)
+        return ingredientArray.includes(id)
     })
     return filteredCocktails.length
 }
@@ -38,20 +39,21 @@ const getIngredientCount = (res, id) => {
 module.exports.getBestIngredients = async({inventory}) => {
     const ingredients = await getIngredients()
     const cocktails = await getAllCocktails()
-    let res
+    let availableCocktails
     //get cocktail includes inventory
     if(inventory.length > 0) {
-        res = cocktails.filter(({ingredient_array}) => {
-            return inventory.some((id) => ingredient_array.includes(id))
+        availableCocktails = cocktails.filter(({ingredients}) => {
+            const ingredientArray = ingredients.map(({ingredient_id}) => ingredient_id)
+            return inventory.some((id) => ingredientArray.includes(id))
         })
     //all cocktails
     }else{
-        res = cocktails
+        availableCocktails = cocktails
     }
     //add count property
     let countedIng = ingredients.map((ingredient) => {
-        return {...ingredient, count: getIngredientCount(res, ingredient.id)}
-    })
+        return {...ingredient, count: getIngredientCount(availableCocktails, ingredient.id)}
+    })  
    
     //sort by count
     let sortedIng = countedIng.sort((a, b) => b.count - a.count)
@@ -85,16 +87,17 @@ module.exports.inventorySelection = async({inventory, cluster, filter_gout, filt
     const cocktails = await getAllCocktails()
     
     //select only cocktail available with the cluster
-    let clusterCocktails = cocktails.filter(({ingredient_array}) => {
-            //tous les ingrédients du cluster sont dans le cocktail
-            let inCluster = true
-            //si le cluster est supérieur à 0, on séléctionne les cocktails avec TOUT les ingrédients séléctionnés
-            if(cluster.length > 0) inCluster = cluster.every((id) => ingredient_array.includes(id))
-            //tous les ingrédients du cocktail sont dans l'inventaire
-            const inInventory = inngredient_array.every(id => inventory.includes(id))
-            return inCluster && inInventory
-        })
-    //redefine clusterCocktails with difficulty and gout
+    let clusterCocktails = cocktails.filter(({ingredients}) => {
+        const ingredientArray = ingredients.map(({ingredient_id}) => ingredient_id)
+        //tous les ingrédients du cluster sont dans le cocktail
+        let inCluster = true
+        //si le cluster est supérieur à 0, on séléctionne les cocktails avec TOUT les ingrédients séléctionnés
+        if(cluster.length > 0) inCluster = cluster.every((id) => ingredientArray.includes(id))
+        //tous les ingrédients du cocktail sont dans l'inventaire
+        const inInventory = ingredientArray.every(id => inventory.includes(id))
+        return inCluster && inInventory
+    })
+    //redefine clusterCocktails with difficulty and gout filters
     clusterCocktails = filterCocktails(clusterCocktails, filter_gout, filter_difficulty)
     
     //add count property for the cocktails available
@@ -103,7 +106,11 @@ module.exports.inventorySelection = async({inventory, cluster, filter_gout, filt
     })
     //sort by count
     let sortedIng = countedIng.sort((a, b) => b.count - a.count)
+
     return sortedIng.filter((ingredient) => {
-        return !cluster.includes(ingredient.id) && ingredient.count
+        const ingredientAlreadyInCluster = !cluster.includes(ingredient.id)
+        const occurences = ingredient.count
+        //remove cluster ingredients and no counted ingredients
+        return ingredientAlreadyInCluster && occurences
     })
 }

@@ -21,6 +21,7 @@ module.exports.schema = `
     type Ingredient {
         ingredient_id: Int
         volume: String
+        nom: String
         cocktail_id: Int
     }
 
