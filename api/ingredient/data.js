@@ -1,38 +1,38 @@
-const client = require('../utils/bdd')
+const client = require('../utils/bdd');
 
-
-module.exports.getAllIngredients = async() => {
-    const res = await client.query('SELECT * FROM ingredient ORDER BY nom')
-    return res.rows
-}
+module.exports.getAllIngredients = async () => {
+	const res = await client.query('SELECT * FROM ingredient ORDER BY nom');
+	return res.rows;
+};
 
 module.exports.createIngredient = (nom, alias, family_of) => {
-    const text = 'INSERT INTO ingredient (nom, alias, family_of) VALUES ($1, $2, $3)'
-    const values = [nom, alias, family_of]
+	const text =
+		'INSERT INTO ingredient (nom, alias, family_of) VALUES ($1, $2, $3)';
+	const values = [nom, alias, family_of];
 
-    client.query(text, values, (err, res) => {
-        if (err) throw err
-    })
-}
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
 
-module.exports.modifyIngredient = ({nom, alias, family_of, id}) => {
-    const text =  'UPDATE ingredient SET nom = $1, alias=$2, family_of=$3 WHERE id = $4'
-    const values = [nom, alias, family_of, id]
+module.exports.modifyIngredient = ({ nom, alias, family_of, id }) => {
+	const text =
+		'UPDATE ingredient SET nom = $1, alias=$2, family_of=$3 WHERE id = $4';
+	const values = [nom, alias, family_of, id];
 
-    client.query(text, values, (err, res) => {
-        if (err) throw err
-    })
-}
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
 
-module.exports.deleteIngredient = ({id}) => {
-    const text = 'DELETE FROM ingredient WHERE id = $1'
-    const values = [id]
+module.exports.deleteIngredient = ({ id }) => {
+	const text = 'DELETE FROM ingredient WHERE id = $1';
+	const values = [id];
 
-    client.query(text, values, (err, res) => {
-        if (err) throw err
-    })
-}
-
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
 
 /*
 Schéma d'un ingrédient : 

@@ -1,7 +1,15 @@
-const { gql } = require('apollo-server')
-const {schema:ingredientSchema, resolvers:ingredientResolvers} = require("../ingredient/type")
-const {schema: cocktailSchema, resolvers: cocktailResolvers} = require("../cocktail/type")
-const {schema:goutSchema, resolvers:goutResolvers} = require("../gout/type")
+const {
+	schema: ingredientSchema,
+	resolvers: ingredientResolvers,
+} = require('../ingredient/type');
+const {
+	schema: cocktailSchema,
+	resolvers: cocktailResolvers,
+} = require('../cocktail/type');
+const {
+	schema: goutSchema,
+	resolvers: goutResolvers,
+} = require('../gout/type');
 
 module.exports.schema = `
     type Query {
@@ -47,68 +55,68 @@ module.exports.schema = `
 `;
 
 const {
-    ingredient, 
-    ingredients, 
-    bestIngredients,
-    inventorySelection,
-    searchIngredient,
-    createIngredient, 
-    modifyIngredient,
-    deleteIngredient
-} = ingredientResolvers
+	ingredient,
+	ingredients,
+	bestIngredients,
+	inventorySelection,
+	searchIngredient,
+	createIngredient,
+	modifyIngredient,
+	deleteIngredient,
+} = ingredientResolvers;
 
 const {
-    cocktail,
-    cocktails,
-    availCocktails,
-    createdCocktails,
-    createCocktail,
-    modifyCocktail,
-    deleteCocktail,
-    createDescriptionCocktail,
-    createIngredientCocktail,
-    modifyDescriptionCocktail,
-    modifyIngredientCocktail,
-    deleteIngredientCocktail,
-    deleteDescriptionCocktail
-} = cocktailResolvers
+	cocktail,
+	cocktails,
+	availCocktails,
+	createdCocktails,
+	createCocktail,
+	modifyCocktail,
+	deleteCocktail,
+	createDescriptionCocktail,
+	createIngredientCocktail,
+	modifyDescriptionCocktail,
+	modifyIngredientCocktail,
+	deleteIngredientCocktail,
+	deleteDescriptionCocktail,
+} = cocktailResolvers;
 
-const {
-    gout,
-    gouts,
-    createGout,
-    modifyGout,
-    deleteGout
-} = goutResolvers
+const { gout, gouts, createGout, modifyGout, deleteGout } = goutResolvers;
 
 module.exports.root = {
-    ingredient,
-    ingredients,
-    bestIngredients,
-    searchIngredient,
-    inventorySelection,
-    createIngredient,
-    modifyIngredient,
-    deleteIngredient,
+	Query: {
+		ingredient,
+		ingredients,
+		bestIngredients,
+		searchIngredient,
+		inventorySelection,
 
-    gout,
-    gouts,
-    createGout,
-    modifyGout,
-    deleteGout,
+		gout,
+		gouts,
 
-    cocktail,
-    cocktails,
-    availCocktails,
-    createdCocktails,
-    createCocktail,
-    modifyCocktail,
-    deleteCocktail,
+		cocktail,
+		cocktails,
+		availCocktails,
+		createdCocktails,
+	},
+	Mutation: {
+		createIngredient,
+		modifyIngredient,
+		deleteIngredient,
 
-    createDescriptionCocktail,
-    createIngredientCocktail,
-    modifyDescriptionCocktail,
-    modifyIngredientCocktail,
-    deleteIngredientCocktail,
-    deleteDescriptionCocktail
-}
+		createGout,
+		modifyGout,
+		deleteGout,
+
+		createCocktail,
+		modifyCocktail,
+		deleteCocktail,
+
+		createDescriptionCocktail,
+		createIngredientCocktail,
+		modifyDescriptionCocktail,
+		modifyIngredientCocktail,
+		deleteIngredientCocktail,
+		deleteDescriptionCocktail,
+	},
+};
