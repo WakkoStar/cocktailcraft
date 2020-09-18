@@ -17,7 +17,7 @@ const GET_ONE_GOUT = `
 `;
 
 export const getAllGouts = async () => {
-	const response = await axios.post(
+	const req = await axios.post(
 		'http://localhost:4000/graphql',
 		{
 			query: GET_ALL_GOUTS,
@@ -28,13 +28,12 @@ export const getAllGouts = async () => {
 			},
 		}
 	);
-	return response.data.data.gouts
-		? response.data.data.gouts
-		: response.data.errors;
+	const res = req.data;
+	return res.data.gout ? res.data.gout : res.errors;
 };
 
 export const getOneGout = async id => {
-	const response = await axios.post(
+	const req = await axios.post(
 		'http://localhost:4000/graphql',
 		{
 			query: GET_ONE_GOUT,
@@ -48,8 +47,6 @@ export const getOneGout = async id => {
 			},
 		}
 	);
-
-	return response.data.data.gout
-		? response.data.data.gout
-		: response.data.errors;
+	const res = req.data;
+	return res.data.gout ? res.data.gout : res.errors;
 };

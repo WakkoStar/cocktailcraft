@@ -33,7 +33,7 @@
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "react-scripts build",
-		"test": "jest",
+		"test": "node ./api/utils/resetDbForTest.js && jest",
 		"eject": "react-scripts eject",
 		"nodemon": "nodemon server.js",
 		"predeploy": "npm run build",

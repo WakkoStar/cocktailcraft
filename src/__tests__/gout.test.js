@@ -1,4 +1,6 @@
+import { createGout, deleteGout } from '../api/gouts/mutation';
 import { getAllGouts, getOneGout } from '../api/gouts/query';
+import resetDbForTest from '../../api/utils/resetDbForTest';
 
 it('should get one gout', async () => {
 	const gout = await getOneGout(0);
@@ -7,10 +9,25 @@ it('should get one gout', async () => {
 
 it('should get an error with bad ID of gout', async () => {
 	const gout = await getOneGout(7);
-	expect(gout).toBeNull();
+	expect(gout.message).toMatch(/no founded/);
 });
 
 it('should get all gouts', async () => {
 	const gouts = await getAllGouts();
-	expect(gouts.length).toBe(3);
+	expect(gouts.length).toBeGreaterThan(1);
+});
+
+it('should create new gout : "test"', async () => {
+	const createGoutMsg = await createGout('test');
+	expect(createGoutMsg).toMatch(/succès/);
+});
+
+it('shoud delete the gout : "test"', async () => {
+	const deleteGoutMsg = await deleteGout(0);
+	expect(deleteGoutMsg).toMatch(/succès/);
+});
+
+it('shoud get an error on deleting the gout : "test"', async () => {
+	const deleteGoutMsg = await deleteGout(100);
+	expect(deleteGoutMsg.message).toMatch(/no ID founded/);
 });
