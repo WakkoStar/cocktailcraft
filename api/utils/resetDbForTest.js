@@ -1,4 +1,3 @@
-
 const client = require('../utils/bdd');
 
 const QUERY = `TRUNCATE cocktails CASCADE;
@@ -47,6 +46,9 @@ INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (7,'
 INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (8,'4 cl',1);
 INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (4,'5 grammes',1);`;
 
-client.query(QUERY, (err, res) => {
-	if (err) throw err;
-});
+const reset = async () => {
+	return await client.query(QUERY);
+};
+module.exports = async () => {
+	await client.query(QUERY);
+};

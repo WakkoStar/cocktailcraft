@@ -11,20 +11,15 @@
 		"apollo-server-testing": "^2.17.0",
 		"axios": "^0.20.0",
 		"bootstrap": "^4.5.0",
-		"cors": "^2.8.5",
-		"express-graphql": "^0.9.0",
 		"gh-pages": "^3.1.0",
 		"graphql": "^15.1.0",
-		"graphql-disable-introspection": "^1.1.0",
 		"graphql-tag": "^2.10.3",
 		"isomorphic-fetch": "^2.2.1",
 		"lodash": "^4.17.20",
-		"multiselect-react-dropdown": "^1.5.0",
 		"nodemon": "^2.0.4",
 		"path": "^0.12.7",
 		"pg": "^8.2.1",
 		"react": "^16.13.1",
-		"react-apollo": "^3.1.5",
 		"react-bootstrap": "^1.0.1",
 		"react-dom": "^16.13.1",
 		"react-router-dom": "^5.2.0",
@@ -58,11 +53,5 @@
 	"main": "server.js",
 	"author": "",
 	"license": "ISC",
-	"devDependencies": {
-		"@babel/core": "^7.11.6",
-		"@babel/plugin-transform-async-to-generator": "^7.10.4",
-		"@babel/plugin-transform-runtime": "^7.11.5",
-		"@babel/plugin-transform-spread": "^7.11.0",
-		"@babel/preset-env": "^7.11.5"
-	}
+	"devDependencies": {}
 }

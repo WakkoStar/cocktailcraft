@@ -1,6 +1,11 @@
 import { createGout, deleteGout } from '../api/gouts/mutation';
 import { getAllGouts, getOneGout } from '../api/gouts/query';
-import resetDbForTest from '../../api/utils/resetDbForTest';
+import { resetDbForTest } from '../../api/utils/resetDbForTest';
+
+it('resetDb', async () => {
+	const reset = await resetDbForTest();
+	expect(reset).not.toBe('Mentholé');
+});
 
 it('should get one gout', async () => {
 	const gout = await getOneGout(0);
