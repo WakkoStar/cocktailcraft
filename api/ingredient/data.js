@@ -39,8 +39,8 @@ Schéma d'un ingrédient :
 {
     id: id,
     nom : String,
-    family_of : id,
-    aliases : [String],
+    family_of : [id],
+    alias : [String],
 }
 
 Automatiser la description : 

@@ -18,7 +18,7 @@ module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
 			//check if all ingredients of the cocktail
 			return cocktail.ingredients.every(({ ingredient_id }) => {
 				//is included within the parameter
-				return ingredient_array.includes(ingredient_id);
+				return ingredient_array.includes(parseInt(ingredient_id));
 			});
 		}
 	);

@@ -3,7 +3,7 @@ const client = require('../utils/bdd');
 
 module.exports.getAllCocktails = async () => {
 	const resIngredients = await client.query(
-		'SELECT * FROM cocktails c FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail FULL JOIN ingredient i ON i.id = ic.ingredient_id ORDER BY c.nom'
+		'SELECT * FROM cocktails c FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail FULL JOIN ingredients i ON i.id = ic.ingredient_id ORDER BY c.nom'
 	);
 	const resDescriptions = await client.query(
 		'SELECT * FROM cocktails c FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail ORDER BY c.nom'
@@ -158,11 +158,13 @@ module.exports.deleteCocktail = ({ id }) => {
         ],
         ingredients: [
             {
-                ingredient_id : 1,
+				ingredient_id : 1,
+				nom : "Angostura"
                 volume: "un trait"
             },
             {
-                ingredient_id: 3,
+				ingredient_id: 3,
+				nom : "Sucre"
                 volume: "20 grammes"
             }
         ],

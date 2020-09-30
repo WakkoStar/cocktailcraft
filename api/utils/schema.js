@@ -28,8 +28,8 @@ module.exports.schema = `
         createdCocktails(cluster: [Int!]!): [Cocktails]
     }
     type Mutation {
-        createIngredient(nom: String!, alias:[String!]!, family_of:Int!): String
-        modifyIngredient(nom: String!, alias:[String!]!, family_of:Int!, id: Int!): String
+        createIngredient(nom: String!, alias:[String], family_of:[Int]): String
+        modifyIngredient(nom: String!, alias:[String], family_of:[Int], id: Int!): String
         deleteIngredient(id: Int!): String
         
         createGout(nom: String!): String
