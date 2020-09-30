@@ -1,13 +1,13 @@
 const client = require('../utils/bdd');
 
 module.exports.getAllIngredients = async () => {
-	const res = await client.query('SELECT * FROM ingredient ORDER BY nom');
+	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
 	return res.rows;
 };
 
 module.exports.createIngredient = (nom, alias, family_of) => {
 	const text =
-		'INSERT INTO ingredient (nom, alias, family_of) VALUES ($1, $2, $3)';
+		'INSERT INTO ingredients (nom, alias, family_of) VALUES ($1, $2, $3)';
 	const values = [nom, alias, family_of];
 
 	client.query(text, values, (err, res) => {
@@ -17,7 +17,7 @@ module.exports.createIngredient = (nom, alias, family_of) => {
 
 module.exports.modifyIngredient = ({ nom, alias, family_of, id }) => {
 	const text =
-		'UPDATE ingredient SET nom = $1, alias=$2, family_of=$3 WHERE id = $4';
+		'UPDATE ingredients SET nom = $1, alias=$2, family_of=$3 WHERE id = $4';
 	const values = [nom, alias, family_of, id];
 
 	client.query(text, values, (err, res) => {
@@ -26,7 +26,7 @@ module.exports.modifyIngredient = ({ nom, alias, family_of, id }) => {
 };
 
 module.exports.deleteIngredient = ({ id }) => {
-	const text = 'DELETE FROM ingredient WHERE id = $1';
+	const text = 'DELETE FROM ingredients WHERE id = $1';
 	const values = [id];
 
 	client.query(text, values, (err, res) => {

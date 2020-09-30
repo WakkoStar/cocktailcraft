@@ -16,7 +16,7 @@ module.exports.schema = `
         id: Int
         nom: String
         alias: [String]
-        family_of: Int
+        family_of: [Int]
     }
 `;
 
