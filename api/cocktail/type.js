@@ -33,11 +33,13 @@ module.exports.schema = `
     input descriptionInput {
         content : String!
         preparation: String!
+        id_cocktail: Int!
     }
 
     input ingredientInput {
         ingredient_id: Int!
         volume: String!
+        id_cocktail: Int!
     }
 
     type Cocktails {

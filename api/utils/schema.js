@@ -40,8 +40,8 @@ module.exports.schema = `
         modifyCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, id: Int!) : String
         deleteCocktail(id: Int!): String
 
-        createDescriptionCocktail(input: [descriptionInput!]!, id_cocktail: Int!): String
-        createIngredientCocktail(input: [ingredientInput!]!, id_cocktail: Int!):String
+        createDescriptionCocktail(input: [descriptionInput!]!): String
+        createIngredientCocktail(input: [ingredientInput!]!):String
 
         modifyDescriptionCocktail(input: [descriptionInput!]!, id: Int!): String
         modifyIngredientCocktail(input: [ingredientInput!]!, id: Int!):String

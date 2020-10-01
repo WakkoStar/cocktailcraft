@@ -66,11 +66,8 @@ module.exports.createCocktail = (nom, gout_array, difficulty) => {
 	});
 };
 
-module.exports.createDescriptionsOfCocktail = ({
-	input: descriptions,
-	id_cocktail,
-}) => {
-	descriptions.map(({ content, preparation }) => {
+module.exports.createDescriptionsOfCocktail = ({ input: descriptions }) => {
+	descriptions.map(({ content, preparation, id_cocktail }) => {
 		const text =
 			'INSERT INTO description_cocktail (content, preparation, id_cocktail) VALUES ($1,$2,$3)';
 		const values = [content, preparation, id_cocktail];
@@ -81,11 +78,8 @@ module.exports.createDescriptionsOfCocktail = ({
 	});
 };
 
-module.exports.createIngredientOfCocktail = ({
-	input: ingredients,
-	id_cocktail,
-}) => {
-	ingredients.map(({ ingredient_id, volume }) => {
+module.exports.createIngredientOfCocktail = ({ input: ingredients }) => {
+	ingredients.map(({ ingredient_id, volume, id_cocktail }) => {
 		const text =
 			'INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES ($1,$2,$3)';
 		const values = [ingredient_id, volume, id_cocktail];
@@ -107,10 +101,10 @@ module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 };
 
 module.exports.updateIngredientOfCocktail = ({ input: ingredients, id }) => {
-	ingredients.map(({ ingredient_id, volume }) => {
+	ingredients.map(({ ingredient_id, volume, id_cocktail }) => {
 		const text =
-			'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2 WHERE id = $3';
-		const values = [ingredient_id, volume, id];
+			'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2, id_cocktail = $3 WHERE id = $4';
+		const values = [ingredient_id, volume, id_cocktail, id];
 
 		client.query(text, values, (err, res) => {
 			if (err) throw err;
@@ -119,10 +113,10 @@ module.exports.updateIngredientOfCocktail = ({ input: ingredients, id }) => {
 };
 
 module.exports.updateDescriptionOfCocktail = ({ input: descriptions, id }) => {
-	descriptions.map(({ content, preparation }) => {
+	descriptions.map(({ content, preparation, id_cocktail }) => {
 		const text =
-			'UPDATE description_cocktail SET content = $1, preparation = $2 WHERE id = $3';
-		const values = [content, preparation, id];
+			'UPDATE description_cocktail SET content = $1, preparation = $2, id_cocktail = $3 WHERE id = $4';
+		const values = [content, preparation, id_cocktail, id];
 
 		client.query(text, values, (err, res) => {
 			if (err) throw err;

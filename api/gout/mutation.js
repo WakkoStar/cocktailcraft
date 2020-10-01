@@ -24,7 +24,6 @@ module.exports.createGout = async (_, { nom }) => {
 	if (existsGout) {
 		throw new Error('Gout already exists');
 	} else {
-		console.log(nom);
 		createGoutInDb(nom);
 		return `${nom} vient d'être créé avec succès`;
 	}
