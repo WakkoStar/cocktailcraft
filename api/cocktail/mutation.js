@@ -13,14 +13,16 @@ const {
 
 const executeRequestInDb = async (params, hasInput, callback, msg) => {
 	//define id
-	const id = hasInput ? params.input.id_cocktail : params.id;
+	const id = hasInput ? params.input[0].id_cocktail : params.id;
 	//execute callback
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const cocktails = await getCocktails();
-	const existsCocktail = cocktails.find(cocktail => cocktail.id == id);
-	if (existsCocktail) {
+	const existsCocktail = cocktails.find(
+		cocktail => parseInt(cocktail.id) === id
+	);
+	if (existsCocktail || params.bypassIdCocktail) {
 		callback({ ...params });
-		return `${msg} (cocktail: ${existsCocktail.nom})`;
+		return `${msg} (cocktail: ${existsCocktail && existsCocktail.nom})`;
 	} else {
 		throw new Error('ID no founded');
 	}
@@ -29,7 +31,7 @@ const executeRequestInDb = async (params, hasInput, callback, msg) => {
 module.exports.createCocktail = async (_, { nom, gout_array, difficulty }) => {
 	if (!nom || !gout_array || !difficulty) throw new Error('empty fields');
 	const cocktails = await getCocktails();
-	const existsCocktail = cocktails.find(cocktail => cocktail.nom == nom);
+	const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);
 	if (existsCocktail) {
 		throw new Error('Cocktail already exists');
 	} else {
@@ -97,7 +99,7 @@ module.exports.modifyIngredientCocktail = async (_, { input, id }) => {
 
 module.exports.deleteIngredientCocktail = async (_, { id }) => {
 	return await executeRequestInDb(
-		{ id, db: 'ingredient_cocktail' },
+		{ id, db: 'ingredient_cocktail', bypassIdCocktail: true },
 		false,
 		deleteOfCocktail,
 		`Les ingrédients du cocktail vient d'être supprimés avec succès`
@@ -105,7 +107,7 @@ module.exports.deleteIngredientCocktail = async (_, { id }) => {
 };
 module.exports.deleteDescriptionCocktail = async (_, { id }) => {
 	return await executeRequestInDb(
-		{ id, db: 'description_cocktail' },
+		{ id, db: 'description_cocktail', bypassIdCocktail: true },
 		false,
 		deleteOfCocktail,
 		`Les descriptions du cocktail vient d'être supprimés avec succès`
