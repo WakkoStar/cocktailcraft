@@ -67,7 +67,7 @@ module.exports.createCocktail = (nom, gout_array, difficulty) => {
 };
 
 module.exports.createDescriptionsOfCocktail = ({
-	descriptions,
+	input: descriptions,
 	id_cocktail,
 }) => {
 	descriptions.map(({ content, preparation }) => {
@@ -81,7 +81,10 @@ module.exports.createDescriptionsOfCocktail = ({
 	});
 };
 
-module.exports.createIngredientOfCocktail = ({ ingredients, id_cocktail }) => {
+module.exports.createIngredientOfCocktail = ({
+	input: ingredients,
+	id_cocktail,
+}) => {
 	ingredients.map(({ ingredient_id, volume }) => {
 		const text =
 			'INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES ($1,$2,$3)';
@@ -103,7 +106,7 @@ module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 	});
 };
 
-module.exports.updateIngredientOfCocktail = ({ ingredients, id }) => {
+module.exports.updateIngredientOfCocktail = ({ input: ingredients, id }) => {
 	ingredients.map(({ ingredient_id, volume }) => {
 		const text =
 			'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2 WHERE id = $3';
@@ -115,7 +118,7 @@ module.exports.updateIngredientOfCocktail = ({ ingredients, id }) => {
 	});
 };
 
-module.exports.updateDescriptionOfCocktail = ({ descriptions, id }) => {
+module.exports.updateDescriptionOfCocktail = ({ input: descriptions, id }) => {
 	descriptions.map(({ content, preparation }) => {
 		const text =
 			'UPDATE description_cocktail SET content = $1, preparation = $2 WHERE id = $3';

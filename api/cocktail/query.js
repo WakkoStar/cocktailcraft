@@ -7,7 +7,7 @@ module.exports.getAllCocktails = async () => {
 
 module.exports.getOneCocktails = async (_, { id }) => {
 	const cocktails = await getCocktails();
-	return cocktails.filter(cocktail => cocktail.id === id)[0];
+	return cocktails.filter(cocktail => parseInt(cocktail.id) === id)[0];
 };
 
 module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
