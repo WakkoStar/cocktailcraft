@@ -10,7 +10,7 @@ const executeRequestInDb = async (params, callback, msg) => {
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const ingredients = await getIngredients();
 	const existsIngredients = ingredients.find(
-		ingredient => ingredient.id == params.id
+		ingredient => parseInt(ingredient.id) === params.id
 	);
 	if (existsIngredients) {
 		callback({ ...params });
@@ -23,7 +23,7 @@ const executeRequestInDb = async (params, callback, msg) => {
 module.exports.createIngredient = async (_, { nom, alias, family_of }) => {
 	const ingredients = await getIngredients();
 	const existsIngredients = ingredients.find(
-		ingredient => ingredient.nom == nom
+		ingredient => ingredient.nom === nom
 	);
 	if (existsIngredients) {
 		throw new Error('Ingredient already exists');

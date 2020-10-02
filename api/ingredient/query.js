@@ -8,7 +8,12 @@ module.exports.getAllIngredients = async () => {
 
 module.exports.getOneIngredients = async (_, { id }) => {
 	const ingredients = await getIngredients();
-	return ingredients.filter(ingredient => parseInt(ingredient.id) === id)[0];
+
+	const ingredientFinded = ingredients.filter(
+		ingredient => parseInt(ingredient.id) === id
+	)[0];
+	if (!ingredientFinded) throw new Error('ingredient no founded');
+	return ingredientFinded;
 };
 
 module.exports.searchIngredient = async (_, { search }) => {

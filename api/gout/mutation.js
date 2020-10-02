@@ -9,7 +9,7 @@ const {
 const executeRequestInDb = async (params, callback, msg) => {
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const gouts = await getGouts();
-	const existsGout = gouts.find(gout => gout.id == params.id);
+	const existsGout = gouts.find(gout => parseInt(gout.id) === params.id);
 	if (existsGout) {
 		callback({ ...params });
 		return `${msg} (gout: ${existsGout.nom})`;
@@ -20,7 +20,7 @@ const executeRequestInDb = async (params, callback, msg) => {
 
 module.exports.createGout = async (_, { nom }) => {
 	const gouts = await getGouts();
-	const existsGout = gouts.find(gout => gout.nom == nom);
+	const existsGout = gouts.find(gout => gout.nom === nom);
 	if (existsGout) {
 		throw new Error('Gout already exists');
 	} else {

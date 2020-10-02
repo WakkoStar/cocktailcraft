@@ -7,7 +7,11 @@ module.exports.getAllCocktails = async () => {
 
 module.exports.getOneCocktails = async (_, { id }) => {
 	const cocktails = await getCocktails();
-	return cocktails.filter(cocktail => parseInt(cocktail.id) === id)[0];
+	const cocktailFinded = cocktails.filter(
+		cocktail => parseInt(cocktail.id) === id
+	)[0];
+	if (!cocktailFinded) throw new Error('cocktail no founded');
+	return cocktailFinded;
 };
 
 module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {

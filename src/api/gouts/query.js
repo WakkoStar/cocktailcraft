@@ -29,7 +29,7 @@ export const getAllGouts = async () => {
 		}
 	);
 	const res = req.data;
-	return res.data.gout ? res.data.gout : res.errors;
+	return res.data.gouts ? res.data.gouts : res.errors[0];
 };
 
 export const getOneGout = async id => {
@@ -48,5 +48,5 @@ export const getOneGout = async id => {
 		}
 	);
 	const res = req.data;
-	return res.data.gout ? res.data.gout : res.errors;
+	return res.data.gout ? res.data.gout : res.errors[0];
 };

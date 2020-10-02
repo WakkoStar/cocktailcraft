@@ -29,7 +29,7 @@ export const createGout = async nom => {
 	);
 
 	const res = req.data;
-	return res.data.createGout ? res.data.createGout : res.errors;
+	return res.data.createGout ? res.data.createGout : res.errors[0];
 };
 
 export const deleteGout = async id => {
@@ -49,5 +49,5 @@ export const deleteGout = async id => {
 	);
 
 	const res = req.data;
-	return res.data.createGout ? res.data.createGout : res.errors;
+	return res.data.createGout ? res.data.createGout : res.errors[0];
 };

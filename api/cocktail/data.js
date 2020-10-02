@@ -3,15 +3,30 @@ const client = require('../utils/bdd');
 
 module.exports.getAllCocktails = async () => {
 	const resIngredients = await client.query(
-		'SELECT * FROM cocktails c FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail FULL JOIN ingredients i ON i.id = ic.ingredient_id ORDER BY c.nom'
+		`SELECT * FROM cocktails c 
+		FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail 
+		FULL JOIN ingredients i ON i.id = ic.ingredient_id ORDER BY c.nom`
 	);
+
 	const resDescriptions = await client.query(
-		'SELECT * FROM cocktails c FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail ORDER BY c.nom'
+		`SELECT * FROM cocktails c 
+		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail ORDER BY c.nom`
 	);
+
 	const cocktails = await getDescriptionsAndIngredientsOfCocktails(
 		_.concat(resDescriptions.rows, resIngredients.rows)
 	);
 	return cocktails;
+};
+
+module.exports.getAllIngredients = async () => {
+	const res = await client.query('SELECT * FROM ingredient_cocktail');
+	return res.rows;
+};
+
+module.exports.getAllDescriptions = async () => {
+	const res = await client.query('SELECT * FROM description_cocktail');
+	return res.rows;
 };
 
 const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
@@ -29,7 +44,6 @@ const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
 				//{id,nom,description,ingredient}
 				const { content, preparation } = cocktailPart;
 				const { ingredient_id, nom, volume } = cocktailPart;
-
 				return {
 					...cocktailFull,
 					descriptions: content
@@ -66,27 +80,25 @@ module.exports.createCocktail = (nom, gout_array, difficulty) => {
 	});
 };
 
-module.exports.createDescriptionsOfCocktail = ({ input: descriptions }) => {
-	descriptions.map(({ content, preparation, id_cocktail }) => {
-		const text =
-			'INSERT INTO description_cocktail (content, preparation, id_cocktail) VALUES ($1,$2,$3)';
-		const values = [content, preparation, id_cocktail];
+module.exports.createDescriptionsOfCocktail = ({ input: description }) => {
+	const { content, preparation, id_cocktail } = description;
+	const text =
+		'INSERT INTO description_cocktail (content, preparation, id_cocktail) VALUES ($1,$2,$3)';
+	const values = [content, preparation, id_cocktail];
 
-		client.query(text, values, (err, res) => {
-			if (err) throw err;
-		});
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
 	});
 };
 
-module.exports.createIngredientOfCocktail = ({ input: ingredients }) => {
-	ingredients.map(({ ingredient_id, volume, id_cocktail }) => {
-		const text =
-			'INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES ($1,$2,$3)';
-		const values = [ingredient_id, volume, id_cocktail];
+module.exports.createIngredientOfCocktail = ({ input: ingredient }) => {
+	const { ingredient_id, volume, id_cocktail } = ingredient;
+	const text =
+		'INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES ($1,$2,$3)';
+	const values = [ingredient_id, volume, id_cocktail];
 
-		client.query(text, values, (err, res) => {
-			if (err) throw err;
-		});
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
 	});
 };
 
@@ -100,27 +112,25 @@ module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 	});
 };
 
-module.exports.updateIngredientOfCocktail = ({ input: ingredients, id }) => {
-	ingredients.map(({ ingredient_id, volume, id_cocktail }) => {
-		const text =
-			'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2, id_cocktail = $3 WHERE id = $4';
-		const values = [ingredient_id, volume, id_cocktail, id];
+module.exports.updateIngredientOfCocktail = ({ input: ingredient, id }) => {
+	const { ingredient_id, volume, id_cocktail } = ingredient;
+	const text =
+		'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2, id_cocktail = $3 WHERE id = $4';
+	const values = [ingredient_id, volume, id_cocktail, id];
 
-		client.query(text, values, (err, res) => {
-			if (err) throw err;
-		});
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
 	});
 };
 
-module.exports.updateDescriptionOfCocktail = ({ input: descriptions, id }) => {
-	descriptions.map(({ content, preparation, id_cocktail }) => {
-		const text =
-			'UPDATE description_cocktail SET content = $1, preparation = $2, id_cocktail = $3 WHERE id = $4';
-		const values = [content, preparation, id_cocktail, id];
+module.exports.updateDescriptionOfCocktail = ({ input: description, id }) => {
+	const { content, preparation, id_cocktail } = description;
+	const text =
+		'UPDATE description_cocktail SET content = $1, preparation = $2, id_cocktail = $3 WHERE id = $4';
+	const values = [content, preparation, id_cocktail, id];
 
-		client.query(text, values, (err, res) => {
-			if (err) throw err;
-		});
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
 	});
 };
 
