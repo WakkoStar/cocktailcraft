@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const GET_ONE_INGREDIENT = `query ingredient ($id: Int!) {
     ingredient (id: $id) {
         id
@@ -18,7 +20,7 @@ const GET_INGREDIENTS = `query ingredients {
 
 export const getAllIngredients = async () => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: GET_INGREDIENTS,
 		},
@@ -34,7 +36,7 @@ export const getAllIngredients = async () => {
 
 export const getOneIngredients = async id => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: GET_ONE_INGREDIENT,
 			variables: {

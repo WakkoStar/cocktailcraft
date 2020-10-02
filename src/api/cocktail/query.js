@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const GET_ONE_COCKTAIL = `query cocktail ($id: Int!) {
     cocktail (id: $id) {
         id
@@ -40,7 +42,7 @@ const GET_ALL_COCKTAIL = `query cocktails {
 
 export const getAllCocktails = async () => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: GET_ALL_COCKTAIL,
 		},
@@ -56,7 +58,7 @@ export const getAllCocktails = async () => {
 
 export const getOneCocktails = async id => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: GET_ONE_COCKTAIL,
 			variables: {

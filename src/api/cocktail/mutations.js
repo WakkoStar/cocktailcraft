@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const CREATE_COCKTAIL = `mutation createCocktail ($nom: String!, $gout_array: [Int!]!, $difficulty: String!) {
     createCocktail (nom: $nom, gout_array: $gout_array, difficulty: $difficulty)
 }`;
@@ -12,7 +14,7 @@ const DELETE_COCKTAIL = `mutation deleteCocktail ($id: Int!) {
 
 export const createCocktail = async (nom, gout_array, difficulty) => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: CREATE_COCKTAIL,
 			variables: {
@@ -34,7 +36,7 @@ export const createCocktail = async (nom, gout_array, difficulty) => {
 
 export const modifyCocktail = async (nom, gout_array, difficulty, id) => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: MODIFY_COCKTAIL,
 			variables: {
@@ -56,7 +58,7 @@ export const modifyCocktail = async (nom, gout_array, difficulty, id) => {
 };
 export const deleteCocktail = async id => {
 	const req = await axios.post(
-		'http://localhost:4000/graphql',
+		'http://localhost:4000',
 		{
 			query: DELETE_COCKTAIL,
 			variables: {
