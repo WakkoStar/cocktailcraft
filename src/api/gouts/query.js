@@ -1,19 +1,20 @@
 import axios from 'axios';
 
-const GET_ALL_GOUTS = `{
-    gouts {
-        id
-        nom
-    }
-}`;
+const GET_ALL_GOUTS = `
+	query gouts {
+		gouts {
+			id
+			nom
+		}
+	}`;
 
 const GET_ONE_GOUT = `
-    query Gout($id: Int!) {
-        gout(id: $id) {
-            id
-            nom
-        }
-    }
+    query gout ($id: Int!) {
+		gout (id: $id) {
+			id
+			nom
+		}
+	}
 `;
 
 export const getAllGouts = async () => {
