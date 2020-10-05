@@ -18,12 +18,14 @@ const {
 
 module.exports.schema = `
     type Description {
+        id: Int
         content : String
         preparation: String
         cocktail_id: Int
     }
 
     type Ingredient {
+        id: Int
         ingredient_id: Int
         volume: String
         nom: String

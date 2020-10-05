@@ -5,11 +5,13 @@ const GET_ONE_COCKTAIL = `query cocktail ($id: Int!) {
         id
         nom
         descriptions {
+            id
             content
             preparation
             cocktail_id
         }
         ingredients {
+            id
             ingredient_id
             volume
             nom
@@ -25,11 +27,13 @@ const GET_ALL_COCKTAIL = `query cocktails {
         id
         nom
         descriptions {
+            id
             content
             preparation
             cocktail_id
         }
         ingredients {
+            id
             ingredient_id
             volume
             nom

@@ -3,13 +3,13 @@ const client = require('../utils/bdd');
 
 module.exports.getAllCocktails = async () => {
 	const resIngredients = await client.query(
-		`SELECT * FROM cocktails c 
+		`SELECT ic.id AS ic_id, ic.ingredient_id, i.nom, ic.volume, id_cocktail FROM cocktails c 
 		FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail 
 		FULL JOIN ingredients i ON i.id = ic.ingredient_id ORDER BY c.nom`
 	);
 
 	const resDescriptions = await client.query(
-		`SELECT * FROM cocktails c 
+		`SELECT dc.id as dc_id, content, preparation, id_cocktail FROM cocktails c 
 		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail ORDER BY c.nom`
 	);
 
@@ -42,12 +42,13 @@ const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
 		return cocktailArray.reduce(
 			(cocktailFull, cocktailPart) => {
 				//{id,nom,description,ingredient}
-				const { content, preparation } = cocktailPart;
-				const { ingredient_id, nom, volume } = cocktailPart;
+				const { content, preparation, dc_id } = cocktailPart;
+				const { ingredient_id, nom, volume, ic_id } = cocktailPart;
 				return {
 					...cocktailFull,
 					descriptions: content
 						? _.concat(cocktailFull.descriptions, {
+								id: dc_id,
 								content,
 								preparation,
 								cocktail_id: el.id,
@@ -55,6 +56,7 @@ const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
 						: cocktailFull.descriptions,
 					ingredients: ingredient_id
 						? _.concat(cocktailFull.ingredients, {
+								id: ic_id,
 								ingredient_id,
 								nom,
 								volume,

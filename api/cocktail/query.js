@@ -2,6 +2,7 @@ const { getAllCocktails: getCocktails } = require('./data');
 
 module.exports.getAllCocktails = async () => {
 	const cocktails = await getCocktails();
+
 	return cocktails;
 };
 
