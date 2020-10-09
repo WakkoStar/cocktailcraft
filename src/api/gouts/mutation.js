@@ -76,5 +76,5 @@ export const deleteGout = async id => {
 	);
 
 	const res = req.data;
-	return res.data.createGout ? res.data.createGout : res.errors[0];
+	return res.data.deleteGout ? res.data.deleteGout : res.errors[0];
 };

@@ -1,9 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
+
 import Cocktails from '../Cocktails';
 import ModifyCocktail from '../Cocktails/cocktail';
 import Ingredients from '../Ingredients';
 import ModifyIngredient from '../Ingredients/ingredient';
+import Gouts from '../Gouts'
+import ModifyGout from '../Gouts/gout'
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
 function App() {
@@ -33,18 +36,25 @@ function App() {
 					</ul>
 				</nav>
 				<Switch>
+					<Route exact path="/gouts">
+						<Gouts />
+					</Route>
 					<Route exact path="/ingredients">
 						<Ingredients />
 					</Route>
 					<Route exact path="/cocktails">
 						<Cocktails />
 					</Route>
-					<Route exact path="/cocktails/:id">
-						<ModifyCocktail />
+					<Route exact path="/gouts/:id">
+						<ModifyGout/>
 					</Route>
 					<Route exact path="/ingredients/:id">
 						<ModifyIngredient />
 					</Route>
+					<Route exact path="/cocktails/:id">
+						<ModifyCocktail />
+					</Route>
+					
 				</Switch>
 			</Router>
 		</div>

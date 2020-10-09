@@ -33,7 +33,7 @@ export const getAllGouts = async () => {
 	return res.data.gouts ? res.data.gouts : res.errors[0];
 };
 
-export const getOneGout = async id => {
+export const getOneGouts = async id => {
 	const req = await axios.post(
 		'http://localhost:4000',
 		{
