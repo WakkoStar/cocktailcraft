@@ -2,6 +2,27 @@ const client = require('../utils/bdd');
 
 module.exports.getAllIngredients = async () => {
 	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
+	const parsedIngredients = res.rows;
+	//get if they have an family
+	const fullfilledIngredients = getHasFamily(parsedIngredients);
+	return fullfilledIngredients;
+};
+
+const getHasFamily = ingredients => {
+	let families_of = ingredients.map(({ family_of }) => family_of);
+	return ingredients.map(ingredient => {
+		const hasFamily = families_of.some(family_of => {
+			return family_of.includes(ingredient.id);
+		});
+		return { ...ingredient, hasFamily };
+	});
+};
+
+module.exports.getAllIngredientsOfFamily = async family_of => {
+	const text = 'SELECT * FROM ingredients WHERE $1 && family_of';
+	const values = [family_of];
+
+	const res = await client.query(text, values);
 	return res.rows;
 };
 

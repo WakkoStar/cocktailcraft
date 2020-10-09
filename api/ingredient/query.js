@@ -1,8 +1,16 @@
-const { getAllIngredients: getIngredients } = require('./data');
+const {
+	getAllIngredients: getIngredients,
+	getAllIngredientsOfFamily: getIngredientsOfFamily,
+} = require('./data');
 const { getAllCocktails } = require('../cocktail/data');
 
 module.exports.getAllIngredients = async () => {
 	const ingredients = await getIngredients();
+	return ingredients;
+};
+
+module.exports.getAllIngredientsOfFamily = async (_, { family_of }) => {
+	const ingredients = await getIngredientsOfFamily(family_of);
 	return ingredients;
 };
 

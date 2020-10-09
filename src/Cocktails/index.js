@@ -1,9 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
 
 import { useRouteMatch, Link } from 'react-router-dom';
-import { getAllCocktails } from '../api/cocktail/query';
-import { deleteCocktail } from '../api/cocktail/mutations';
+import { getAllCocktails } from '../api/cocktails/query';
+import { deleteCocktail } from '../api/cocktails/mutation';
 
 function Cocktails() {
 	let match = useRouteMatch();

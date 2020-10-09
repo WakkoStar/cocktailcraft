@@ -79,5 +79,5 @@ export const deleteIngredient = async id => {
 	const res = req.data;
 	return res.data.deleteIngredient
 		? res.data.deleteIngredient
-		: res.errors[0];
+		: res.errors[0].message;
 };

@@ -14,7 +14,8 @@ const {
 module.exports.schema = `
     type Query {
         ingredient(id: Int!): Ingredients
-        ingredients: [Ingredients]
+		ingredients: [Ingredients]
+		ingredientsFamily(family_of:[Int!]!): [Ingredients]
         bestIngredients(inventory:[Int]): [Ingredients]
         inventorySelection(cluster:[Int], inventory:[Int], filter_gout:[Int], filter_difficulty:[Int]): [Ingredients]
         searchIngredient(search: String): [Ingredients]
@@ -57,6 +58,7 @@ module.exports.schema = `
 const {
 	ingredient,
 	ingredients,
+	ingredientsFamily,
 	bestIngredients,
 	inventorySelection,
 	searchIngredient,
@@ -87,6 +89,7 @@ module.exports.root = {
 	Query: {
 		ingredient,
 		ingredients,
+		ingredientsFamily,
 		bestIngredients,
 		searchIngredient,
 		inventorySelection,

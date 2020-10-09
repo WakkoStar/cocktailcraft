@@ -1,6 +1,7 @@
 const {
 	getOneIngredients,
 	getAllIngredients,
+	getAllIngredientsOfFamily,
 	getBestIngredients,
 	inventorySelection,
 	searchIngredient,
@@ -16,13 +17,15 @@ module.exports.schema = `
         id: Int
         nom: String
         alias: [String]
-        family_of: [Int]
+		family_of: [Int]
+		hasFamily: Boolean
     }
 `;
 
 module.exports.resolvers = {
 	ingredient: getOneIngredients,
 	ingredients: getAllIngredients,
+	ingredientsFamily: getAllIngredientsOfFamily,
 	bestIngredients: getBestIngredients,
 	searchIngredient,
 	inventorySelection,

@@ -5,7 +5,8 @@ const GET_ONE_INGREDIENT = `query ingredient ($id: Int!) {
         id
         nom
         alias
-        family_of
+		family_of
+		hasFamily
     }
 }`;
 
@@ -14,7 +15,8 @@ const GET_INGREDIENTS = `query ingredients {
         id
         nom
         alias
-        family_of
+		family_of
+		hasFamily
     }
 }`;
 

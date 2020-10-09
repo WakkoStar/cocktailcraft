@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { getOneCocktails } from '../api/cocktail/query';
+import { getOneCocktails } from '../api/cocktails/query';
 import { getAllIngredients } from '../api/ingredients/query';
 import { getAllGouts } from '../api/gouts/query';
 const Cocktail = () => {
