@@ -25,6 +25,9 @@ function Gouts() {
 
 	return (
 		<div>
+			<button className="btn">
+				<Link to={`${match.url}/new`}>CREER</Link>
+			</button>
 			<table className="table">
 				<thead>
 					<tr>
@@ -44,9 +47,7 @@ function Gouts() {
 								</td>
 								<td>
 									<button className="btn btn-second">
-										<Link
-											to={`${match.url}/${gout.id}`}
-										>
+										<Link to={`${match.url}/${gout.id}`}>
 											MODIFIER
 										</Link>
 									</button>
@@ -54,9 +55,7 @@ function Gouts() {
 								<td>
 									<button
 										className="btn btn-primary"
-										onClick={() =>
-											clickDeleteGout(gout.id)
-										}
+										onClick={() => clickDeleteGout(gout.id)}
 									>
 										SUPPRIMER
 									</button>

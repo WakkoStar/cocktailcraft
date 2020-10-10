@@ -1,17 +1,26 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
+import rootReducer from '../redux/reducers';
 import Cocktails from '../Cocktails';
 import ModifyCocktail from '../Cocktails/cocktail';
 import Ingredients from '../Ingredients';
 import ModifyIngredient from '../Ingredients/ingredient';
-import Gouts from '../Gouts'
-import ModifyGout from '../Gouts/gout'
+import Gouts from '../Gouts';
+import ModifyGout from '../Gouts/gout';
+import CreateGout from '../Gouts/new';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+
+const store = createStore(
+	rootReducer,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 function App() {
 	return (
-		<div>
+		<Provider store={store}>
 			<Router>
 				<nav className="navbar navbar-expand-lg navbar-light bg-light">
 					<ul className="navbar-nav">
@@ -45,8 +54,11 @@ function App() {
 					<Route exact path="/cocktails">
 						<Cocktails />
 					</Route>
+					<Route exact path="/gouts/new">
+						<CreateGout />
+					</Route>
 					<Route exact path="/gouts/:id">
-						<ModifyGout/>
+						<ModifyGout />
 					</Route>
 					<Route exact path="/ingredients/:id">
 						<ModifyIngredient />
@@ -54,10 +66,9 @@ function App() {
 					<Route exact path="/cocktails/:id">
 						<ModifyCocktail />
 					</Route>
-					
 				</Switch>
 			</Router>
-		</div>
+		</Provider>
 	);
 }
 
