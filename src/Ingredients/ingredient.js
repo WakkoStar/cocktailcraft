@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getOneIngredients } from '../api/ingredients/query';
-import { getAllIngredients } from '../api/ingredients/query';
 
-import {
-	setAlias,
-	addAlias,
-	updateAlias,
-	deleteAlias,
-} from '../redux/actions/alias_ingredient';
+import { getOneIngredients } from '../api/ingredients/query';
+import { modifyIngredient } from '../api/ingredients/mutation';
+
+import Alias from './alias';
+import Family from './family_of';
 
 const Ingredient = props => {
-	const { setAlias, addAlias, updateAlias, deleteAlias, aliases } = props;
 	let { id } = useParams();
 
 	const [ingredient, setIngredient] = useState({
@@ -20,18 +16,25 @@ const Ingredient = props => {
 		alias: [],
 		family_of: [],
 	});
-	const [ingredients, setIngredients] = useState([]);
 
 	useEffect(() => {
 		async function fetchData() {
 			const ingredient = await getOneIngredients(parseInt(id));
 			setIngredient(ingredient);
-			const ingredients = await getAllIngredients();
-			setIngredients(ingredients);
-			setAlias(ingredient.alias);
 		}
 		fetchData();
-	}, [setIngredient, setIngredients, setAlias, id]);
+	}, [setIngredient, id]);
+
+	const submitChanges = async () => {
+		const msg = await modifyIngredient(
+			ingredient.nom,
+			{},
+			ingredient.family_of,
+			parseInt(id)
+		);
+		alert(msg);
+		window.location = '../';
+	};
 
 	return (
 		<div className="container" style={{ marginTop: '2vw' }}>
@@ -51,100 +54,22 @@ const Ingredient = props => {
 						}}
 					/>
 				</div>
-				<div className="form-group">
-					<label>Famille de </label>
-					{ingredient.family_of.map(ingredientId => {
-						return (
-							<div
-								className="form-row"
-								style={{ margin: '1vw' }}
-								key={id}
-							>
-								<div className="col">
-									<select
-										className="custom-select"
-										value={ingredientId}
-									>
-										<option value="-1">Aucun</option>
-										{ingredients.map(ingredient => {
-											return (
-												<option value={ingredient.id}>
-													{ingredient.nom}
-												</option>
-											);
-										})}
-									</select>
-								</div>
-							</div>
-						);
-					})}
-				</div>
-				<div className="form-group">
-					<label>Alias</label>
-					{aliases.map(alias => {
-						return (
-							<div
-								className="form-row"
-								style={{ margin: '1vw' }}
-								key={alias.id}
-							>
-								<div className="col">
-									<div class="input-group mb-3">
-										<input
-											type="text"
-											className="form-control"
-											placeholder="Saisir un nom"
-											value={alias.nom}
-											onChange={e =>
-												updateAlias({
-													id: alias.id,
-													nom: e.target.value,
-												})
-											}
-										/>
-										<div class="input-group-append">
-											<button
-												type="button"
-												class="btn btn-outline-secondary"
-												onClick={() =>
-													deleteAlias({
-														id: alias.id,
-													})
-												}
-											>
-												EFFACER
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						);
-					})}
-					<button
-						type="button"
-						onClick={addAlias}
-						className="btn btn-primary"
-					>
-						AJOUTER
-					</button>
-				</div>
-				<button type="button" className="btn btn-primary">
+				<Alias data={ingredient.alias} />
+				<Family data={ingredient.family_of} />
+				<button
+					type="button"
+					className="btn btn-primary"
+					onClick={submitChanges}
+				>
 					Modifier
 				</button>
 			</form>
 		</div>
 	);
 };
-
 const mapStateToProps = state => ({
 	aliases: state.aliases,
+	family_of: state.family_of,
 });
 
-const mapDispatchToProps = dispatch => ({
-	setAlias: payload => dispatch(setAlias(payload)),
-	addAlias: payload => dispatch(addAlias(payload)),
-	updateAlias: payload => dispatch(updateAlias(payload)),
-	deleteAlias: payload => dispatch(deleteAlias(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Ingredient);
+export default connect(mapStateToProps, {})(Ingredient);

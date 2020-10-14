@@ -1,17 +1,21 @@
-export const addGout = payload =>
-	dispatch({
+export const setGout = payload => ({
+	type: 'SET_GOUT',
+	payload,
+});
+
+export const addGout = id => {
+	return {
 		type: 'ADD_GOUT',
-		payload,
-	});
+		payload: { id: id },
+	};
+};
 
-export const updateGout = payload =>
-	dispatch({
-		type: 'UPDATE_GOUT',
-		payload,
-	});
+export const updateGout = payload => ({
+	type: 'UPDATE_GOUT',
+	payload,
+});
 
-export const deleteGout = payload =>
-	dispatch({
-		type: 'DELETE_GOUT',
-		payload,
-	});
+export const deleteGout = payload => ({
+	type: 'DELETE_GOUT',
+	payload,
+});

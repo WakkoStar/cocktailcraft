@@ -1,37 +1,37 @@
-const { default: Ingredient } = require('../../Ingredients/ingredient');
-
-const initialIngredients = [
-	{
-		id: 0,
-		nom: '',
-		volume: '',
-	},
-];
+const initialIngredient = [];
 
 const ingredientCocktailReducer = (
-	state = initialIngredients,
+	state = initialIngredient,
 	{ type, payload }
 ) => {
-	let id, nom, volume;
+	let id, ingredient_id, volume;
 	if (payload) {
-		id = payload.id ? payload.id : undefined;
-		nom = payload.nom ? payload.nom : undefined;
+		id = payload.id !== undefined ? payload.id : undefined;
+		ingredient_id = payload.ingredient_id
+			? payload.ingredient_id
+			: undefined;
 		volume = payload.volume ? payload.volume : undefined;
 	}
 	switch (type) {
+		case 'SET_INGREDIENT':
+			return payload[0] !== null
+				? payload.map(({ ingredient_id, volume }, index) => {
+						return { id: index, ingredient_id, volume };
+				  })
+				: initialIngredient;
 		case 'ADD_INGREDIENT':
 			return [
 				...state,
 				{
 					id,
-					nom,
-					volume,
+					ingredient_id: null,
+					volume: null,
 				},
 			];
 		case 'UPDATE_INGREDIENT':
 			return state.map(ingredient =>
 				ingredient.id === id
-					? { ...ingredient, nom, volume }
+					? { ...ingredient, ingredient_id, volume }
 					: ingredient
 			);
 		case 'DELETE_INGREDIENT':

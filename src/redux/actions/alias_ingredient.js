@@ -1,14 +1,12 @@
-let nextAliasId = 0;
-
 export const setAlias = payload => ({
 	type: 'SET_ALIAS',
 	payload,
 });
 
-export const addAlias = payload => {
+export const addAlias = id => {
 	return {
 		type: 'ADD_ALIAS',
-		payload: { id: nextAliasId++ },
+		payload: { id: id },
 	};
 };
 

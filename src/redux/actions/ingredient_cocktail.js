@@ -1,17 +1,21 @@
-export const addIngredient = payload =>
-	dispatch({
+export const setIngredient = payload => ({
+	type: 'SET_INGREDIENT',
+	payload,
+});
+
+export const addIngredient = id => {
+	return {
 		type: 'ADD_INGREDIENT',
-		payload,
-	});
+		payload: { id: id },
+	};
+};
 
-export const updateIngredient = payload =>
-	dispatch({
-		type: 'UPDATE_INGREDIENT',
-		payload,
-	});
+export const updateIngredient = payload => ({
+	type: 'UPDATE_INGREDIENT',
+	payload,
+});
 
-export const deleteIngredient = payload =>
-	dispatch({
-		type: 'DELETE_INGREDIENT',
-		payload,
-	});
+export const deleteIngredient = payload => ({
+	type: 'DELETE_INGREDIENT',
+	payload,
+});
