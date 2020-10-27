@@ -1,11 +1,13 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { createGout } from '../api/gouts/mutation';
 const Gout = () => {
+	let history = useHistory();
 	const submitChanges = async () => {
 		const nom = document.getElementById('inputNom').value;
 		const msg = await createGout(nom);
-		alert(msg);
-		window.location = '../';
+		console.info(msg);
+		history.push('/gouts');
 	};
 
 	return (

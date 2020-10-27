@@ -1,5 +1,5 @@
 const client = require('../utils/bdd');
-
+const _ = require('lodash');
 module.exports.getAllIngredients = async () => {
 	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
 	const parsedIngredients = res.rows;
@@ -19,11 +19,14 @@ const getHasFamily = ingredients => {
 };
 
 module.exports.getAllIngredientsOfFamily = async family_of => {
-	const text = 'SELECT * FROM ingredients WHERE $1 && family_of';
-	const values = [family_of];
-
-	const res = await client.query(text, values);
-	return res.rows;
+	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
+	const parsedIngredients = res.rows;
+	//get if they have an family
+	const fullfilledIngredients = getHasFamily(parsedIngredients);
+	return fullfilledIngredients.filter(ing => {
+		const ingFamily_of = ing.family_of.map(el => parseInt(el));
+		return _.intersection(ingFamily_of, family_of).length;
+	});
 };
 
 module.exports.createIngredient = (nom, alias, family_of) => {

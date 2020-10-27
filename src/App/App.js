@@ -8,6 +8,7 @@ import Cocktails from '../Cocktails';
 import ModifyCocktail from '../Cocktails/cocktail';
 import Ingredients from '../Ingredients';
 import ModifyIngredient from '../Ingredients/ingredient';
+import CreateIngredient from '../Ingredients/new';
 import Gouts from '../Gouts';
 import ModifyGout from '../Gouts/gout';
 import CreateGout from '../Gouts/new';
@@ -59,6 +60,9 @@ function App() {
 					</Route>
 					<Route exact path="/gouts/:id">
 						<ModifyGout />
+					</Route>
+					<Route exact path="/ingredients/new">
+						<CreateIngredient />
 					</Route>
 					<Route exact path="/ingredients/:id">
 						<ModifyIngredient />

@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { getOneGouts } from '../api/gouts/query';
 import { modifyGout } from '../api/gouts/mutation';
 const Gout = () => {
 	let { id } = useParams();
-
+	let history = useHistory();
 	const [gout, setGout] = useState({
 		nom: '',
 	});
 
 	const submitChanges = async () => {
 		const msg = await modifyGout(gout.nom, parseInt(gout.id));
-		alert(msg);
-		window.location = '../';
+		console.info(msg);
+		history.push('/gouts');
 	};
 
 	useEffect(() => {

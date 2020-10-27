@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import { getOneIngredients } from '../api/ingredients/query';
-import { modifyIngredient } from '../api/ingredients/mutation';
-
+import { createIngredient } from '../api/ingredients/mutation';
+import { useHistory } from 'react-router-dom';
 import Alias from './alias';
 import Family from './family_of';
 
 const Ingredient = props => {
-	let { id } = useParams();
-	let history = useHistory();
 	const { aliases, family_of } = props;
 
 	const [ingredient, setIngredient] = useState({
@@ -19,13 +15,7 @@ const Ingredient = props => {
 		family_of: [],
 	});
 
-	useEffect(() => {
-		async function fetchData() {
-			const ingredient = await getOneIngredients(parseInt(id));
-			setIngredient(ingredient);
-		}
-		fetchData();
-	}, [setIngredient, id]);
+	let history = useHistory();
 
 	const submitChanges = async () => {
 		const aliasIngredient = aliases.map(({ nom }) => nom);
@@ -33,11 +23,10 @@ const Ingredient = props => {
 			parseInt(ingredientId)
 		);
 
-		const msg = await modifyIngredient(
+		const msg = await createIngredient(
 			ingredient.nom,
 			aliasIngredient,
-			family_ofIngredient,
-			parseInt(id)
+			family_ofIngredient
 		);
 		console.info(msg);
 		history.push('/ingredients');
@@ -68,7 +57,7 @@ const Ingredient = props => {
 					className="btn btn-primary"
 					onClick={submitChanges}
 				>
-					Modifier
+					CREER
 				</button>
 			</form>
 		</div>

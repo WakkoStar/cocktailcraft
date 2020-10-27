@@ -20,6 +20,16 @@ const GET_INGREDIENTS = `query ingredients {
     }
 }`;
 
+const GET_FAMILY_INGREDIENTS = `query ingredientsFamily ($family_of: [Int!]!) {
+    ingredientsFamily (family_of: $family_of) {
+        id
+        nom
+        alias
+		family_of
+		hasFamily
+    }
+}`;
+
 export const getAllIngredients = async () => {
 	const req = await axios.post(
 		'http://localhost:4000',
@@ -53,4 +63,25 @@ export const getOneIngredients = async id => {
 	);
 	const res = req.data;
 	return res.data.ingredient ? res.data.ingredient : res.errors[0];
+};
+
+export const getFamilyIngredients = async family_of => {
+	const req = await axios.post(
+		'http://localhost:4000',
+		{
+			query: GET_FAMILY_INGREDIENTS,
+			variables: {
+				family_of,
+			},
+		},
+		{
+			headers: {
+				'Content-type': 'application/json',
+			},
+		}
+	);
+	const res = req.data;
+	return res.data.ingredientsFamily
+		? res.data.ingredientsFamily
+		: res.errors[0];
 };

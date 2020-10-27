@@ -27,7 +27,7 @@ const Family = props => {
 			setPayloadId(props.data.length);
 		}
 		fetchData();
-	}, [props.data]);
+	}, [props.data, setFamily]);
 
 	return (
 		<div className="form-group">
@@ -47,7 +47,7 @@ const Family = props => {
 									onChange={e =>
 										updateFamily({
 											id,
-											ingredient_id: e.target.value,
+											ingredientId: e.target.value,
 										})
 									}
 								>

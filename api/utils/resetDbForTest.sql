@@ -1,6 +1,4 @@
-const client = require('../utils/bdd');
-
-const QUERY = `TRUNCATE cocktails CASCADE;
+TRUNCATE cocktails CASCADE;
 ALTER SEQUENCE cocktails_id_seq RESTART WITH 0;
 TRUNCATE description_cocktail CASCADE;
 ALTER SEQUENCE description_cocktail_id_seq RESTART WITH 0;
@@ -44,25 +42,4 @@ INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (5,'
 INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (6,'2 cl',1);
 INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (7,'12 cl',1);
 INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (8,'4 cl',1);
-INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (4,'5 grammes',1);`;
-
-const reset = async () => {
-	return await client.query(QUERY);
-};
-module.exports = async () => {
-	await client.query(QUERY);
-};
-
-/**
- * DB:
- * coktails {
- * 	id: bigInt
- * 	nom: char(100)
- *
- * }
- * ingredients
- * gouts
- * description_cocktail
- * ingredient_cocktail
- *
- */
+INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES (4,'5 grammes',1);

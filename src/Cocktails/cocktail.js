@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { getOneCocktails } from '../api/cocktails/query';
-
+import { modifyCocktail } from '../api/cocktails/mutation';
 import Ingredients from './ingredients';
 import Gouts from './gouts';
 import Descriptions from './descriptions';
 
-const Cocktail = () => {
+const Cocktail = props => {
 	let { id } = useParams();
-
+	let history = useHistory();
+	const { gouts, descriptions, ingredients } = props;
 	const [cocktail, setCocktail] = useState({
 		nom: '',
 		difficulty: '',
@@ -26,6 +28,17 @@ const Cocktail = () => {
 		fetchData();
 	}, [setCocktail, id]);
 
+	const submitChanges = async () => {
+		const goutArray = gouts.map(({ goutId }) => parseInt(goutId));
+		const msg = await modifyCocktail(
+			cocktail.nom,
+			goutArray,
+			cocktail.difficulty,
+			parseInt(id)
+		);
+		console.info(msg);
+		history.push('/cocktails');
+	};
 	return (
 		<div className="container" style={{ marginTop: '2vw' }}>
 			<form>
@@ -65,7 +78,11 @@ const Cocktail = () => {
 				<Gouts data={cocktail.gout_array} />
 				<Ingredients data={cocktail.ingredients} />
 				<Descriptions data={cocktail.descriptions} />
-				<button type="submit" className="btn btn-primary">
+				<button
+					type="button"
+					className="btn btn-primary"
+					onClick={submitChanges}
+				>
 					CONFIRMER LES MODIFICATIONS
 				</button>
 			</form>
@@ -73,4 +90,10 @@ const Cocktail = () => {
 	);
 };
 
-export default Cocktail;
+const mapStateToProps = state => ({
+	gouts: state.gouts,
+	ingredients: state.ingredients,
+	descriptions: state.descriptions,
+});
+
+export default connect(mapStateToProps, {})(Cocktail);
