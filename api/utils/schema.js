@@ -6,6 +6,12 @@ const {
 	schema: cocktailSchema,
 	resolvers: cocktailResolvers,
 } = require('../cocktail/type');
+
+const {
+	schema: elementCocktailSchema,
+	resolvers: elementCocktailResolvers,
+} = require('../cocktail/ingredient_and_description/type');
+
 const {
 	schema: goutSchema,
 	resolvers: goutResolvers,
@@ -44,15 +50,16 @@ module.exports.schema = `
         createDescriptionCocktail(input: descriptionInput!): String
         createIngredientCocktail(input: ingredientInput!):String
 
-        modifyDescriptionCocktail(input: descriptionInput!, id: Int!): String
-        modifyIngredientCocktail(input: ingredientInput!, id: Int!):String
+        modifyDescriptionCocktail(input: descriptionInput!): String
+        modifyIngredientCocktail(input: ingredientInput!):String
 
-        deleteDescriptionCocktail(id: Int!): String
-        deleteIngredientCocktail(id: Int!): String
+        deleteDescriptionCocktail(input: descriptionInput!): String
+        deleteIngredientCocktail(input: ingredientInput!): String
     } 
     ${ingredientSchema}
     ${cocktailSchema}
-    ${goutSchema}
+	${goutSchema}
+	${elementCocktailSchema}
 `;
 
 const {
@@ -75,13 +82,16 @@ const {
 	createCocktail,
 	modifyCocktail,
 	deleteCocktail,
+} = cocktailResolvers;
+
+const {
 	createDescriptionCocktail,
 	createIngredientCocktail,
 	modifyDescriptionCocktail,
 	modifyIngredientCocktail,
 	deleteIngredientCocktail,
 	deleteDescriptionCocktail,
-} = cocktailResolvers;
+} = elementCocktailResolvers;
 
 const { gout, gouts, createGout, modifyGout, deleteGout } = goutResolvers;
 

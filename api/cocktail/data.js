@@ -19,16 +19,6 @@ module.exports.getAllCocktails = async () => {
 	return cocktails;
 };
 
-module.exports.getAllIngredients = async () => {
-	const res = await client.query('SELECT * FROM ingredient_cocktail');
-	return res.rows;
-};
-
-module.exports.getAllDescriptions = async () => {
-	const res = await client.query('SELECT * FROM description_cocktail');
-	return res.rows;
-};
-
 const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
 	const res = await client.query('SELECT * FROM cocktails');
 	const distinctCocktails = res.rows;
@@ -72,73 +62,19 @@ const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
 	return fullfilledCocktails;
 };
 
-module.exports.createCocktail = (nom, gout_array, difficulty) => {
+module.exports.createCocktail = async (nom, gout_array, difficulty) => {
 	const text =
-		'INSERT INTO cocktails (nom, gout_array, difficulty) VALUES ($1,$2,$3)';
+		'INSERT INTO cocktails (nom, gout_array, difficulty) VALUES ($1,$2,$3) RETURNING id';
 	const values = [nom, gout_array, difficulty];
 
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
-};
-
-module.exports.createDescriptionsOfCocktail = ({ input: description }) => {
-	const { content, preparation, id_cocktail } = description;
-	const text =
-		'INSERT INTO description_cocktail (content, preparation, id_cocktail) VALUES ($1,$2,$3)';
-	const values = [content, preparation, id_cocktail];
-
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
-};
-
-module.exports.createIngredientOfCocktail = ({ input: ingredient }) => {
-	const { ingredient_id, volume, id_cocktail } = ingredient;
-	const text =
-		'INSERT INTO ingredient_cocktail (ingredient_id, volume, id_cocktail) VALUES ($1,$2,$3)';
-	const values = [ingredient_id, volume, id_cocktail];
-
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
+	const res = await client.query(text, values);
+	return res.rows[0].id;
 };
 
 module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 	const text =
 		'UPDATE cocktails SET nom = $1, gout_array = $2, difficulty = $3 WHERE id = $4';
 	const values = [nom, gout_array, difficulty, id];
-
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
-};
-
-module.exports.updateIngredientOfCocktail = ({ input: ingredient, id }) => {
-	const { ingredient_id, volume, id_cocktail } = ingredient;
-	const text =
-		'UPDATE ingredient_cocktail SET ingredient_id = $1, volume = $2, id_cocktail = $3 WHERE id = $4';
-	const values = [ingredient_id, volume, id_cocktail, id];
-
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
-};
-
-module.exports.updateDescriptionOfCocktail = ({ input: description, id }) => {
-	const { content, preparation, id_cocktail } = description;
-	const text =
-		'UPDATE description_cocktail SET content = $1, preparation = $2, id_cocktail = $3 WHERE id = $4';
-	const values = [content, preparation, id_cocktail, id];
-
-	client.query(text, values, (err, res) => {
-		if (err) throw err;
-	});
-};
-
-module.exports.deleteOfCocktail = ({ id, db }) => {
-	const text = `DELETE FROM ${db} WHERE id_cocktail = $1`;
-	const values = [id];
 
 	client.query(text, values, (err, res) => {
 		if (err) throw err;

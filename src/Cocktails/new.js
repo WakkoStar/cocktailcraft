@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getOneCocktails } from '../api/cocktails/query';
-import { modifyCocktail } from '../api/cocktails/mutation';
+import { createCocktail } from '../api/cocktails/mutation';
 import {
 	refreshIngredient,
 	refreshDescription,
@@ -13,35 +11,25 @@ import Gouts from './gouts';
 import Descriptions from './descriptions';
 
 const Cocktail = props => {
-	let { id } = useParams();
 	let history = useHistory();
 	const { gouts, descriptions, ingredients } = props;
 	const [cocktail, setCocktail] = useState({
 		nom: '',
-		difficulty: '',
+		difficulty: 'Très facile',
 		ingredients: [],
 		descriptions: [],
 		gout_array: [],
 	});
 
-	useEffect(() => {
-		async function fetchData() {
-			const cocktail = await getOneCocktails(parseInt(id));
-			setCocktail(cocktail);
-		}
-		fetchData();
-	}, [setCocktail, id]);
-
 	const submitChanges = async () => {
 		const goutArray = gouts.map(({ goutId }) => parseInt(goutId));
-		const msg = await modifyCocktail(
+		const msg = await createCocktail(
 			cocktail.nom,
 			goutArray,
-			cocktail.difficulty,
-			parseInt(id)
+			cocktail.difficulty
 		);
 		console.info(msg);
-		history.push('/cocktails');
+		const id = msg.replace(/^\D+/g, '');
 		await refreshIngredient(
 			cocktail.ingredients,
 			ingredients,
@@ -52,6 +40,7 @@ const Cocktail = props => {
 			descriptions,
 			parseInt(id)
 		);
+		history.push('/cocktails');
 	};
 	return (
 		<div className="container" style={{ marginTop: '2vw' }}>
@@ -97,7 +86,7 @@ const Cocktail = props => {
 					className="btn btn-primary"
 					onClick={submitChanges}
 				>
-					CONFIRMER LES MODIFICATIONS
+					CREER LE COCKTAIL
 				</button>
 			</form>
 		</div>

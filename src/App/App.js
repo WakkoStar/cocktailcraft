@@ -6,6 +6,7 @@ import { createStore } from 'redux';
 import rootReducer from '../redux/reducers';
 import Cocktails from '../Cocktails';
 import ModifyCocktail from '../Cocktails/cocktail';
+import CreateCocktail from '../Cocktails/new';
 import Ingredients from '../Ingredients';
 import ModifyIngredient from '../Ingredients/ingredient';
 import CreateIngredient from '../Ingredients/new';
@@ -66,6 +67,9 @@ function App() {
 					</Route>
 					<Route exact path="/ingredients/:id">
 						<ModifyIngredient />
+					</Route>
+					<Route exact path="/cocktails/new">
+						<CreateCocktail />
 					</Route>
 					<Route exact path="/cocktails/:id">
 						<ModifyCocktail />

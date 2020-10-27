@@ -25,6 +25,9 @@ function Cocktails() {
 
 	return (
 		<div>
+			<button class="btn">
+				<Link to={`${match.url}/new`}>CREER</Link>
+			</button>
 			<table className="table">
 				<thead>
 					<tr>
