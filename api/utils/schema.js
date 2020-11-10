@@ -17,6 +17,11 @@ const {
 	resolvers: goutResolvers,
 } = require('../gout/type');
 
+const {
+	schema: userSchema,
+	resolvers: userResolvers,
+} = require('../users/type');
+
 module.exports.schema = `
     type Query {
         ingredient(id: Int!): Ingredients
@@ -32,7 +37,9 @@ module.exports.schema = `
         cocktail(id : Int!): Cocktails
         cocktails : [Cocktails]
         availCocktails(ingredient_array : [Int!]!) : [Cocktails]
-        createdCocktails(cluster: [Int!]!): [Cocktails]
+		createdCocktails(cluster: [Int!]!): [Cocktails]
+		
+		user(id: Int!): User
     }
     type Mutation {
         createIngredient(nom: String!, alias:[String], family_of:[Int]): String
@@ -54,12 +61,15 @@ module.exports.schema = `
         modifyIngredientCocktail(input: ingredientInput!):String
 
         deleteDescriptionCocktail(input: descriptionInput!): String
-        deleteIngredientCocktail(input: ingredientInput!): String
+		deleteIngredientCocktail(input: ingredientInput!): String
+		
+		deleteUser(id: Int): String
     } 
     ${ingredientSchema}
     ${cocktailSchema}
 	${goutSchema}
 	${elementCocktailSchema}
+	${userSchema}
 `;
 
 const {
@@ -93,6 +103,8 @@ const {
 	deleteDescriptionCocktail,
 } = elementCocktailResolvers;
 
+const { user, deleteUser } = userResolvers;
+
 const { gout, gouts, createGout, modifyGout, deleteGout } = goutResolvers;
 
 module.exports.root = {
@@ -111,6 +123,8 @@ module.exports.root = {
 		cocktails,
 		availCocktails,
 		createdCocktails,
+
+		user,
 	},
 	Mutation: {
 		createIngredient,
@@ -131,5 +145,7 @@ module.exports.root = {
 		modifyIngredientCocktail,
 		deleteIngredientCocktail,
 		deleteDescriptionCocktail,
+
+		deleteUser,
 	},
 };
