@@ -6,7 +6,8 @@ const {
 	getAllCocktails: getCocktails,
 } = require('./data');
 
-const executeRequestInDb = async (params, callback, msg) => {
+const executeRequestInDb = async (params, callback, msg, ctx) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	//execute callback
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const cocktails = await getCocktails();
@@ -21,7 +22,12 @@ const executeRequestInDb = async (params, callback, msg) => {
 	}
 };
 
-module.exports.createCocktail = async (_, { nom, gout_array, difficulty }) => {
+module.exports.createCocktail = async (
+	_,
+	{ nom, gout_array, difficulty },
+	ctx
+) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	if (!nom || !gout_array || !difficulty) throw new Error('empty fields');
 	const cocktails = await getCocktails();
 	const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);
@@ -35,19 +41,22 @@ module.exports.createCocktail = async (_, { nom, gout_array, difficulty }) => {
 
 module.exports.modifyCocktail = async (
 	_,
-	{ nom, gout_array, difficulty, id }
+	{ nom, gout_array, difficulty, id },
+	ctx
 ) => {
 	return await executeRequestInDb(
 		{ nom, gout_array, difficulty, id },
 		modifyCocktailInDb,
-		`Le cocktail vient d'être modifié avec succès`
+		`Le cocktail vient d'être modifié avec succès`,
+		ctx
 	);
 };
 
-module.exports.deleteCocktail = async (_, { id }) => {
+module.exports.deleteCocktail = async (_, { id }, ctx) => {
 	return await executeRequestInDb(
 		{ id },
 		deleteCocktailInDb,
-		`Le cocktail vient d'être supprimé avec succès`
+		`Le cocktail vient d'être supprimé avec succès`,
+		ctx
 	);
 };

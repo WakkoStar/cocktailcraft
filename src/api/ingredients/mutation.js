@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { SERVER_URL } from '../../config';
 const CREATE_INGREDIENT = `mutation createIngredient ($nom: String!, $alias: [String], $family_of: [Int]) {
     createIngredient (nom: $nom, alias: $alias, family_of: $family_of)
 }`;
@@ -14,7 +14,7 @@ const DELETE_INGREDIENT = `mutation deleteIngredient ($id: Int!) {
 
 export const createIngredient = async (nom, alias, family_of) => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: CREATE_INGREDIENT,
 			variables: {
@@ -38,7 +38,7 @@ export const createIngredient = async (nom, alias, family_of) => {
 
 export const modifyIngredient = async (nom, alias, family_of, id) => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: MODIFY_INGREDIENT,
 			variables: {
@@ -62,7 +62,7 @@ export const modifyIngredient = async (nom, alias, family_of, id) => {
 };
 export const deleteIngredient = async id => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: DELETE_INGREDIENT,
 			variables: {

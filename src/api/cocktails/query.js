@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { SERVER_URL } from '../../config';
+axios.defaults.withCredentials = true;
 
 const GET_ONE_COCKTAIL = `query cocktail ($id: Int!) {
     cocktail (id: $id) {
@@ -46,7 +48,7 @@ const GET_ALL_COCKTAIL = `query cocktails {
 
 export const getAllCocktails = async () => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_ALL_COCKTAIL,
 		},
@@ -62,7 +64,7 @@ export const getAllCocktails = async () => {
 
 export const getOneCocktails = async id => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_ONE_COCKTAIL,
 			variables: {

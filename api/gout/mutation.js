@@ -6,7 +6,8 @@ const {
 	getAllGouts: getGouts,
 } = require('./data');
 
-const executeRequestInDb = async (params, callback, msg) => {
+const executeRequestInDb = async (params, callback, msg, ctx) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const gouts = await getGouts();
 	const existsGout = gouts.find(gout => parseInt(gout.id) === params.id);
@@ -18,7 +19,8 @@ const executeRequestInDb = async (params, callback, msg) => {
 	}
 };
 
-module.exports.createGout = async (_, { nom }) => {
+module.exports.createGout = async (_, { nom }, ctx) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	const gouts = await getGouts();
 	const existsGout = gouts.find(gout => gout.nom === nom);
 	if (existsGout) {
@@ -29,18 +31,20 @@ module.exports.createGout = async (_, { nom }) => {
 	}
 };
 
-module.exports.modifyGout = async (_, { nom, id }) => {
+module.exports.modifyGout = async (_, { nom, id }, ctx) => {
 	return await executeRequestInDb(
 		{ nom, id },
 		modifyGoutInDb,
-		"Le goût vient d'être modifié avec succès"
+		"Le goût vient d'être modifié avec succès",
+		ctx
 	);
 };
 
-module.exports.deleteGout = async (_, { id }) => {
+module.exports.deleteGout = async (_, { id }, ctx) => {
 	return await executeRequestInDb(
 		{ id },
 		deleteGoutInDb,
-		"Le goût vient d'être supprimé avec succès"
+		"Le goût vient d'être supprimé avec succès",
+		ctx
 	);
 };

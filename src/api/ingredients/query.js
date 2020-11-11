@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { SERVER_URL } from '../../config';
 const GET_ONE_INGREDIENT = `query ingredient ($id: Int!) {
     ingredient (id: $id) {
         id
@@ -32,7 +32,7 @@ const GET_FAMILY_INGREDIENTS = `query ingredientsFamily ($family_of: [Int!]!) {
 
 export const getAllIngredients = async () => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_INGREDIENTS,
 		},
@@ -48,7 +48,7 @@ export const getAllIngredients = async () => {
 
 export const getOneIngredients = async id => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_ONE_INGREDIENT,
 			variables: {
@@ -67,7 +67,7 @@ export const getOneIngredients = async id => {
 
 export const getFamilyIngredients = async family_of => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_FAMILY_INGREDIENTS,
 			variables: {

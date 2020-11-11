@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SERVER_URL } from '../../../config';
 
 const CREATE_DESCRIPTION = `mutation createDescriptionCocktail ($input: descriptionInput!) {
     createDescriptionCocktail (input: $input)
@@ -26,7 +27,7 @@ const DELETE_INGREDIENT = `mutation deleteIngredientCocktail ($input: ingredient
 
 const createDescription = async input => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: CREATE_DESCRIPTION,
 			variables: {
@@ -52,7 +53,7 @@ const createDescription = async input => {
 
 const createIngredient = async input => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: CREATE_INGREDIENT,
 			variables: {
@@ -78,7 +79,7 @@ const createIngredient = async input => {
 
 const modifyDescription = async (input, id) => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: MODIFY_DESCRIPTION,
 			variables: {
@@ -104,7 +105,7 @@ const modifyDescription = async (input, id) => {
 
 const modifyIngredient = async (input, id) => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: MODIFY_INGREDIENT,
 			variables: {
@@ -130,7 +131,7 @@ const modifyIngredient = async (input, id) => {
 
 const deleteDescription = async input => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: DELETE_DESCRIPTION,
 			variables: {
@@ -156,7 +157,7 @@ const deleteDescription = async input => {
 
 const deleteIngredient = async input => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: DELETE_INGREDIENT,
 			variables: {

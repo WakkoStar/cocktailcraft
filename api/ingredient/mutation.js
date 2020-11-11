@@ -6,7 +6,8 @@ const {
 	getAllIngredients: getIngredients,
 } = require('./data');
 
-const executeRequestInDb = async (params, callback, msg) => {
+const executeRequestInDb = async (params, callback, msg, ctx) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const ingredients = await getIngredients();
 	const existsIngredients = ingredients.find(
@@ -20,7 +21,8 @@ const executeRequestInDb = async (params, callback, msg) => {
 	}
 };
 
-module.exports.createIngredient = async (_, { nom, alias, family_of }) => {
+module.exports.createIngredient = async (_, { nom, alias, family_of }, ctx) => {
+	if (!ctx.user.is_admin) return 'Not admin';
 	const ingredients = await getIngredients();
 	const existsIngredients = ingredients.find(
 		ingredient => ingredient.nom === nom
@@ -33,18 +35,24 @@ module.exports.createIngredient = async (_, { nom, alias, family_of }) => {
 	}
 };
 
-module.exports.modifyIngredient = async (_, { nom, alias, family_of, id }) => {
+module.exports.modifyIngredient = async (
+	_,
+	{ nom, alias, family_of, id },
+	ctx
+) => {
 	return await executeRequestInDb(
 		{ nom, alias, family_of, id },
 		modifyIngredientInDb,
-		"L'ingrédient vient d'être modifié avec succès"
+		"L'ingrédient vient d'être modifié avec succès",
+		ctx
 	);
 };
 
-module.exports.deleteIngredient = async (_, { id }) => {
+module.exports.deleteIngredient = async (_, { id }, ctx) => {
 	return await executeRequestInDb(
 		{ id },
 		deleteIngredientInDb,
-		"L'ingrédient vient d'être supprimé avec succès"
+		"L'ingrédient vient d'être supprimé avec succès",
+		ctx
 	);
 };

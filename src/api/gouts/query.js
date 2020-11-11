@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { SERVER_URL } from '../../config';
 const GET_ALL_GOUTS = `
 	query gouts {
 		gouts {
@@ -19,7 +19,7 @@ const GET_ONE_GOUT = `
 
 export const getAllGouts = async () => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_ALL_GOUTS,
 		},
@@ -35,7 +35,7 @@ export const getAllGouts = async () => {
 
 export const getOneGouts = async id => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: GET_ONE_GOUT,
 			variables: {

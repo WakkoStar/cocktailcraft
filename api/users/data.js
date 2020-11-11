@@ -4,7 +4,7 @@ module.exports.getUser = async id => {
 	const text = 'SELECT * FROM users WHERE facebook_id = $1';
 	const values = [id];
 	const res = await client.query(text, values);
-	return res.rows;
+	return res.rows[0];
 };
 
 module.exports.getUserInfo = async id => {

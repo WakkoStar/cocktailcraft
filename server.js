@@ -1,12 +1,26 @@
+require('dotenv').config();
+
 const { ApolloServer, gql } = require('apollo-server-express');
 const express = require('express');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const { schema, root } = require('./api/utils/schema');
 const client = require('./api/utils/bdd');
+const isLogged = require('./api/utils/auth');
 require('./api/utils/passport');
 
+const app = express();
+
+//CORS
+const corsOptions = {
+	origin: process.env.CLIENT_URL,
+	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	preflightContinue: false,
+	optionsSuccessStatus: 204,
+	credentials: true,
+};
 //GRAPHQL CONNECTION
 client.connect();
 const server = new ApolloServer({
@@ -14,10 +28,11 @@ const server = new ApolloServer({
 		${schema}
 	`,
 	resolvers: root,
+	context: async ({ req }) => ({
+		user: await isLogged(req),
+	}),
 });
-
-const app = express();
-server.applyMiddleware({ app });
+server.applyMiddleware({ app, cors: corsOptions });
 
 //FACEBOOK PASSPORT
 app.use(passport.initialize());
@@ -32,10 +47,12 @@ app.get(
 			maxAge: 900000,
 			httpOnly: true,
 		});
-		res.redirect('http://localhost:3000');
+		res.redirect(process.env.CLIENT_URL);
 	}
 );
 
-app.listen({ port: 4000 }, () =>
-	console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+app.listen({ port: process.env.PORT }, () =>
+	console.log(
+		`🚀 Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`
+	)
 );

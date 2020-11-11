@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { SERVER_URL } from '../../config';
 const CREATE_GOUT = `
     mutation createGout ($nom: String!) {
     	createGout (nom: $nom)
@@ -20,7 +20,7 @@ const DELETE_GOUT = `
 
 export const createGout = async nom => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: CREATE_GOUT,
 			variables: {
@@ -40,7 +40,7 @@ export const createGout = async nom => {
 
 export const modifyGout = async (nom, id) => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: MODIFY_GOUT,
 			variables: {
@@ -61,7 +61,7 @@ export const modifyGout = async (nom, id) => {
 
 export const deleteGout = async id => {
 	const req = await axios.post(
-		'http://localhost:4000',
+		SERVER_URL,
 		{
 			query: DELETE_GOUT,
 			variables: {
