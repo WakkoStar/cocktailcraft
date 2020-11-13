@@ -1,9 +1,17 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
-const { getUser } = require('../users/data');
 const { AuthenticationError } = require('apollo-server-express');
+
+const { getUser, createUser } = require('../users/data');
+
 const isLogged = async req => {
-	const token = req.headers.cookie && req.headers.cookie.replace('jwt=', '');
+	let token;
+	if (req.headers.cookie) {
+		token = req.headers.cookie.replace('jwt=', '');
+	} else if (req.headers.authorization) {
+		token = req.headers.authorization.replace('Bearer ', '');
+	}
+
 	const data = await fetch(
 		`https://graph.facebook.com/debug_token?input_token=${token}&access_token=${process.env.FACEBOOK_ACCESS_TOKEN}`
 	);
@@ -12,4 +20,13 @@ const isLogged = async req => {
 	if (!user) throw new AuthenticationError('you must be logged in');
 	return user;
 };
-module.exports = isLogged;
+
+const register = async profile => {
+	const user = await getUser(profile.id);
+	if (!user) {
+		createUser(profile.first_name, profile.id);
+	}
+};
+
+module.exports.isLogged = isLogged;
+module.exports.register = register;

@@ -4,14 +4,20 @@ const { ApolloServer, gql } = require('apollo-server-express');
 const express = require('express');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const { schema, root } = require('./api/utils/schema');
 const client = require('./api/utils/bdd');
-const isLogged = require('./api/utils/auth');
+const { isLogged, register } = require('./api/utils/auth');
 require('./api/utils/passport');
 
 const app = express();
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 //CORS
 const corsOptions = {
@@ -21,6 +27,14 @@ const corsOptions = {
 	optionsSuccessStatus: 204,
 	credentials: true,
 };
+
+//LOGIN ON MOBILE
+app.post('/register', async (req, res) => {
+	const profile = req.body.user;
+	await register(profile);
+	res.json('Registered');
+});
+
 //GRAPHQL CONNECTION
 client.connect();
 const server = new ApolloServer({
