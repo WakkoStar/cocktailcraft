@@ -8,8 +8,8 @@ const bodyParser = require('body-parser');
 
 const { schema, root } = require('./api/utils/schema');
 const client = require('./api/utils/bdd');
-const { isLogged, register } = require('./api/utils/auth');
-require('./api/utils/passport');
+const { isLogged, register } = require('./api/auth/account');
+require('./api/auth/passport');
 
 const app = express();
 
@@ -42,9 +42,9 @@ const server = new ApolloServer({
 		${schema}
 	`,
 	resolvers: root,
-	context: async ({ req }) => ({
+	/*context: async ({ req }) => ({
 		user: await isLogged(req),
-	}),
+	}),*/
 });
 server.applyMiddleware({ app, cors: corsOptions });
 
@@ -52,9 +52,9 @@ server.applyMiddleware({ app, cors: corsOptions });
 app.use(passport.initialize());
 app.use(cookieParser());
 
-app.get('/login', passport.authenticate('facebook'));
+app.get('/fb/login', passport.authenticate('facebook'));
 app.get(
-	'/login/callback',
+	'fb/login/callback',
 	passport.authenticate('facebook', { failureRedirect: '/login' }),
 	(req, res) => {
 		res.cookie('jwt', req.user.token, {

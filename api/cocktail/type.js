@@ -2,7 +2,8 @@ const {
 	getAllCocktails,
 	getOneCocktails,
 	getAvailableCocktails,
-	getCreatedCocktails,
+	getCraftedCocktails,
+	getCreatedCocktailsByUser,
 } = require('./query');
 const {
 	createCocktail,
@@ -17,7 +18,8 @@ module.exports.schema = `
         descriptions : [Description]
         ingredients : [Ingredient]
         gout_array : [Int]
-        difficulty : String
+		difficulty : String
+		user_id: Int
     }
 `;
 
@@ -25,7 +27,8 @@ module.exports.resolvers = {
 	cocktail: getOneCocktails,
 	cocktails: getAllCocktails,
 	availCocktails: getAvailableCocktails,
-	createdCocktails: getCreatedCocktails,
+	craftedCocktails: getCraftedCocktails,
+	createdCocktailsByUser: getCreatedCocktailsByUser,
 	createCocktail,
 	modifyCocktail,
 	deleteCocktail,

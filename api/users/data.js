@@ -1,23 +1,24 @@
 const client = require('../utils/bdd');
 
+module.exports.getUserByProviderId = async (pid, provider_name) => {
+	const text =
+		'SELECT * FROM users WHERE provider_id = $1 AND provider_name= $2';
+	const values = [pid, provider_name];
+	const res = await client.query(text, values);
+	return res.rows[0];
+};
+
 module.exports.getUser = async id => {
-	const text = 'SELECT * FROM users WHERE facebook_id = $1';
+	const text = 'SELECT * FROM users WHERE id = $1';
 	const values = [id];
 	const res = await client.query(text, values);
 	return res.rows[0];
 };
 
-module.exports.getUserInfo = async id => {
-	const text = 'SELECT * FROM users WHERE facebook_id = $1';
-	const values = [id];
-	const res = await client.query(text, values);
-	return res.rows;
-};
-
-module.exports.createUser = (username, facebook_id) => {
+module.exports.createUser = (username, provider_id, provider_name) => {
 	const text =
-		'INSERT INTO users (username, cocktail_created_in_day, is_admin, facebook_id) VALUES ($1, $2, $3, $4)';
-	const values = [username, 0, false, facebook_id];
+		'INSERT INTO users (username, provider_id,provider_name ) VALUES ($1, $2, $3)';
+	const values = [username, provider_id, provider_name];
 
 	client.query(text, values, (err, res) => {
 		if (err) throw err;
@@ -32,6 +33,23 @@ module.exports.updateCocktailCreatedInDay = (cocktail_created_in_day, id) => {
 		if (err) throw err;
 	});
 };
+module.exports.updateCocktailCrafted = (cocktail_count, id) => {
+	const text = 'UPDATE users SET cocktail_crafted = $1 WHERE id = $2';
+	const values = [cocktail_count, id];
+
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
+
+module.exports.updateUserExp = (experience, id) => {
+	const text = 'UPDATE users SET experience = $1 WHERE id = $2';
+	const values = [experience, id];
+
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
 
 module.exports.deleteUser = ({ id }) => {
 	const text = 'DELETE FROM users WHERE id = $1';
@@ -40,4 +58,24 @@ module.exports.deleteUser = ({ id }) => {
 	client.query(text, values, (err, res) => {
 		if (err) throw err;
 	});
+};
+
+//USER INFO
+module.exports.getAllLevels = async () => {
+	const text = 'SELECT * FROM levels';
+	const res = await client.query(text);
+	return res.rows;
+};
+
+module.exports.getCreatedCocktailCountByUserId = async user_id => {
+	const text = 'SELECT * FROM cocktails WHERE user_id = $1';
+	const values = [user_id];
+	const res = await client.query(text, values);
+	return res.rowCount;
+};
+module.exports.getNotesCountByUserId = async user_id => {
+	const text = 'SELECT * FROM notes WHERE user_id= $1';
+	const values = [user_id];
+	const res = await client.query(text, values);
+	return res.rowCount;
 };

@@ -31,9 +31,3 @@ module.exports.deleteGout = ({ id }) => {
 		if (err) throw err;
 	});
 };
-/*
-gout {
-    id: Int
-    nom: String
-}
-*/

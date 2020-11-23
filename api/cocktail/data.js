@@ -1,71 +1,97 @@
 var _ = require('lodash');
 const client = require('../utils/bdd');
 
-module.exports.getAllCocktails = async () => {
+module.exports.getAllCocktails = async (is_visible = true) => {
 	const resIngredients = await client.query(
-		`SELECT ic.id AS ic_id, ic.ingredient_id, i.nom, ic.volume, id_cocktail FROM cocktails c 
+		`SELECT ic.id AS el_id, ic.ingredient_id, i.nom, ic.volume, id_cocktail FROM cocktails c 
 		FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail 
-		FULL JOIN ingredients i ON i.id = ic.ingredient_id ORDER BY c.nom`
+		FULL JOIN ingredients i ON i.id = ic.ingredient_id`
 	);
 
 	const resDescriptions = await client.query(
-		`SELECT dc.id as dc_id, content, preparation, id_cocktail FROM cocktails c 
-		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail ORDER BY c.nom`
+		`SELECT dc.id as el_id, content, preparation, id_cocktail FROM cocktails c 
+		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail`
 	);
 
-	const cocktails = await getDescriptionsAndIngredientsOfCocktails(
-		_.concat(resDescriptions.rows, resIngredients.rows)
+	const resCocktails = await client.query(
+		'SELECT * FROM cocktails WHERE is_visible = $1',
+		[is_visible]
 	);
-	return cocktails;
+	const cocktails = resCocktails.rows;
+
+	const descriptions = await getElementsOfCocktail(
+		cocktails,
+		resDescriptions.rows,
+		'descriptions'
+	);
+	const ingredients = await getElementsOfCocktail(
+		cocktails,
+		resIngredients.rows,
+		'ingredients'
+	);
+
+	return concatElementsIntoCocktails(cocktails, descriptions, ingredients);
 };
 
-const getDescriptionsAndIngredientsOfCocktails = async cocktails => {
-	const res = await client.query('SELECT * FROM cocktails');
-	const distinctCocktails = res.rows;
-
-	const fullfilledCocktails = distinctCocktails.map(el => {
-		//selection des lignes a aggreger
-		const cocktailArray = cocktails.filter(
-			({ id_cocktail }) => id_cocktail === el.id
+const concatElementsIntoCocktails = (
+	cocktails,
+	cocktailDescriptions,
+	cocktailIngredients
+) => {
+	return cocktails.map(cocktail => {
+		const elementIngredient = cocktailIngredients.find(
+			el => el.id === cocktail.id
 		);
-		//aggreger les lignes en un objet
-		return cocktailArray.reduce(
-			(cocktailFull, cocktailPart) => {
-				//{id,nom,description,ingredient}
-				const { content, preparation, dc_id } = cocktailPart;
-				const { ingredient_id, nom, volume, ic_id } = cocktailPart;
+		const elementDesc = cocktailDescriptions.find(
+			el => el.id === cocktail.id
+		);
+		return {
+			...cocktail,
+			ingredients: elementIngredient.ingredients,
+			descriptions: elementDesc.descriptions,
+		};
+	});
+};
+
+const getElementsOfCocktail = async (cocktails, elementsCocktail, key) => {
+	const fullfilledCocktails = cocktails.map(({ id }) => {
+		const elementsForOneCocktail = elementsCocktail.filter(
+			({ id_cocktail }) => id_cocktail === id
+		);
+
+		return elementsForOneCocktail.reduce(
+			(cocktails, element) => {
 				return {
-					...cocktailFull,
-					descriptions: content
-						? _.concat(cocktailFull.descriptions, {
-								id: dc_id,
-								content,
-								preparation,
-								cocktail_id: el.id,
-						  })
-						: cocktailFull.descriptions,
-					ingredients: ingredient_id
-						? _.concat(cocktailFull.ingredients, {
-								id: ic_id,
-								ingredient_id,
-								nom,
-								volume,
-								cocktail_id: el.id,
-						  })
-						: cocktailFull.ingredients,
+					...cocktails,
+					[key]: _.concat(cocktails[key], {
+						...element,
+						id: element.el_id,
+					}),
 				};
 			},
-			{ ...el, descriptions: [], ingredients: [] }
+			{ id, [key]: [] }
 		);
 	});
 
 	return fullfilledCocktails;
 };
 
-module.exports.createCocktail = async (nom, gout_array, difficulty) => {
+module.exports.getCreatedCocktailByUser = async id => {
+	const text = 'SELECT * FROM cocktails WHERE user_id = $1';
+	const values = [id];
+	const res = await client.query(text, values);
+	return res.rows;
+};
+
+module.exports.createCocktail = async (
+	nom,
+	gout_array,
+	difficulty,
+	user_id
+) => {
 	const text =
-		'INSERT INTO cocktails (nom, gout_array, difficulty) VALUES ($1,$2,$3) RETURNING id';
-	const values = [nom, gout_array, difficulty];
+		'INSERT INTO cocktails (nom, gout_array, difficulty, user_id) VALUES ($1,$2,$3) RETURNING id';
+	const values = [nom, gout_array, difficulty, user_id];
 
 	const res = await client.query(text, values);
 	return res.rows[0].id;
@@ -81,6 +107,15 @@ module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 	});
 };
 
+module.exports.setVisibility = ({ is_visible, id }) => {
+	const text = 'UPDATE cocktails SET is_visible = $1 WHERE id = $2';
+	const values = [is_visible, id];
+
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
+
 module.exports.deleteCocktail = ({ id }) => {
 	const text = `DELETE FROM cocktails WHERE id = $1`;
 	const values = [id];
@@ -89,31 +124,3 @@ module.exports.deleteCocktail = ({ id }) => {
 		if (err) throw err;
 	});
 };
-
-/*
-    schéma : 
-    {
-        id: 1,
-        nom: mojito,
-        descriptions: [
-            {
-                content: "Mettre la menthe....",
-                preparation : "Fait directement au verre"
-            },
-        ],
-        ingredients: [
-            {
-				ingredient_id : 1,
-				nom : "Angostura"
-                volume: "un trait"
-            },
-            {
-				ingredient_id: 3,
-				nom : "Sucre"
-                volume: "20 grammes"
-            }
-        ],
-        gout_array: [1, 2, 4, 8],
-        difficulty: "Facile"
-    }
-*/

@@ -23,10 +23,13 @@ module.exports.getAllIngredientsOfFamily = async family_of => {
 	const parsedIngredients = res.rows;
 	//get if they have an family
 	const fullfilledIngredients = getHasFamily(parsedIngredients);
-	return fullfilledIngredients.filter(ing => {
-		const ingFamily_of = ing.family_of.map(el => parseInt(el));
-		return _.intersection(ingFamily_of, family_of).length;
+
+	const ingredientsOfThisFamily = fullfilledIngredients.filter(ingredient => {
+		const family_ofElement = ingredient.family_of.map(el => parseInt(el));
+		return _.intersection(family_ofElement, family_of).length;
 	});
+
+	return ingredientsOfThisFamily;
 };
 
 module.exports.createIngredient = (nom, alias, family_of) => {
@@ -59,13 +62,6 @@ module.exports.deleteIngredient = ({ id }) => {
 };
 
 /*
-Schéma d'un ingrédient : 
-{
-    id: id,
-    nom : String,
-    family_of : [id],
-    alias : [String],
-}
 
 Automatiser la description : 
 Directement au verre : 

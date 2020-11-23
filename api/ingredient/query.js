@@ -29,10 +29,10 @@ module.exports.searchIngredient = async (_, { search }) => {
 
 	const minSearch = search.toLowerCase();
 
-	const results = ingredients.filter(({ name, alias }) => {
-		const withName = name.toLowerCase().includes(minSearch);
+	const results = ingredients.filter(({ nom, alias }) => {
+		const withName = nom.toLowerCase().includes(minSearch);
 		let withAliases = false;
-		if (alias)
+		if (alias && alias[0] !== null && alias.length)
 			withAliases = alias.some(el =>
 				el.toLowerCase().includes(minSearch)
 			);

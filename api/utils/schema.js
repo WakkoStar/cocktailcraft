@@ -22,6 +22,11 @@ const {
 	resolvers: userResolvers,
 } = require('../users/type');
 
+const {
+	schema: noteSchema,
+	resolvers: noteResolvers,
+} = require('../note/type');
+
 module.exports.schema = `
     type Query {
         ingredient(id: Int!): Ingredients
@@ -37,9 +42,12 @@ module.exports.schema = `
         cocktail(id : Int!): Cocktails
         cocktails : [Cocktails]
         availCocktails(ingredient_array : [Int!]!) : [Cocktails]
-		createdCocktails(cluster: [Int!]!): [Cocktails]
-		
-		user(id: Int!): User
+		craftedCocktails(cluster: [Int!]!): [Cocktails]
+		createdCocktailsByUser: [Cocktails]
+
+		user: User
+
+		cocktailNote(cocktail_id: Int!): Note
     }
     type Mutation {
         createIngredient(nom: String!, alias:[String], family_of:[Int]): String
@@ -63,13 +71,16 @@ module.exports.schema = `
         deleteDescriptionCocktail(input: descriptionInput!): String
 		deleteIngredientCocktail(input: ingredientInput!): String
 		
-		deleteUser(id: Int): String
+		deleteUser: String
+
+		addNote(cocktail_id: Int!, rate: Int!): String
     } 
     ${ingredientSchema}
     ${cocktailSchema}
 	${goutSchema}
 	${elementCocktailSchema}
 	${userSchema}
+	${noteSchema}
 `;
 
 const {
@@ -88,7 +99,8 @@ const {
 	cocktail,
 	cocktails,
 	availCocktails,
-	createdCocktails,
+	craftedCocktails,
+	createdCocktailsByUser,
 	createCocktail,
 	modifyCocktail,
 	deleteCocktail,
@@ -107,6 +119,8 @@ const { user, deleteUser } = userResolvers;
 
 const { gout, gouts, createGout, modifyGout, deleteGout } = goutResolvers;
 
+const { addNote, cocktailNote } = noteResolvers;
+
 module.exports.root = {
 	Query: {
 		ingredient,
@@ -122,9 +136,12 @@ module.exports.root = {
 		cocktail,
 		cocktails,
 		availCocktails,
-		createdCocktails,
+		craftedCocktails,
+		createdCocktailsByUser,
 
 		user,
+
+		cocktailNote,
 	},
 	Mutation: {
 		createIngredient,
@@ -147,5 +164,7 @@ module.exports.root = {
 		deleteDescriptionCocktail,
 
 		deleteUser,
+
+		addNote,
 	},
 };

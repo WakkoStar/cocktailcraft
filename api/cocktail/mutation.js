@@ -7,7 +7,7 @@ const {
 } = require('./data');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
-	if (!ctx.user.is_admin) return 'Not admin';
+	if (!ctx.user.is_admin) throw new Error('Not admin');
 	//execute callback
 	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
 	const cocktails = await getCocktails();
@@ -27,7 +27,7 @@ module.exports.createCocktail = async (
 	{ nom, gout_array, difficulty },
 	ctx
 ) => {
-	if (!ctx.user.is_admin) return 'Not admin';
+	if (!ctx.user.is_admin) throw new Error('Not admin');
 	if (!nom || !gout_array || !difficulty) throw new Error('empty fields');
 	const cocktails = await getCocktails();
 	const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);

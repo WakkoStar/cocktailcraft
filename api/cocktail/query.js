@@ -1,13 +1,26 @@
-const { getAllCocktails: getCocktails } = require('./data');
+const {
+	getAllCocktails: getCocktails,
+	getCreatedCocktailByUser,
+} = require('./data');
 
-module.exports.getAllCocktails = async () => {
-	const cocktails = await getCocktails();
-
+module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
+	if (!is_visible && !ctx.user.is_admin) throw new Error('Not admin');
+	const cocktails = await getCocktails(is_visible);
 	return cocktails;
 };
 
 module.exports.getOneCocktails = async (_, { id }) => {
-	const cocktails = await getCocktails();
+	const cocktails = await getCocktails(true);
+	const cocktailFinded = cocktails.filter(
+		cocktail => parseInt(cocktail.id) === id
+	)[0];
+	if (!cocktailFinded) throw new Error('cocktail no founded');
+	return cocktailFinded;
+};
+
+module.exports.getOneCocktailsForAdmin = async (_, { id }, ctx) => {
+	if (!ctx.user.is_admin) throw new Error('Not admin');
+	const cocktails = await getCocktails(false);
 	const cocktailFinded = cocktails.filter(
 		cocktail => parseInt(cocktail.id) === id
 	)[0];
@@ -16,7 +29,7 @@ module.exports.getOneCocktails = async (_, { id }) => {
 };
 
 module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
-	const cocktails = await getCocktails();
+	const cocktails = await getCocktails(true);
 	const availCocktails = cocktails.filter(
 		//For each cocktail
 		cocktail => {
@@ -30,9 +43,9 @@ module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
 	return availCocktails;
 };
 
-module.exports.getCreatedCocktails = async (_, { cluster }) => {
+module.exports.getCraftedCocktails = async (_, { cluster }) => {
 	//cluster : [ingredient.id]
-	const cocktails = await getCocktails();
+	const cocktails = await getCocktails(true);
 	const createdCocktails = cocktails.filter(({ ingredients }) => {
 		const ingredientArray = ingredients.map(
 			({ ingredient_id }) => ingredient_id
@@ -44,4 +57,9 @@ module.exports.getCreatedCocktails = async (_, { cluster }) => {
 		return inCocktail && inCluster;
 	});
 	return createdCocktails;
+};
+
+module.exports.getCreatedCocktailsByUser = async (_, {}, ctx) => {
+	const cocktails = await getCreatedCocktailByUser(ctx.user.id);
+	return cocktails;
 };
