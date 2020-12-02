@@ -14,7 +14,10 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 	);
 
 	const resCocktails = await client.query(
-		'SELECT * FROM cocktails WHERE is_visible = $1',
+		`SELECT c.id, c.nom, c.gout_array, c.difficulty, c.user_id, u.username FROM cocktails c 
+		FULL JOIN users u ON u.id = c.user_id
+		WHERE is_visible = $1 
+		`,
 		[is_visible]
 	);
 	const cocktails = resCocktails.rows;
@@ -77,7 +80,8 @@ const getElementsOfCocktail = async (cocktails, elementsCocktail, key) => {
 };
 
 module.exports.getCreatedCocktailByUser = async id => {
-	const text = 'SELECT * FROM cocktails WHERE user_id = $1';
+	const text =
+		'SELECT * FROM cocktails WHERE user_id = $1 AND is_visible = true ORDER BY creation_date DESC';
 	const values = [id];
 	const res = await client.query(text, values);
 	return res.rows;
@@ -90,7 +94,7 @@ module.exports.createCocktail = async (
 	user_id
 ) => {
 	const text =
-		'INSERT INTO cocktails (nom, gout_array, difficulty, user_id) VALUES ($1,$2,$3) RETURNING id';
+		'INSERT INTO cocktails (nom, gout_array, difficulty, user_id) VALUES ($1,$2,$3,$4) RETURNING id';
 	const values = [nom, gout_array, difficulty, user_id];
 
 	const res = await client.query(text, values);

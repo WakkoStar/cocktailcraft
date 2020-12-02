@@ -185,7 +185,6 @@ const selectItems = (previous, actual) => {
 	const toDelete = previous.filter(el => !actual.includes(el));
 	const toUpdate = previous.filter(el => actual.includes(el));
 	const toCreate = actual.filter(el => !previous.includes(el));
-
 	return { toDelete, toUpdate, toCreate };
 };
 
@@ -194,28 +193,29 @@ export const refreshIngredient = async (
 	ingActual,
 	id_cocktail
 ) => {
-	const previous = ingPrevious.map(({ ingredient_id }) => ingredient_id);
-	const actual = ingActual.map(({ ingredient_id }) => ingredient_id);
+	const previous = ingPrevious.map(({ ingredient_id }) =>
+		parseInt(ingredient_id)
+	);
+	const actual = ingActual.map(({ ingredient_id }) =>
+		parseInt(ingredient_id)
+	);
 	const items = selectItems(previous, actual);
 
 	items.toDelete.map(async ingredient_id => {
 		const ingredient = ingPrevious.find(
-			el => el.ingredient_id === ingredient_id
+			el => el.ingredient_id === parseInt(ingredient_id)
 		);
 		await deleteIngredient({ ...ingredient, id_cocktail });
 	});
 	items.toUpdate.map(async ingredient_id => {
 		const ingredient = ingActual.find(
-			el => el.ingredient_id === ingredient_id
-		);
-		const previousIngredient = ingPrevious.find(
-			el => el.ingredient_id === ingredient_id
+			el => el.ingredient_id === parseInt(ingredient_id)
 		);
 		await modifyIngredient({ ...ingredient, id_cocktail });
 	});
 	items.toCreate.map(async ingredient_id => {
 		const ingredient = ingActual.find(
-			el => el.ingredient_id === ingredient_id
+			el => el.ingredient_id === parseInt(ingredient_id)
 		);
 		await createIngredient({ ...ingredient, id_cocktail });
 	});

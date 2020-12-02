@@ -1,5 +1,5 @@
-const { getUserInfo, deleteUser } = require('./query');
-
+const { getUserInfo } = require('./query');
+const { deleteUser, reportUser, banUser } = require('./mutation');
 module.exports.schema = `
     type User {
         id: Int
@@ -17,4 +17,6 @@ module.exports.schema = `
 module.exports.resolvers = {
 	user: getUserInfo,
 	deleteUser,
+	reportUser,
+	banUser,
 };

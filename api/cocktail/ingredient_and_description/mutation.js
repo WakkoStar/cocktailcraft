@@ -10,25 +10,34 @@ const {
 
 const { getAllCocktails: getCocktails } = require('../data');
 
-const executeRequestElementInDb = async (params, callback, msg, ctx) => {
-	if (!ctx.user.is_admin) return 'Not admin';
-	//execute callback
-	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
+const executeRequestElementInDb = (params, callback, msg, ctx) => {
+	return new Promise(async (resolve, reject) => {
+		//to avoid admin rights on create functionS
+		if (!ctx.user.is_admin && !msg.includes('créé')) reject('Not admin');
+		//execute callback
+		if (_.some(params, _.isUndefined)) reject('empty fields');
 
-	callback({ ...params });
-	return `${msg} (id_cocktail: ${params.input.id_cocktail})`;
+		callback({ ...params });
+		resolve(`${msg} (id_cocktail: ${params.input.id_cocktail})`);
+	});
 };
 
-const verifyCocktail = async id => {
-	const cocktails = await getCocktails();
-	const existsCocktail = cocktails.find(
-		cocktail => parseInt(cocktail.id) === id
-	);
-	if (!existsCocktail) throw new Error('cocktail no founded');
+const verifyCocktail = id => {
+	return new Promise(async (resolve, reject) => {
+		const res1 = await getCocktails(false);
+		const res2 = await getCocktails(true);
+		const cocktails = res1.concat(res2);
+		const existsCocktail = cocktails.find(
+			cocktail => parseInt(cocktail.id) === parseInt(id)
+		);
+		existsCocktail
+			? resolve('Cocktail founded')
+			: reject('cocktail no founded');
+	});
 };
 
 module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
-	await verifyCocktail(input.id_cocktail);
+	verifyCocktail(input.id_cocktail);
 	return await executeRequestElementInDb(
 		{ input },
 		createDescriptionsOfCocktail,
@@ -38,7 +47,7 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 };
 
 module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
-	await verifyCocktail(input.id_cocktail);
+	verifyCocktail(input.id_cocktail);
 	return await executeRequestElementInDb(
 		{ input },
 		createIngredientOfCocktail,
@@ -48,7 +57,7 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 };
 
 module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
-	await verifyCocktail(input.id_cocktail);
+	verifyCocktail(input.id_cocktail);
 	return await executeRequestElementInDb(
 		{ input },
 		updateDescriptionOfCocktail,
@@ -58,7 +67,7 @@ module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 };
 
 module.exports.modifyIngredientCocktail = async (_, { input }, ctx) => {
-	await verifyCocktail(input.id_cocktail);
+	verifyCocktail(input.id_cocktail);
 	return await executeRequestElementInDb(
 		{ input },
 		updateIngredientOfCocktail,

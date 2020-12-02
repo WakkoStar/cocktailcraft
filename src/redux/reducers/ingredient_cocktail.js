@@ -6,9 +6,9 @@ const ingredientCocktailReducer = (
 ) => {
 	let id, ingredient_id, volume;
 	if (payload) {
-		id = payload.id !== undefined ? payload.id : undefined;
+		id = payload.id !== undefined ? parseInt(payload.id) : undefined;
 		ingredient_id = payload.ingredient_id
-			? payload.ingredient_id
+			? parseInt(payload.ingredient_id)
 			: undefined;
 		volume = payload.volume ? payload.volume : undefined;
 	}

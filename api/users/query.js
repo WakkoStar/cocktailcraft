@@ -1,6 +1,5 @@
 const {
 	getUser: getUserInDb,
-	deleteUser: deleteUserInDb,
 	getAllLevels,
 	getCreatedCocktailCountByUserId,
 	getNotesCountByUserId,
@@ -18,7 +17,7 @@ module.exports.getUserInfo = async (_, {}, ctx) => {
 	const nextLevel = levels[nextLevelIndex];
 
 	//GET LEVEL PROGRESSION
-	const levelProgression =
+	const levelProgressionRate =
 		(user.experience - currentLevel.experience) /
 		(nextLevel.experience - currentLevel.experience);
 
@@ -26,26 +25,14 @@ module.exports.getUserInfo = async (_, {}, ctx) => {
 	const cocktailCreatedCount = await getCreatedCocktailCountByUserId(
 		ctx.user.id
 	);
-
 	//GET NOTES COUNT
 	const noteCount = await getNotesCountByUserId(ctx.user.id);
-
 	return {
 		...user,
 		rank_id: currentLevel.id,
 		rank_name: currentLevel.rank,
 		note_count: noteCount,
-		level_progression: levelProgression * 100,
+		level_progression: Math.floor(levelProgressionRate * 100),
 		cocktail_created_count: cocktailCreatedCount,
 	};
-};
-
-module.exports.deleteUser = async (_, {}, ctx) => {
-	const user = await getUserInDb(ctx.user.id);
-	if (user) {
-		deleteUserInDb(id);
-		return `"L'utilisateur vient d'être supprimé avec succès" (utilisateur: ${user.username})`;
-	} else {
-		throw new Error('User not founded');
-	}
 };

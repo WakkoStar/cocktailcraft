@@ -6,6 +6,8 @@ import { createStore } from 'redux';
 import rootReducer from '../redux/reducers';
 import Cocktails from '../Cocktails';
 import ModifyCocktail from '../Cocktails/cocktail';
+import AdminCocktails from '../CocktailsAdmin';
+import ModifyAdminCocktail from '../CocktailsAdmin/cocktail';
 import CreateCocktail from '../Cocktails/new';
 import Ingredients from '../Ingredients';
 import ModifyIngredient from '../Ingredients/ingredient';
@@ -30,6 +32,11 @@ function App() {
 							<h4>COCKTAILMANIA</h4>
 						</li>
 						<li className="nav-item">
+							<Link className="nav-link" to="/admin-cocktails">
+								Approves
+							</Link>
+						</li>
+						<li className="nav-item">
 							<Link className="nav-link" to="/cocktails">
 								Cocktails
 							</Link>
@@ -44,6 +51,14 @@ function App() {
 								Gouts
 							</Link>
 						</li>
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="http://localhost:4000/fb/login"
+							>
+								LOGIN
+							</a>
+						</li>
 					</ul>
 				</nav>
 				<Switch>
@@ -55,6 +70,9 @@ function App() {
 					</Route>
 					<Route exact path="/cocktails">
 						<Cocktails />
+					</Route>
+					<Route exact path="/admin-cocktails">
+						<AdminCocktails />
 					</Route>
 					<Route exact path="/gouts/new">
 						<CreateGout />
@@ -73,6 +91,9 @@ function App() {
 					</Route>
 					<Route exact path="/cocktails/:id">
 						<ModifyCocktail />
+					</Route>
+					<Route exact path="/admin-cocktails/:id">
+						<ModifyAdminCocktail />
 					</Route>
 				</Switch>
 			</Router>

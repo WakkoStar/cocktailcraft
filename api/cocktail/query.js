@@ -4,28 +4,23 @@ const {
 } = require('./data');
 
 module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
-	if (!is_visible && !ctx.user.is_admin) throw new Error('Not admin');
-	const cocktails = await getCocktails(is_visible);
-	return cocktails;
+	return new Promise(async (resolve, reject) => {
+		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
+		const cocktails = await getCocktails(is_visible);
+		resolve(cocktails);
+	});
 };
 
-module.exports.getOneCocktails = async (_, { id }) => {
-	const cocktails = await getCocktails(true);
-	const cocktailFinded = cocktails.filter(
-		cocktail => parseInt(cocktail.id) === id
-	)[0];
-	if (!cocktailFinded) throw new Error('cocktail no founded');
-	return cocktailFinded;
-};
-
-module.exports.getOneCocktailsForAdmin = async (_, { id }, ctx) => {
-	if (!ctx.user.is_admin) throw new Error('Not admin');
-	const cocktails = await getCocktails(false);
-	const cocktailFinded = cocktails.filter(
-		cocktail => parseInt(cocktail.id) === id
-	)[0];
-	if (!cocktailFinded) throw new Error('cocktail no founded');
-	return cocktailFinded;
+module.exports.getOneCocktails = async (_, { id, is_visible }, ctx) => {
+	return new Promise(async (resolve, reject) => {
+		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
+		const cocktails = await getCocktails(is_visible);
+		const cocktailFinded = cocktails.filter(
+			cocktail => parseInt(cocktail.id) === id
+		)[0];
+		if (!cocktailFinded) reject('cocktail no founded');
+		resolve(cocktailFinded);
+	});
 };
 
 module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
@@ -47,10 +42,9 @@ module.exports.getCraftedCocktails = async (_, { cluster }) => {
 	//cluster : [ingredient.id]
 	const cocktails = await getCocktails(true);
 	const createdCocktails = cocktails.filter(({ ingredients }) => {
-		const ingredientArray = ingredients.map(
-			({ ingredient_id }) => ingredient_id
+		const ingredientArray = ingredients.map(({ ingredient_id }) =>
+			parseInt(ingredient_id)
 		);
-
 		const inCocktail = ingredientArray.every(id => cluster.includes(id));
 		const inCluster = cluster.every(id => ingredientArray.includes(id));
 

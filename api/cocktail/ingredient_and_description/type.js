@@ -12,7 +12,7 @@ type Description {
         id: Int
         content : String
         preparation: String
-        cocktail_id: Int
+        id_cocktail: Int
     }
 
     type Ingredient {
@@ -20,7 +20,7 @@ type Description {
         ingredient_id: Int
         volume: String
         nom: String
-        cocktail_id: Int
+        id_cocktail: Int
     }
 
     input descriptionInput {

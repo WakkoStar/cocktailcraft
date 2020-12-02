@@ -4,39 +4,62 @@ const {
 	modifyCocktail: modifyCocktailInDb,
 	deleteCocktail: deleteCocktailInDb,
 	getAllCocktails: getCocktails,
+	setVisibility: setVisibilityInDb,
 } = require('./data');
 
+const { updateUserExp, updateCocktailCreatedInDay } = require('../users/data');
+
+const getAllCocktails = async () => {
+	const res1 = await getCocktails(false);
+	const res2 = await getCocktails(true);
+	const cocktails = res1.concat(res2);
+	return cocktails;
+};
+
 const executeRequestInDb = async (params, callback, msg, ctx) => {
-	if (!ctx.user.is_admin) throw new Error('Not admin');
-	//execute callback
-	if (_.some(params, _.isUndefined)) throw new Error('empty fields');
-	const cocktails = await getCocktails();
-	const existsCocktail = cocktails.find(
-		cocktail => parseInt(cocktail.id) === params.id
-	);
-	if (existsCocktail) {
-		callback({ ...params });
-		return `${msg} (cocktail: ${existsCocktail.nom})`;
-	} else {
-		throw new Error('ID no founded');
-	}
+	return new Promise(async (resolve, reject) => {
+		if (!ctx.user.is_admin) reject('Not admin');
+		//execute callback
+		if (_.some(params, _.isUndefined)) reject('empty fields');
+		const cocktails = await getAllCocktails();
+		const existsCocktail = cocktails.find(
+			cocktail => parseInt(cocktail.id) === params.id
+		);
+		if (existsCocktail) {
+			callback({ ...params });
+			resolve(`${msg} (cocktail: ${existsCocktail.nom})`);
+		} else {
+			reject('ID no founded');
+		}
+	});
 };
 
 module.exports.createCocktail = async (
-	_,
+	__,
 	{ nom, gout_array, difficulty },
 	ctx
 ) => {
-	if (!ctx.user.is_admin) throw new Error('Not admin');
-	if (!nom || !gout_array || !difficulty) throw new Error('empty fields');
-	const cocktails = await getCocktails();
-	const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);
-	if (existsCocktail) {
-		throw new Error('Cocktail already exists');
-	} else {
-		const getId = await createCocktailInDb(nom, gout_array, difficulty);
-		return `${nom} vient d'être créé avec succès #${getId}`;
-	}
+	return new Promise(async (resolve, reject) => {
+		if (!nom || !gout_array || !difficulty) reject('empty fields');
+		const cocktails = await getAllCocktails();
+		const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);
+		if (existsCocktail || ctx.user.cocktail_created_in_day >= 10) {
+			reject("Cocktail already exists or you can't create new cocktail");
+		} else {
+			const getId = await createCocktailInDb(
+				nom,
+				gout_array,
+				difficulty,
+				ctx.user.id
+			);
+			updateCocktailCreatedInDay(
+				Number(ctx.user.cocktail_created_in_day) + 1,
+				ctx.user.id
+			);
+			updateUserExp(Number(ctx.user.experience) + 100, ctx.user.id);
+			resolve(`${nom} vient d'être créé avec succès #${getId}`);
+		}
+	});
 };
 
 module.exports.modifyCocktail = async (
@@ -57,6 +80,15 @@ module.exports.deleteCocktail = async (_, { id }, ctx) => {
 		{ id },
 		deleteCocktailInDb,
 		`Le cocktail vient d'être supprimé avec succès`,
+		ctx
+	);
+};
+
+module.exports.setVisibility = async (_, { is_visible, id }, ctx) => {
+	return await executeRequestInDb(
+		{ is_visible, id },
+		setVisibilityInDb,
+		`Le cocktail vient de changer de vue avec succès`,
 		ctx
 	);
 };

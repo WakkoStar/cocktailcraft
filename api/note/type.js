@@ -1,14 +1,13 @@
-const { addNote, updateNote } = require('./mutation');
+const { addNote } = require('./mutation');
 const { getNoteOfCocktail } = require('./query');
 module.exports.schema = `
     type Note {
-        rate: Int
+        rate: Float
         count: Int
     }
 `;
 
 module.exports.resolvers = {
 	addNote,
-	updateNote,
 	cocktailNote: getNoteOfCocktail,
 };

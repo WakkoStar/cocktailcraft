@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 //CORS
 const corsOptions = {
-	origin: process.env.CLIENT_URL,
+	origin: [process.env.CLIENT_URL, '192.168.1.11'],
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	preflightContinue: false,
 	optionsSuccessStatus: 204,
@@ -31,8 +31,13 @@ const corsOptions = {
 //LOGIN ON MOBILE
 app.post('/register', async (req, res) => {
 	const profile = req.body.user;
-	await register(profile);
-	res.json('Registered');
+	register(profile)
+		.then(() => {
+			res.json({ status: 'connected' });
+		})
+		.catch(() => {
+			res.status(401).send({ status: 'banned' });
+		});
 });
 
 //GRAPHQL CONNECTION
@@ -42,9 +47,9 @@ const server = new ApolloServer({
 		${schema}
 	`,
 	resolvers: root,
-	/*context: async ({ req }) => ({
+	context: async ({ req }) => ({
 		user: await isLogged(req),
-	}),*/
+	}),
 });
 server.applyMiddleware({ app, cors: corsOptions });
 
@@ -54,8 +59,8 @@ app.use(cookieParser());
 
 app.get('/fb/login', passport.authenticate('facebook'));
 app.get(
-	'fb/login/callback',
-	passport.authenticate('facebook', { failureRedirect: '/login' }),
+	'/fb/login/callback',
+	passport.authenticate('facebook', { failureRedirect: '/fb/login' }),
 	(req, res) => {
 		res.cookie('jwt', req.user.token, {
 			maxAge: 900000,

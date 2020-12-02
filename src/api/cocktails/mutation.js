@@ -13,6 +13,10 @@ const DELETE_COCKTAIL = `mutation deleteCocktail ($id: Int!) {
     deleteCocktail (id: $id)
 }`;
 
+const SET_VISIBILITY = `mutation setVisibility ($id: Int!, $is_visible: Boolean!) {
+    setVisibility (id: $id, is_visible: $is_visible)
+}`;
+
 export const createCocktail = async (nom, gout_array, difficulty) => {
 	const req = await axios.post(
 		SERVER_URL,
@@ -75,4 +79,25 @@ export const deleteCocktail = async id => {
 
 	const res = req.data;
 	return res.data.deleteCocktail ? res.data.deleteCocktail : res.errors[0];
+};
+
+export const setVisibility = async (id, is_visible) => {
+	const req = await axios.post(
+		SERVER_URL,
+		{
+			query: SET_VISIBILITY,
+			variables: {
+				id,
+				is_visible,
+			},
+		},
+		{
+			headers: {
+				'Content-type': 'application/json',
+			},
+		}
+	);
+
+	const res = req.data;
+	return res.data.setVisibility ? res.data.setVisibility : res.errors[0];
 };

@@ -12,7 +12,7 @@ module.exports.addNote = (user_id, cocktail_id, rate) => {
 		'INSERT INTO notes (user_id, cocktail_id, rate) VALUES ($1, $2, $3)';
 	const values = [user_id, cocktail_id, rate];
 
-	client.query(text, values, (err, res) => {
+	client.query(text, values, err => {
 		if (err) throw err;
 	});
 };
@@ -22,7 +22,7 @@ module.exports.updateNote = (user_id, cocktail_id, rate) => {
 		'UPDATE notes SET rate = $1 WHERE user_id = $2 AND cocktail_id = $3';
 	const values = [rate, user_id, cocktail_id];
 
-	client.query(text, values, (err, res) => {
+	client.query(text, values, err => {
 		if (err) throw err;
 	});
 };

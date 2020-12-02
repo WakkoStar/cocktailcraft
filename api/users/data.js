@@ -34,7 +34,7 @@ module.exports.updateCocktailCreatedInDay = (cocktail_created_in_day, id) => {
 	});
 };
 module.exports.updateCocktailCrafted = (cocktail_count, id) => {
-	const text = 'UPDATE users SET cocktail_crafted = $1 WHERE id = $2';
+	const text = 'UPDATE users SET cocktail_crafted_count = $1 WHERE id = $2';
 	const values = [cocktail_count, id];
 
 	client.query(text, values, (err, res) => {
@@ -78,4 +78,20 @@ module.exports.getNotesCountByUserId = async user_id => {
 	const values = [user_id];
 	const res = await client.query(text, values);
 	return res.rowCount;
+};
+
+module.exports.reportUser = async (user_id, rate) => {
+	const text = 'UPDATE users SET report_count = $1 WHERE id = $2';
+	const values = [rate, user_id];
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
+
+module.exports.banUser = async user_id => {
+	const text = 'UPDATE users SET has_ban = true WHERE id = $1';
+	const values = [user_id];
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
 };

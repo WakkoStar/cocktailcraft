@@ -27,6 +27,11 @@ const {
 	resolvers: noteResolvers,
 } = require('../note/type');
 
+const {
+	schema: notifSchema,
+	resolvers: notifResolvers,
+} = require('../notifications/type');
+
 module.exports.schema = `
     type Query {
         ingredient(id: Int!): Ingredients
@@ -39,8 +44,8 @@ module.exports.schema = `
         gout(id: Int!): Gouts
         gouts: [Gouts]
 
-        cocktail(id : Int!): Cocktails
-        cocktails : [Cocktails]
+        cocktail(id : Int!, is_visible: Boolean): Cocktails
+        cocktails(is_visible: Boolean) : [Cocktails]
         availCocktails(ingredient_array : [Int!]!) : [Cocktails]
 		craftedCocktails(cluster: [Int!]!): [Cocktails]
 		createdCocktailsByUser: [Cocktails]
@@ -48,6 +53,12 @@ module.exports.schema = `
 		user: User
 
 		cocktailNote(cocktail_id: Int!): Note
+
+		lovedCocktails: [Cocktails]
+
+		history: [Cocktails]
+
+		notifications: [Notifcations]
     }
     type Mutation {
         createIngredient(nom: String!, alias:[String], family_of:[Int]): String
@@ -61,6 +72,7 @@ module.exports.schema = `
         createCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!) : String
         modifyCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, id: Int!) : String
         deleteCocktail(id: Int!): String
+		setVisibility(id: Int!, is_visible: Boolean!): String
 
         createDescriptionCocktail(input: descriptionInput!): String
         createIngredientCocktail(input: ingredientInput!):String
@@ -72,8 +84,18 @@ module.exports.schema = `
 		deleteIngredientCocktail(input: ingredientInput!): String
 		
 		deleteUser: String
+		reportUser(user_id: Int!): String
+		banUser(user_id: Int!):String
 
-		addNote(cocktail_id: Int!, rate: Int!): String
+		addNote(cocktail_id: Int!, rate: Float!): String
+
+		addLovedCocktail(cocktail_id: Int!): String
+		deleteLovedCocktail(cocktail_id: Int!): String
+
+		addToHistory(cocktail_id: Int!): String
+
+		addNotifications(message: String!, user_id: Int!): String
+		deleteNotifications(id: Int!): String
     } 
     ${ingredientSchema}
     ${cocktailSchema}
@@ -81,6 +103,7 @@ module.exports.schema = `
 	${elementCocktailSchema}
 	${userSchema}
 	${noteSchema}
+	${notifSchema}
 `;
 
 const {
@@ -100,10 +123,16 @@ const {
 	cocktails,
 	availCocktails,
 	craftedCocktails,
+	lovedCocktails,
 	createdCocktailsByUser,
+	history,
 	createCocktail,
 	modifyCocktail,
 	deleteCocktail,
+	addLovedCocktail,
+	deleteLovedCocktail,
+	setVisibility,
+	addToHistory,
 } = cocktailResolvers;
 
 const {
@@ -115,11 +144,13 @@ const {
 	deleteDescriptionCocktail,
 } = elementCocktailResolvers;
 
-const { user, deleteUser } = userResolvers;
+const { user, deleteUser, reportUser, banUser } = userResolvers;
 
 const { gout, gouts, createGout, modifyGout, deleteGout } = goutResolvers;
 
 const { addNote, cocktailNote } = noteResolvers;
+
+const { addNotifications, deleteNotifications, notifications } = notifResolvers;
 
 module.exports.root = {
 	Query: {
@@ -142,6 +173,10 @@ module.exports.root = {
 		user,
 
 		cocktailNote,
+		lovedCocktails,
+		history,
+
+		notifications,
 	},
 	Mutation: {
 		createIngredient,
@@ -155,6 +190,7 @@ module.exports.root = {
 		createCocktail,
 		modifyCocktail,
 		deleteCocktail,
+		setVisibility,
 
 		createDescriptionCocktail,
 		createIngredientCocktail,
@@ -164,7 +200,16 @@ module.exports.root = {
 		deleteDescriptionCocktail,
 
 		deleteUser,
+		reportUser,
+		banUser,
 
 		addNote,
+
+		addLovedCocktail,
+		deleteLovedCocktail,
+		addToHistory,
+
+		addNotifications,
+		deleteNotifications,
 	},
 };

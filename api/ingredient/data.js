@@ -1,5 +1,6 @@
 const client = require('../utils/bdd');
-const _ = require('lodash');
+const { getHasFamily } = require('./helpers');
+
 module.exports.getAllIngredients = async () => {
 	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
 	const parsedIngredients = res.rows;
@@ -8,36 +9,12 @@ module.exports.getAllIngredients = async () => {
 	return fullfilledIngredients;
 };
 
-const getHasFamily = ingredients => {
-	let families_of = ingredients.map(({ family_of }) => family_of);
-	return ingredients.map(ingredient => {
-		const hasFamily = families_of.some(family_of => {
-			return family_of.includes(ingredient.id);
-		});
-		return { ...ingredient, hasFamily };
-	});
-};
-
-module.exports.getAllIngredientsOfFamily = async family_of => {
-	const res = await client.query('SELECT * FROM ingredients ORDER BY nom');
-	const parsedIngredients = res.rows;
-	//get if they have an family
-	const fullfilledIngredients = getHasFamily(parsedIngredients);
-
-	const ingredientsOfThisFamily = fullfilledIngredients.filter(ingredient => {
-		const family_ofElement = ingredient.family_of.map(el => parseInt(el));
-		return _.intersection(family_ofElement, family_of).length;
-	});
-
-	return ingredientsOfThisFamily;
-};
-
 module.exports.createIngredient = (nom, alias, family_of) => {
 	const text =
 		'INSERT INTO ingredients (nom, alias, family_of) VALUES ($1, $2, $3)';
 	const values = [nom, alias, family_of];
 
-	client.query(text, values, (err, res) => {
+	client.query(text, values, err => {
 		if (err) throw err;
 	});
 };
@@ -47,7 +24,7 @@ module.exports.modifyIngredient = ({ nom, alias, family_of, id }) => {
 		'UPDATE ingredients SET nom = $1, alias=$2, family_of=$3 WHERE id = $4';
 	const values = [nom, alias, family_of, id];
 
-	client.query(text, values, (err, res) => {
+	client.query(text, values, err => {
 		if (err) throw err;
 	});
 };
@@ -56,7 +33,7 @@ module.exports.deleteIngredient = ({ id }) => {
 	const text = 'DELETE FROM ingredients WHERE id = $1';
 	const values = [id];
 
-	client.query(text, values, (err, res) => {
+	client.query(text, values, err => {
 		if (err) throw err;
 	});
 };

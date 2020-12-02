@@ -6,9 +6,11 @@ module.exports.getAllGouts = async () => {
 };
 
 module.exports.getOneGouts = async (_, { id }) => {
-	const gouts = await getGouts();
-	const gout = gouts.filter(gout => parseInt(gout.id) === id)[0];
+	return new Promise(async (resolve, reject) => {
+		const gouts = await getGouts();
+		const gout = gouts.filter(gout => parseInt(gout.id) === id)[0];
 
-	if (!gout) throw new Error('Gout no founded');
-	return gout;
+		if (!gout) reject('Gout no founded');
+		resolve(gout);
+	});
 };

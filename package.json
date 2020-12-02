@@ -22,6 +22,7 @@
 		"graphql-tag": "^2.10.3",
 		"isomorphic-fetch": "^2.2.1",
 		"lodash": "^4.17.20",
+		"moment": "^2.29.1",
 		"node-fetch": "^2.6.1",
 		"nodemon": "^2.0.4",
 		"passport": "^0.4.1",
