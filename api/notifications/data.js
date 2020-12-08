@@ -10,7 +10,7 @@ module.exports.getAllNotificationsByUserId = async user_id => {
 };
 
 module.exports.addNotifications = ({ message, user_id }) => {
-	const text = 'INSERT INTO gouts (message, user_id) VALUES ($1, $2)';
+	const text = 'INSERT INTO notifications (message, user_id) VALUES ($1, $2)';
 	const values = [message, user_id];
 
 	client.query(text, values, err => {

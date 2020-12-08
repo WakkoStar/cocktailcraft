@@ -52,6 +52,7 @@ const createDescription = async input => {
 };
 
 const createIngredient = async input => {
+	console.log(input);
 	const req = await axios.post(
 		SERVER_URL,
 		{

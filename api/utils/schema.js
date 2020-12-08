@@ -58,7 +58,7 @@ module.exports.schema = `
 
 		history: [Cocktails]
 
-		notifications: [Notifcations]
+		notifications: [Notifications]
     }
     type Mutation {
         createIngredient(nom: String!, alias:[String], family_of:[Int]): String

@@ -17,6 +17,7 @@ const { addLovedCocktail, deleteLovedCocktail } = require('./loved/mutation');
 
 const { getHistory } = require('./history/query');
 const { addToHistory } = require('./history/mutation');
+
 module.exports.schema = `
     type Cocktails {
         id : Int

@@ -114,7 +114,6 @@ module.exports.inventorySelection = async (_, { inventory, cluster }) => {
 	});
 	//sort by count
 	let sortedIng = countedIng.sort((a, b) => b.count - a.count);
-
 	return sortedIng.filter(ingredient => {
 		const ingredientAlreadyInCluster = !cluster.includes(ingredient.id);
 		const occurences = ingredient.count;

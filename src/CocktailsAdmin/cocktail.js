@@ -16,10 +16,12 @@ import { reportUser, banUser } from '../api/user/mutation';
 import Ingredients from './ingredients';
 import Gouts from './gouts';
 import Descriptions from './descriptions';
+import { addNotifications } from '../api/notifications/mutation';
 
 const Cocktail = props => {
 	let { id } = useParams();
 	let history = useHistory();
+
 	const { gouts, descriptions, ingredients } = props;
 	const [cocktail, setCocktail] = useState({
 		nom: '',
@@ -60,6 +62,10 @@ const Cocktail = props => {
 
 		console.log(msg);
 		history.push('/admin-cocktails');
+		await addNotifications(
+			`Votre cocktail, '${cocktail.nom}', a été accepté !`,
+			parseInt(cocktail.user_id)
+		);
 	};
 
 	const setDeleteCocktail = async () => {
@@ -68,16 +74,28 @@ const Cocktail = props => {
 		await refreshDescription(cocktail.descriptions, [], parseInt(id));
 		console.log(msg);
 		history.push('/admin-cocktails');
+		await addNotifications(
+			`Malheureusement, votre cocktail, '${cocktail.nom}', a été refusé. 
+			Soit il existe déjà, soit il ne correspond aux normes attendues`,
+			parseInt(cocktail.user_id)
+		);
 	};
 
 	const setReportUser = async () => {
 		await setDeleteCocktail();
 		reportUser(parseInt(cocktail.user_id));
+		await addNotifications(
+			`Votre cocktail, '${cocktail.nom}', a été refusé. 
+			Il ne respecte pas le règlement, vous avez reçu un avertissement`,
+			parseInt(cocktail.user_id)
+		);
 	};
+
 	const setBanUser = async () => {
 		await setDeleteCocktail();
 		banUser(parseInt(cocktail.user_id));
 	};
+
 	return (
 		<div className="container" style={{ marginTop: '2vw' }}>
 			<form>

@@ -1,6 +1,11 @@
 var _ = require('lodash');
 const client = require('../utils/bdd');
 
+const {
+	concatElementsIntoCocktails,
+	getElementsOfCocktail,
+} = require('./helpers');
+
 module.exports.getAllCocktails = async (is_visible = true) => {
 	const resIngredients = await client.query(
 		`SELECT ic.id AS el_id, ic.ingredient_id, i.nom, ic.volume, id_cocktail FROM cocktails c 
@@ -34,49 +39,6 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 	);
 
 	return concatElementsIntoCocktails(cocktails, descriptions, ingredients);
-};
-
-const concatElementsIntoCocktails = (
-	cocktails,
-	cocktailDescriptions,
-	cocktailIngredients
-) => {
-	return cocktails.map(cocktail => {
-		const elementIngredient = cocktailIngredients.find(
-			el => el.id === cocktail.id
-		);
-		const elementDesc = cocktailDescriptions.find(
-			el => el.id === cocktail.id
-		);
-		return {
-			...cocktail,
-			ingredients: elementIngredient.ingredients,
-			descriptions: elementDesc.descriptions,
-		};
-	});
-};
-
-const getElementsOfCocktail = async (cocktails, elementsCocktail, key) => {
-	const fullfilledCocktails = cocktails.map(({ id }) => {
-		const elementsForOneCocktail = elementsCocktail.filter(
-			({ id_cocktail }) => id_cocktail === id
-		);
-
-		return elementsForOneCocktail.reduce(
-			(cocktails, element) => {
-				return {
-					...cocktails,
-					[key]: _.concat(cocktails[key], {
-						...element,
-						id: element.el_id,
-					}),
-				};
-			},
-			{ id, [key]: [] }
-		);
-	});
-
-	return fullfilledCocktails;
 };
 
 module.exports.getCreatedCocktailByUser = async id => {

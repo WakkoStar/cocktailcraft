@@ -22,18 +22,14 @@ const executeRequestElementInDb = (params, callback, msg, ctx) => {
 	});
 };
 
-const verifyCocktail = id => {
-	return new Promise(async (resolve, reject) => {
-		const res1 = await getCocktails(false);
-		const res2 = await getCocktails(true);
-		const cocktails = res1.concat(res2);
-		const existsCocktail = cocktails.find(
-			cocktail => parseInt(cocktail.id) === parseInt(id)
-		);
-		existsCocktail
-			? resolve('Cocktail founded')
-			: reject('cocktail no founded');
-	});
+const verifyCocktail = async id => {
+	const res1 = await getCocktails(false);
+	const res2 = await getCocktails(true);
+	const cocktails = res1.concat(res2);
+	const existsCocktail = cocktails.find(
+		cocktail => parseInt(cocktail.id) === parseInt(id)
+	);
+	if (!existsCocktail) throw new Error('cocktail no founded');
 };
 
 module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
