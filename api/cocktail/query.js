@@ -3,6 +3,8 @@ const {
 	getCreatedCocktailByUser,
 } = require('./data');
 
+const { getHelpersCocktails } = require('../utils/finder');
+
 module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
 	return new Promise(async (resolve, reject) => {
 		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
@@ -12,14 +14,12 @@ module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
 };
 
 module.exports.getOneCocktails = async (_, { id, is_visible }, ctx) => {
+	const isVisible = is_visible == undefined ? true : is_visible;
 	return new Promise(async (resolve, reject) => {
 		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
-		const cocktails = await getCocktails(is_visible);
-		const cocktailFinded = cocktails.filter(
-			cocktail => parseInt(cocktail.id) === id
-		)[0];
-		if (!cocktailFinded) reject('cocktail no founded');
-		resolve(cocktailFinded);
+		const cocktail = await getHelpersCocktails(id, [isVisible]);
+		if (!cocktail.isExist) reject('cocktail no founded');
+		resolve(cocktail);
 	});
 };
 
@@ -39,7 +39,6 @@ module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
 };
 
 module.exports.getCraftedCocktails = async (_, { cluster }) => {
-	//cluster : [ingredient.id]
 	const cocktails = await getCocktails(true);
 	const createdCocktails = cocktails.filter(({ ingredients }) => {
 		const ingredientArray = ingredients.map(({ ingredient_id }) =>

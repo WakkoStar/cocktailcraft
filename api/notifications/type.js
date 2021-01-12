@@ -3,7 +3,8 @@ const { getNotifications } = require('./query');
 
 module.exports.schema = `
     type Notifications {
-        message: Float
+        message: String
+        time: String
         id: Int
     }
 `;

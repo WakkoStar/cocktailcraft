@@ -2,12 +2,16 @@ var _ = require('lodash');
 const client = require('../../utils/bdd');
 
 module.exports.getAllIngredients = async () => {
-	const res = await client.query('SELECT * FROM ingredient_cocktail');
+	const res = await client.query(
+		'SELECT * FROM ingredient_cocktail ORDER BY volume'
+	);
 	return res.rows;
 };
 
 module.exports.getAllDescriptions = async () => {
-	const res = await client.query('SELECT * FROM description_cocktail');
+	const res = await client.query(
+		'SELECT * FROM description_cocktail ORDER BY preparation'
+	);
 	return res.rows;
 };
 

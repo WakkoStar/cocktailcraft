@@ -6,28 +6,20 @@ const {
 	setVisibility: setVisibilityInDb,
 } = require('./data');
 
+const { addNotifications } = require('../notifications/data');
 const { updateUserExp, updateCocktailCreatedInDay } = require('../users/data');
-const { getAllCocktails: getCocktails } = require('./data');
-
-const getConcatedCocktails = async () => {
-	const res1 = await getCocktails(false);
-	const res2 = await getCocktails(true);
-	const cocktails = res1.concat(res2);
-	return cocktails;
-};
+const { isValidDifficulty, isValidName, isValidGouts } = require('./helpers');
+const { getHelpersCocktails } = require('../utils/finder');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
 		if (!ctx.user.is_admin) reject('Not admin');
 		//execute callback
 		if (_.some(params, _.isUndefined)) reject('empty fields');
-		const cocktails = await getConcatedCocktails();
-		const existsCocktail = cocktails.find(
-			cocktail => parseInt(cocktail.id) === params.id
-		);
-		if (existsCocktail) {
+		const cocktail = await getHelpersCocktails(params.id, [true, false]);
+		if (cocktail.isExist) {
 			callback({ ...params });
-			resolve(`${msg} (cocktail: ${existsCocktail.nom})`);
+			resolve(`${msg} (cocktail: ${cocktail.nom})`);
 		} else {
 			reject('ID no founded');
 		}
@@ -40,14 +32,23 @@ module.exports.createCocktail = async (
 	ctx
 ) => {
 	return new Promise(async (resolve, reject) => {
+		//Check fields
+
 		if (!nom || !gout_array || !difficulty) reject('empty fields');
-		const cocktails = await getConcatedCocktails();
-		const existsCocktail = cocktails.find(cocktail => cocktail.nom === nom);
-		if (existsCocktail || ctx.user.cocktail_created_in_day >= 10) {
+
+		if (
+			!isValidDifficulty(difficulty) ||
+			!isValidName(nom) ||
+			!isValidGouts(gout_array)
+		)
+			reject('Invalid fields');
+		//Create cocktail if isn't already created
+		const cocktail = await getHelpersCocktails(null, [true, false], nom);
+		if (cocktail.isExist || ctx.user.cocktail_created_in_day >= 10) {
 			reject("Cocktail already exists or you can't create new cocktail");
 		} else {
 			const getId = await createCocktailInDb(
-				nom,
+				nom.trim(),
 				gout_array,
 				difficulty,
 				ctx.user.id
@@ -57,6 +58,10 @@ module.exports.createCocktail = async (
 				ctx.user.id
 			);
 			updateUserExp(Number(ctx.user.experience) + 100, ctx.user.id);
+			addNotifications({
+				message: `Votre cocktail "${nom}" a été soumis, nous traitons votre demande...`,
+				user_id: ctx.user.id,
+			});
 			resolve(`${getId}`);
 		}
 	});

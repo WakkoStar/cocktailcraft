@@ -3,7 +3,7 @@ const {
 	updateNote: updateNoteInDb,
 	getAllNotesByCocktailId,
 } = require('./data');
-const { getAllCocktails } = require('../cocktail/data');
+const { getHelpersCocktails } = require('../utils/finder');
 const { updateUserExp } = require('../users/data');
 var _ = require('lodash');
 
@@ -15,14 +15,8 @@ module.exports.addNote = async (__, { cocktail_id, rate }, ctx) => {
 		if (_.isNaN(parseFloat(rate)) && parseFloat(rate) > 5) {
 			reject('Invalid rate');
 		}
-		const cocktails = await getAllCocktails();
-		if (
-			_.isUndefined(
-				cocktails.find(({ id }) => parseInt(id) == cocktail_id)
-			)
-		) {
-			reject('Cocktail not found');
-		}
+		const cocktail = await getHelpersCocktails(cocktail_id);
+		if (!cocktail.isExist) reject('Cocktail not found');
 
 		const notes = await getAllNotesByCocktailId(cocktail_id);
 		const isUserAlreadyNoted = notes.find(

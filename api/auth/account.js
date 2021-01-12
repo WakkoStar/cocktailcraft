@@ -7,7 +7,7 @@ const { getUserByProviderId, createUser } = require('../users/data');
 //TODO :GOOGLE
 const isLogged = async req => {
 	let token;
-	//PC
+	//PC, TODO : to delete
 	if (req.headers.cookie) {
 		token = req.headers.cookie.replace('jwt=', '');
 		//MOBILE

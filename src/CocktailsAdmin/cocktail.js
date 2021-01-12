@@ -75,8 +75,7 @@ const Cocktail = props => {
 		console.log(msg);
 		history.push('/admin-cocktails');
 		await addNotifications(
-			`Malheureusement, votre cocktail, '${cocktail.nom}', a été refusé. 
-			Soit il existe déjà, soit il ne correspond aux normes attendues`,
+			`Malheureusement, votre cocktail, '${cocktail.nom}', a été refusé. Soit il existe déjà, soit il ne correspond aux normes attendues`,
 			parseInt(cocktail.user_id)
 		);
 	};

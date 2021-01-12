@@ -10,18 +10,22 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 	const resIngredients = await client.query(
 		`SELECT ic.id AS el_id, ic.ingredient_id, i.nom, ic.volume, id_cocktail FROM cocktails c 
 		FULL JOIN ingredient_cocktail ic ON c.id = ic.id_cocktail 
-		FULL JOIN ingredients i ON i.id = ic.ingredient_id`
+		FULL JOIN ingredients i ON i.id = ic.ingredient_id
+		ORDER BY volume`
 	);
 
 	const resDescriptions = await client.query(
 		`SELECT dc.id as el_id, content, preparation, id_cocktail FROM cocktails c 
-		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail`
+		FULL JOIN description_cocktail dc ON c.id = dc.id_cocktail
+		 ORDER BY preparation
+		`
 	);
 
 	const resCocktails = await client.query(
 		`SELECT c.id, c.nom, c.gout_array, c.difficulty, c.user_id, u.username FROM cocktails c 
 		FULL JOIN users u ON u.id = c.user_id
 		WHERE is_visible = $1 
+		ORDER BY creation_date
 		`,
 		[is_visible]
 	);
