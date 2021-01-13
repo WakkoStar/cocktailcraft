@@ -13,9 +13,15 @@ const { getHelpersCocktails } = require('../utils/finder');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
 		//execute callback
-		if (_.some(params, _.isUndefined)) reject('empty fields');
+		if (_.some(params, _.isUndefined)) {
+			reject('empty fields');
+			return;
+		}
 		const cocktail = await getHelpersCocktails(params.id, [true, false]);
 		if (cocktail.isExist) {
 			callback({ ...params });
@@ -27,25 +33,32 @@ const executeRequestInDb = async (params, callback, msg, ctx) => {
 };
 
 module.exports.createCocktail = async (
-	__,
+	_,
 	{ nom, gout_array, difficulty },
 	ctx
 ) => {
 	return new Promise(async (resolve, reject) => {
 		//Check fields
 
-		if (!nom || !gout_array || !difficulty) reject('empty fields');
+		if (!nom || !gout_array || !difficulty) {
+			reject('empty fields');
+			return;
+		}
 
 		if (
 			!isValidDifficulty(difficulty) ||
 			!isValidName(nom) ||
 			!isValidGouts(gout_array)
-		)
+		) {
 			reject('Invalid fields');
+			return;
+		}
+
 		//Create cocktail if isn't already created
 		const cocktail = await getHelpersCocktails(null, [true, false], nom);
 		if (cocktail.isExist || ctx.user.cocktail_created_in_day >= 10) {
 			reject("Cocktail already exists or you can't create new cocktail");
+			return;
 		} else {
 			const getId = await createCocktailInDb(
 				nom.trim(),

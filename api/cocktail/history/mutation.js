@@ -9,8 +9,10 @@ const { getCreatedCocktailByUser, getAllCocktails } = require('../data');
 module.exports.addToHistory = async (_, { cocktail_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
 		const cocktails = await getAllCocktails(true);
+
 		if (!cocktails.find(cocktail => cocktail.id == cocktail_id)) {
 			reject('Cocktail not found');
+			return;
 		}
 
 		const history = await getHistory(ctx.user.id);

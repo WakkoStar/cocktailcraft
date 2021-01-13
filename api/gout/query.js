@@ -10,7 +10,10 @@ module.exports.getOneGouts = async (_, { id }) => {
 		const gouts = await getGouts();
 		const gout = gouts.filter(gout => parseInt(gout.id) === id)[0];
 
-		if (!gout) reject('Gout no founded');
-		resolve(gout);
+		if (!gout) {
+			reject('Gout no founded');
+		} else {
+			resolve(gout);
+		}
 	});
 };

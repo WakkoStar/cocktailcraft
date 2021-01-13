@@ -60,7 +60,7 @@ const Descriptions = props => {
 									})
 								}
 							>
-								<option value="Directement dans un verre">
+								<option value="Directement dans le verre">
 									Directement dans un verre
 								</option>
 								<option value="Shaker">Shaker</option>

@@ -9,8 +9,14 @@ const { getHelpersIngredient } = require('../utils/finder');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
-		if (_.some(params, _.isUndefined)) reject('empty fields');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
+		if (_.some(params, _.isUndefined)) {
+			reject('empty fields');
+			return;
+		}
 
 		const ingredient = await getHelpersIngredient(params.id);
 		if (ingredient.isExist) {
@@ -24,7 +30,10 @@ const executeRequestInDb = async (params, callback, msg, ctx) => {
 
 module.exports.createIngredient = async (_, { nom, alias, family_of }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
 		const ingredient = await getHelpersIngredient(null, nom);
 		if (ingredient.isExist) {
 			reject('Ingredient already exists');

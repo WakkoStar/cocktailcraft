@@ -7,8 +7,14 @@ const { getUser } = require('../users/data');
 
 module.exports.addNotifications = async (_, { message, user_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
-		if (!message || !user_id) reject('empty fields');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
+		if (!message || !user_id) {
+			reject('empty fields');
+			return;
+		}
 
 		const user = await getUser(user_id);
 		if (user) {
@@ -22,7 +28,10 @@ module.exports.addNotifications = async (_, { message, user_id }, ctx) => {
 
 module.exports.deleteNotifications = async (_, { id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!id) reject('empty fields');
+		if (!id) {
+			reject('empty fields');
+			return;
+		}
 
 		const user = await getUser(ctx.user.id);
 		if (user) {

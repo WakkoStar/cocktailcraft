@@ -21,7 +21,10 @@ module.exports.deleteUser = async (_, {}, ctx) => {
 
 module.exports.reportUser = async (_, { user_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (ctx.user.is_admin == false) reject('Not Admin');
+		if (ctx.user.is_admin == false) {
+			reject('Not Admin');
+			return;
+		}
 		const user = await getUserInDb(user_id);
 		if (user) {
 			reportUserInDb(user_id, user.report_count + 1);
@@ -37,7 +40,10 @@ module.exports.reportUser = async (_, { user_id }, ctx) => {
 
 module.exports.banUser = async (_, { user_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (ctx.user.is_admin == false) reject('Not Admin');
+		if (ctx.user.is_admin == false) {
+			reject('Not Admin');
+			return;
+		}
 		const user = await getUserInDb(user_id);
 		if (user) {
 			banUserInDb(user_id);

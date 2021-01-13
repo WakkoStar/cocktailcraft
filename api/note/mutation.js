@@ -11,12 +11,17 @@ module.exports.addNote = async (__, { cocktail_id, rate }, ctx) => {
 	return new Promise(async (resolve, reject) => {
 		if (_.isUndefined(cocktail_id) || _.isUndefined(rate)) {
 			reject('empty fields');
+			return;
 		}
 		if (_.isNaN(parseFloat(rate)) && parseFloat(rate) > 5) {
 			reject('Invalid rate');
+			return;
 		}
 		const cocktail = await getHelpersCocktails(cocktail_id);
-		if (!cocktail.isExist) reject('Cocktail not found');
+		if (!cocktail.isExist) {
+			reject('Cocktail not found');
+			return;
+		}
 
 		const notes = await getAllNotesByCocktailId(cocktail_id);
 		const isUserAlreadyNoted = notes.find(

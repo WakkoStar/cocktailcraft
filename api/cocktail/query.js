@@ -7,7 +7,10 @@ const { getHelpersCocktails } = require('../utils/finder');
 
 module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
+		if (!is_visible && !ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
 		const cocktails = await getCocktails(is_visible);
 		resolve(cocktails);
 	});
@@ -16,9 +19,15 @@ module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
 module.exports.getOneCocktails = async (_, { id, is_visible }, ctx) => {
 	const isVisible = is_visible == undefined ? true : is_visible;
 	return new Promise(async (resolve, reject) => {
-		if (!is_visible && !ctx.user.is_admin) reject('Not admin');
+		if (!is_visible && !ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
 		const cocktail = await getHelpersCocktails(id, [isVisible]);
-		if (!cocktail.isExist) reject('cocktail no founded');
+		if (!cocktail.isExist) {
+			reject('cocktail no founded');
+			return;
+		}
 		resolve(cocktail);
 	});
 };

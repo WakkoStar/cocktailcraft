@@ -46,6 +46,7 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 			!canModifyCocktail(input.id_cocktail, ctx)
 		) {
 			reject("Can't create description");
+			return;
 		}
 
 		const succeedMessage = executeRequestElementInDbMessage(
@@ -68,7 +69,7 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 
 module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		const cocktail = await getHelpersCocktail(input.id_cocktail, [
+		const cocktail = await getHelpersCocktails(input.id_cocktail, [
 			true,
 			false,
 		]);
@@ -82,9 +83,10 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 			!canModifyCocktail(input.id_cocktail, ctx)
 		) {
 			reject('Cant create this ingredient');
+			return;
 		}
 
-		const succeedMessage = executeRequestElementInDbMessage(
+		const succeedMessage = await executeRequestElementInDbMessage(
 			{ input },
 			createIngredientOfCocktail,
 			`Les ingrédients du cocktail vient d'être créé avec succès`,
@@ -99,9 +101,12 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 
 module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!canModifyCocktail) reject('invalid cocktail');
+		if (!canModifyCocktail) {
+			reject('invalid cocktail');
+			return;
+		}
 
-		const succeedMessage = executeRequestElementInDbMessage(
+		const succeedMessage = await executeRequestElementInDbMessage(
 			{ input },
 			updateDescriptionOfCocktail,
 			`Les descriptions du cocktail vient d'être modifiés avec succès`,
@@ -116,7 +121,10 @@ module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 
 module.exports.modifyIngredientCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!canModifyCocktail) reject('invalid cocktail');
+		if (!canModifyCocktail) {
+			reject('invalid cocktail');
+			return;
+		}
 		const succeedMessage = executeRequestElementInDbMessage(
 			{ input },
 			updateIngredientOfCocktail,

@@ -8,6 +8,7 @@ module.exports.getNoteOfCocktail = async (__, { cocktail_id }) => {
 			_.isUndefined(cocktails.find(c => parseInt(c.id) === cocktail_id))
 		) {
 			reject('Cocktail not found');
+			return;
 		}
 		const notes = await getAllNotesByCocktailId(cocktail_id);
 		const count = notes.length;

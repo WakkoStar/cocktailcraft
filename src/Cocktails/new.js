@@ -29,7 +29,7 @@ const Cocktail = props => {
 			cocktail.difficulty
 		);
 		console.info(msg);
-		const id = msg.replace(/^\D+/g, '');
+		const id = msg;
 		await refreshIngredient(
 			cocktail.ingredients,
 			ingredients,

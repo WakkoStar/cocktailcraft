@@ -49,13 +49,13 @@ module.exports.getElementsOfCocktail = async (
 
 module.exports.isValidDifficulty = difficulty => {
 	const difficulties = ['Très facile', 'Facile', 'Moyen', 'Difficile'];
-	return difficulties.includes(el => el == difficulty);
+	return difficulties.includes(difficulty);
 };
 
 module.exports.isValidPreparation = preparation => {
 	const preparations = ['Directement dans le verre', 'Au shaker'];
 
-	return preparations.includes(el => el == preparation);
+	return preparations.includes(preparation);
 };
 
 module.exports.isValidDescription = description => {
@@ -86,7 +86,7 @@ module.exports.isValidVolume = volume => {
 		'Aucune unité',
 	];
 
-	const isValidUnit = volumes.includes(el => volume.includes(el));
+	const isValidUnit = volumes.some(el => volume.includes(el));
 
 	const number = volume.replace(/^\D+/g, '');
 	const isValidNumber =
@@ -110,7 +110,7 @@ module.exports.isValidName = nom => {
 
 module.exports.isValidGouts = gout_array => {
 	if (gout_array.length < 1 || gout_array.length > 5) return false;
-	if (gout_array.every(({ gout }) => typeof parseInt(gout) != 'number'))
+	if (gout_array.some(({ gout }) => typeof parseInt(gout) != 'number'))
 		return false;
 
 	return true;

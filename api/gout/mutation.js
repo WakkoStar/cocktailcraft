@@ -8,8 +8,14 @@ const {
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
-		if (_.some(params, _.isUndefined)) reject('empty fields');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
+		if (_.some(params, _.isUndefined)) {
+			reject('empty fields');
+			return;
+		}
 		const gouts = await getGouts();
 		const existsGout = gouts.find(gout => parseInt(gout.id) === params.id);
 		if (existsGout) {
@@ -23,7 +29,10 @@ const executeRequestInDb = async (params, callback, msg, ctx) => {
 
 module.exports.createGout = async (_, { nom }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) reject('Not admin');
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
 		const gouts = await getGouts();
 		const existsGout = gouts.find(gout => gout.nom === nom);
 		if (existsGout) {

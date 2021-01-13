@@ -7,8 +7,10 @@ const _ = require('lodash');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (_.some(params, _.isUndefined) && _.isUndefined(ctx.user.id))
+		if (_.some(params, _.isUndefined) && _.isUndefined(ctx.user.id)) {
 			reject('empty fields');
+			return;
+		}
 		const cocktail = await getHelpersCocktails(params.cocktail_id, [true]);
 
 		if (cocktail.isExist) {
