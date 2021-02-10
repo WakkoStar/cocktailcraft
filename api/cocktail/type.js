@@ -28,6 +28,7 @@ module.exports.schema = `
 		difficulty : String
 		user_id: Int
 		username: String
+		image: String
     }
 `;
 

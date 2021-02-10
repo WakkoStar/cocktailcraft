@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (_.some(params, _.isUndefined) && _.isUndefined(ctx.user.id)) {
+		if (_.some(params, _.isNil) && _.isNil(ctx.user.id)) {
 			reject('empty fields');
 			return;
 		}
@@ -23,12 +23,13 @@ const executeRequestInDb = async (params, callback, msg, ctx) => {
 };
 
 module.exports.deleteLovedCocktail = async (_, { cocktail_id }, ctx) => {
-	return await executeRequestInDb(
+	const res = await executeRequestInDb(
 		{ cocktail_id },
 		deleteLovedCocktailInDb,
 		`Le cocktail vient d'être supprimé avec succès`,
 		ctx
 	);
+	return res;
 };
 
 module.exports.addLovedCocktail = async (_, { cocktail_id }, ctx) => {

@@ -58,6 +58,7 @@ module.exports.getCraftedCocktails = async (_, { cluster }) => {
 
 		return inCocktail && inCluster;
 	});
+
 	return createdCocktails;
 };
 

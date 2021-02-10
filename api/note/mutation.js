@@ -9,11 +9,15 @@ var _ = require('lodash');
 
 module.exports.addNote = async (__, { cocktail_id, rate }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (_.isUndefined(cocktail_id) || _.isUndefined(rate)) {
+		if (_.isNil(cocktail_id) || _.isNil(rate)) {
 			reject('empty fields');
 			return;
 		}
-		if (_.isNaN(parseFloat(rate)) && parseFloat(rate) > 5) {
+		if (
+			_.isNaN(parseFloat(rate)) ||
+			parseFloat(rate) > 5 ||
+			parseFloat(rate) < 0
+		) {
 			reject('Invalid rate');
 			return;
 		}

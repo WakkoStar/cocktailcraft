@@ -19,7 +19,6 @@ module.exports.schema = `
         alias: [String]
 		family_of: [Int]
 		hasFamily: Boolean
-		image: String
     }
 `;
 

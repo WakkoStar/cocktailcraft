@@ -3,7 +3,7 @@ const client = require('../../utils/bdd');
 
 module.exports.getHistory = async user_id => {
 	const res = await client.query(
-		`SELECT cocktail_id, nom FROM history_cocktail hc
+		`SELECT cocktail_id, nom, image FROM history_cocktail hc
         JOIN cocktails c ON c.id = hc.cocktail_id
         WHERE c.user_id = $1 ORDER BY time DESC `,
 		[user_id]

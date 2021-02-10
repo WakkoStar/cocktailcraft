@@ -10,6 +10,7 @@ module.exports.schema = `
         level_progression: Int
         cocktail_created_count: Int,
         note_count : Int, 
+        cocktail_created_in_day: Int,
         cocktail_crafted_count: Int
     }
 `;

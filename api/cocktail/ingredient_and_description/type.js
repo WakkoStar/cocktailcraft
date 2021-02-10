@@ -8,7 +8,7 @@ const {
 } = require('./mutation');
 
 module.exports.schema = `
-type Description {
+    type Description {
         id: Int
         content : String
         preparation: String

@@ -18,22 +18,30 @@ const {
 	isValidVolume,
 } = require('../helpers');
 
-const executeRequestElementInDbMessage = (params, callback, msg, ctx) => {
+const executeRequestElementInDb = (
+	params,
+	callback,
+	ctx,
+	isNeedToBeAdmin = true
+) => {
 	//to avoid admin rights on create function
-	if (!ctx.user.is_admin && !msg.includes('créé')) return null;
+	if (!ctx.user.is_admin && isNeedToBeAdmin) return false;
 	//execute callback
-	if (_.some(params, _.isUndefined)) return null;
-
+	if (_.some(params.input, _.isNil)) return false;
 	callback({ ...params });
-	return `${msg} (id_cocktail: ${params.input.id_cocktail})`;
+	return true;
 };
 
 const canModifyCocktail = async (id, ctx) => {
 	const cocktail = await getHelpersCocktails(id, [false, true]);
-
 	if (!cocktail.isExist) return false;
-	if (cocktail.is_visible == true && !ctx.user.is_admin) return false;
-	if (ctx.user.id != cocktail.user_id || !ctx.user.is_admin) return false;
+	if (!ctx.user.is_admin) {
+		if (cocktail.is_visible == true || cocktail.is_visible == undefined) {
+			return false;
+		}
+
+		if (ctx.user.id != cocktail.user_id) return false;
+	}
 
 	return true;
 };
@@ -43,13 +51,12 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 		if (
 			!isValidDescription(input.content) ||
 			!isValidPreparation(input.preparation) ||
-			!canModifyCocktail(input.id_cocktail, ctx)
+			!(await canModifyCocktail(input.id_cocktail, ctx))
 		) {
 			reject("Can't create description");
 			return;
 		}
-
-		const succeedMessage = executeRequestElementInDbMessage(
+		const isSucceed = executeRequestElementInDb(
 			{
 				input: {
 					...input,
@@ -57,11 +64,10 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 				},
 			},
 			createDescriptionsOfCocktail,
-			`La description du cocktail vient d'être créé avec succès`,
-			ctx
+			ctx,
+			false
 		);
-
-		succeedMessage
+		isSucceed
 			? resolve('Description created')
 			: reject("Can't create description");
 	});
@@ -80,20 +86,20 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 			!canAddIngredient ||
 			!ingredient.isExist ||
 			!isValidVolume(input.volume) ||
-			!canModifyCocktail(input.id_cocktail, ctx)
+			!(await canModifyCocktail(input.id_cocktail, ctx))
 		) {
 			reject('Cant create this ingredient');
 			return;
 		}
 
-		const succeedMessage = await executeRequestElementInDbMessage(
+		const isSucceed = await executeRequestElementInDb(
 			{ input },
 			createIngredientOfCocktail,
-			`Les ingrédients du cocktail vient d'être créé avec succès`,
-			ctx
+			ctx,
+			false
 		);
 
-		succeedMessage
+		isSucceed
 			? resolve('Ingredient created')
 			: reject('Cant create this ingredient');
 	});
@@ -101,19 +107,18 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 
 module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!canModifyCocktail) {
+		if (!(await canModifyCocktail(input.id_cocktail, ctx))) {
 			reject('invalid cocktail');
 			return;
 		}
 
-		const succeedMessage = await executeRequestElementInDbMessage(
+		const isSucceed = await executeRequestElementInDb(
 			{ input },
 			updateDescriptionOfCocktail,
-			`Les descriptions du cocktail vient d'être modifiés avec succès`,
 			ctx
 		);
 
-		succeedMessage
+		isSucceed
 			? resolve('Description modified')
 			: reject('Cant modify this description');
 	});
@@ -121,48 +126,53 @@ module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 
 module.exports.modifyIngredientCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!canModifyCocktail) {
+		if (!(await canModifyCocktail(input.id_cocktail, ctx))) {
 			reject('invalid cocktail');
 			return;
 		}
-		const succeedMessage = executeRequestElementInDbMessage(
+		const isSucceed = executeRequestElementInDb(
 			{ input },
 			updateIngredientOfCocktail,
-			`Les ingrédients du cocktail vient d'être modifiés avec succès`,
 			ctx
 		);
 
-		succeedMessage
+		isSucceed
 			? resolve('Ingredient modified')
-			: reject('Cant modify this ingredieny');
+			: reject('Cant modify this ingredient');
 	});
 };
 
 module.exports.deleteIngredientCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		const succeedMessage = executeRequestElementInDbMessage(
+		if (!(await canModifyCocktail(input.id_cocktail, ctx))) {
+			reject('invalid cocktail');
+			return;
+		}
+		const isSucceed = executeRequestElementInDb(
 			{ input },
 			deleteIngredientOfCocktailInDb,
-			`Les ingrédients du cocktail vient d'être supprimés avec succès`,
 			ctx
 		);
 
-		succeedMessage
+		isSucceed
 			? resolve('Ingredient deleted')
-			: reject('Cant delete this ingredieny');
+			: reject('Cant delete this ingredient');
 	});
 };
 
 module.exports.deleteDescriptionCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		const succeedMessage = executeRequestElementInDbMessage(
+		if (!(await canModifyCocktail(input.id_cocktail, ctx))) {
+			reject('invalid cocktail');
+			return;
+		}
+		const isSucceed = executeRequestElementInDb(
 			{ input },
 			deleteDescriptionOfCocktailInDb,
-			`Les descriptions du cocktail vient d'être supprimés avec succès`,
 			ctx
 		);
 
-		succeedMessage
+		isSucceed
 			? resolve('Description deleted')
 			: reject('Cant delete this description');
 	});

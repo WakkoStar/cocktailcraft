@@ -22,7 +22,7 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 	);
 
 	const resCocktails = await client.query(
-		`SELECT c.id, c.nom, c.gout_array, c.difficulty, c.user_id, u.username FROM cocktails c 
+		`SELECT c.id, c.nom, c.gout_array, c.difficulty, c.user_id, u.username, c.image FROM cocktails c 
 		FULL JOIN users u ON u.id = c.user_id
 		WHERE is_visible = $1 
 		ORDER BY creation_date
@@ -41,7 +41,6 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 		resIngredients.rows,
 		'ingredients'
 	);
-
 	return concatElementsIntoCocktails(cocktails, descriptions, ingredients);
 };
 
@@ -71,6 +70,15 @@ module.exports.modifyCocktail = ({ nom, gout_array, difficulty, id }) => {
 	const text =
 		'UPDATE cocktails SET nom = $1, gout_array = $2, difficulty = $3 WHERE id = $4';
 	const values = [nom, gout_array, difficulty, id];
+
+	client.query(text, values, (err, res) => {
+		if (err) throw err;
+	});
+};
+
+module.exports.modifyCocktailImage = (image, id) => {
+	const text = 'UPDATE cocktails SET image = $1 WHERE id = $2';
+	const values = [image, id];
 
 	client.query(text, values, (err, res) => {
 		if (err) throw err;

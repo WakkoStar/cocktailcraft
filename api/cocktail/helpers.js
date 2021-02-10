@@ -1,4 +1,12 @@
 var _ = require('lodash');
+var fs = require('fs');
+var path = require('path');
+const { async: mime } = require('mime-kind');
+const sharp = require('sharp');
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+var { promisify } = require('util');
+var sizeOf = promisify(require('image-size'));
 
 module.exports.concatElementsIntoCocktails = (
 	cocktails,
@@ -12,11 +20,14 @@ module.exports.concatElementsIntoCocktails = (
 		const elementDesc = cocktailDescriptions.find(
 			el => el.id === cocktail.id
 		);
-		return {
+
+		const fullfilledCocktails = {
 			...cocktail,
 			ingredients: elementIngredient.ingredients,
 			descriptions: elementDesc.descriptions,
 		};
+
+		return fullfilledCocktails;
 	});
 };
 
@@ -60,7 +71,7 @@ module.exports.isValidPreparation = preparation => {
 
 module.exports.isValidDescription = description => {
 	if (description.length > 2000 || description.length < 10) return false;
-	if (description.match(new RegExp(`[^ -~à-ÿ]`))) return false;
+	if (description.match(new RegExp(`[^ -~à-ÿ∰∎≹]`))) return false;
 
 	return true;
 };
@@ -114,4 +125,77 @@ module.exports.isValidGouts = gout_array => {
 		return false;
 
 	return true;
+};
+
+module.exports.uploadFile = (createReadStream, filename) => {
+	return new Promise(async (resolve, reject) => {
+		const tempFileCompress = path.join('tmp/to_compress/', filename);
+		const tempFileCrop = path.join('tmp/to_crop/', filename);
+		const pathFile = path.join('assets/', filename);
+
+		const myReadable = createReadStream();
+
+		const type = await mime(myReadable);
+		if (type.ext !== 'jpg' && type.ext !== 'png') {
+			reject('Error on type : ' + type.ext);
+			return;
+		}
+
+		const isFileExist = fs.existsSync(pathFile);
+		if (isFileExist) {
+			reject('File already exists');
+			return;
+		}
+
+		const myWritable = fs.createWriteStream(tempFileCompress);
+
+		const handleError = () => {
+			console.log('Error ocurred while piping, closing all streams.');
+			myReadable.destroy();
+			myWritable.end();
+			reject('error');
+		};
+
+		let totalLength = 0;
+		myReadable
+			.on('data', chunk => {
+				totalLength += chunk.length;
+				if (totalLength > 3000000) {
+					handleError();
+					fs.unlinkSync(tempFile);
+					reject('File too large');
+					return;
+				}
+			})
+			.on('error', handleError)
+			.pipe(myWritable)
+			.on('error', handleError)
+			.on('finish', async () => {
+				imagemin(['tmp/to_compress/' + filename], {
+					destination: 'tmp/to_crop',
+					plugins: [
+						imageminMozjpeg({
+							maxMemory: 1000,
+						}),
+					],
+				}).then(async () => {
+					//crop file
+					const dimensions = await sizeOf(tempFileCrop);
+					const isWidthMinSize = dimensions.height > dimensions.width;
+					const minSize = isWidthMinSize
+						? dimensions.width
+						: dimensions.height;
+					sharp(tempFileCrop)
+						.resize(minSize, minSize)
+						.withMetadata()
+						.toFile(pathFile)
+						//delete file
+						.then(() => {
+							fs.unlinkSync(tempFileCrop);
+							fs.unlinkSync(tempFileCompress);
+						});
+				});
+				resolve('finished');
+			});
+	});
 };

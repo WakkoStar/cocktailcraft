@@ -19,7 +19,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-//CORS
+//static files
+app.use('/assets', express.static('assets'));
+
+//CORS //TODO
 const corsOptions = {
 	origin: [process.env.CLIENT_URL, '192.168.1.11'],
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

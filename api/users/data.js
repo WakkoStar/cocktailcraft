@@ -5,14 +5,14 @@ module.exports.getUserByProviderId = async (pid, provider_name) => {
 		'SELECT * FROM users WHERE provider_id = $1 AND provider_name= $2';
 	const values = [pid, provider_name];
 	const res = await client.query(text, values);
-	return res.rows[0];
+	return res.rows[0] ? res.rows[0] : undefined;
 };
 
 module.exports.getUser = async id => {
 	const text = 'SELECT * FROM users WHERE id = $1';
 	const values = [id];
 	const res = await client.query(text, values);
-	return res.rows[0];
+	return res.rows[0] ? res.rows[0] : undefined;
 };
 
 module.exports.createUser = (username, provider_id, provider_name) => {

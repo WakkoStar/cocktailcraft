@@ -1,23 +1,32 @@
 TRUNCATE cocktails CASCADE;
 ALTER SEQUENCE cocktails_id_seq RESTART WITH 0;
+
 TRUNCATE description_cocktail CASCADE;
 ALTER SEQUENCE description_cocktail_id_seq RESTART WITH 0;
-TRUNCATE gouts CASCADE;
-ALTER SEQUENCE gouts_id_seq RESTART WITH 0;
-TRUNCATE ingredients CASCADE;
-ALTER SEQUENCE ingredients_id_seq RESTART WITH 0;
+
 TRUNCATE ingredient_cocktail CASCADE;
 ALTER SEQUENCE ingredient_cocktail_id_seq RESTART WITH 0;
+
 TRUNCATE history_cocktail CASCADE;
 ALTER SEQUENCE history_cocktail_id_seq RESTART WITH 0;
-TRUNCATE levels CASCADE;
-ALTER SEQUENCE levels_id_seq RESTART WITH 1;
+
 TRUNCATE loved_cocktail CASCADE;
 ALTER SEQUENCE cocktails_loved_id_seq RESTART WITH 0;
+
 TRUNCATE notes CASCADE;
 ALTER SEQUENCE notes_id_seq RESTART WITH 0;
+
 TRUNCATE notifications CASCADE;
 ALTER SEQUENCE notifications_id_seq RESTART WITH 0;
+
+TRUNCATE gouts CASCADE;
+ALTER SEQUENCE gouts_id_seq RESTART WITH 0;
+
+TRUNCATE ingredients CASCADE;
+ALTER SEQUENCE ingredients_id_seq RESTART WITH 0;
+
+TRUNCATE levels CASCADE;
+ALTER SEQUENCE levels_id_seq RESTART WITH 1;
 
 INSERT INTO gouts (nom) VALUES ('Mentholé');
 INSERT INTO gouts (nom) VALUES ('Sucré');

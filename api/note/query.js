@@ -1,12 +1,10 @@
 const { getAllNotesByCocktailId } = require('./data');
-const { getAllCocktails } = require('../cocktail/data');
-var _ = require('lodash');
+const { getHelpersCocktails } = require('../utils/finder');
+
 module.exports.getNoteOfCocktail = async (__, { cocktail_id }) => {
 	return new Promise(async (resolve, reject) => {
-		const cocktails = await getAllCocktails();
-		if (
-			_.isUndefined(cocktails.find(c => parseInt(c.id) === cocktail_id))
-		) {
+		const cocktail = await getHelpersCocktails(cocktail_id, [true]);
+		if (!cocktail.isExist) {
 			reject('Cocktail not found');
 			return;
 		}

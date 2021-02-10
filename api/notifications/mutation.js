@@ -5,13 +5,13 @@ const {
 const _ = require('lodash');
 const { getUser } = require('../users/data');
 
-module.exports.addNotifications = async (_, { message, user_id }, ctx) => {
+module.exports.addNotifications = async (__, { message, user_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
 		if (!ctx.user.is_admin) {
 			reject('Not admin');
 			return;
 		}
-		if (!message || !user_id) {
+		if (_.isNil(message) || _.isNil(user_id) || message == '') {
 			reject('empty fields');
 			return;
 		}
@@ -26,9 +26,9 @@ module.exports.addNotifications = async (_, { message, user_id }, ctx) => {
 	});
 };
 
-module.exports.deleteNotifications = async (_, { id }, ctx) => {
+module.exports.deleteNotifications = async (__, { id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (!id) {
+		if (_.isNil(id)) {
 			reject('empty fields');
 			return;
 		}

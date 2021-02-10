@@ -20,8 +20,7 @@ module.exports.addToHistory = async (_, { cocktail_id }, ctx) => {
 		const isCocktailAlreadySeen = history.find(
 			el => parseInt(el.cocktail_id) == parseInt(cocktail_id)
 		);
-
-		if (isCocktailAlreadySeen) {
+		if (isCocktailAlreadySeen != undefined) {
 			updateHistory(cocktail_id, ctx.user.id, cocktail_id);
 		} else {
 			if (history.length >= 20) {

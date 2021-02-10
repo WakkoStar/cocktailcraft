@@ -1,7 +1,7 @@
 const client = require('../../utils/bdd');
 
 module.exports.getCocktailsLovedByUserId = async user_id => {
-	const text = `SELECT cocktail_id, nom FROM loved_cocktail lc 
+	const text = `SELECT cocktail_id, nom, image FROM loved_cocktail lc 
 	JOIN cocktails c ON c.id = lc.cocktail_id
 	WHERE lc.user_id = $1 AND c.is_visible = true
 	ORDER BY time DESC`;

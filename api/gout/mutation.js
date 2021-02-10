@@ -12,7 +12,7 @@ const executeRequestInDb = async (params, callback, msg, ctx) => {
 			reject('Not admin');
 			return;
 		}
-		if (_.some(params, _.isUndefined)) {
+		if (_.some(params, _.isNil)) {
 			reject('empty fields');
 			return;
 		}

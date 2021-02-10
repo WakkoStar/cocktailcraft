@@ -29,7 +29,10 @@ module.exports.getOneIngredients = async (_, { id }) => {
 	});
 };
 
-module.exports.searchIngredient = async (_, { search }) => {
+module.exports.searchIngredient = async (
+	_,
+	{ search, isFamilyIncluded = false }
+) => {
 	const ingredients = await getIngredients();
 	const minSearch = search.toLowerCase();
 
@@ -40,7 +43,9 @@ module.exports.searchIngredient = async (_, { search }) => {
 			withAliases = alias.some(el =>
 				el.toLowerCase().includes(minSearch)
 			);
-		return (withName || withAliases) && !hasFamily;
+		return (
+			(withName || withAliases) && (isFamilyIncluded ? true : !hasFamily)
+		);
 	});
 
 	return results;
@@ -80,7 +85,10 @@ module.exports.getBestIngredients = async (_, { inventory }) => {
 	);
 };
 
-module.exports.inventorySelection = async (_, { inventory, cluster }) => {
+module.exports.inventorySelection = async (
+	_,
+	{ inventory, cluster, preparations }
+) => {
 	//get ingredients of the inventory
 	const ingredients = await getIngredients();
 	const inventoryIng = ingredients.filter(({ id }) =>
@@ -90,7 +98,7 @@ module.exports.inventorySelection = async (_, { inventory, cluster }) => {
 	const cocktails = await getAllCocktails(true);
 
 	//select only cocktail available with the cluster
-	let clusterCocktails = cocktails.filter(({ ingredients }) => {
+	let clusterCocktails = cocktails.filter(({ ingredients, descriptions }) => {
 		const ingredientArray = ingredients.map(({ ingredient_id }) =>
 			parseInt(ingredient_id)
 		);
@@ -103,7 +111,10 @@ module.exports.inventorySelection = async (_, { inventory, cluster }) => {
 		}
 		//tous les ingrédients du cocktail sont dans l'inventaire
 		const inInventory = ingredientArray.every(id => inventory.includes(id));
-		return inCluster && inInventory;
+		const inPreparation = descriptions.some(({ preparation }) =>
+			preparations.includes(preparation)
+		);
+		return inCluster && inInventory && inPreparation;
 	});
 
 	//add count property for the cocktails available

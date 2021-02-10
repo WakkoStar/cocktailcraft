@@ -8,7 +8,6 @@ const {
 module.exports.getUserInfo = async (_, {}, ctx) => {
 	const user = await getUserInDb(ctx.user.id);
 	//GET RANK
-
 	const levels = await getAllLevels();
 	const nextLevelIndex = levels.findIndex(
 		level => parseInt(level.experience) > parseInt(user.experience)

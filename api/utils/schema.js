@@ -38,8 +38,8 @@ module.exports.schema = `
 		ingredients: [Ingredients]
 		ingredientsFamily(family_of:[Int!]!): [Ingredients]
         bestIngredients(inventory:[Int]): [Ingredients]
-        inventorySelection(cluster:[Int], inventory:[Int], filter_gout:[Int], filter_difficulty:[Int]): [Ingredients]
-        searchIngredient(search: String): [Ingredients]
+        inventorySelection(cluster:[Int], inventory:[Int], preparations:[String]): [Ingredients]
+        searchIngredient(search: String, isFamilyIncluded: Boolean): [Ingredients]
 
         gout(id: Int!): Gouts
         gouts: [Gouts]
@@ -69,8 +69,8 @@ module.exports.schema = `
         modifyGout(nom: String!, id: Int!): String
         deleteGout(id: Int!): String
 
-        createCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!) : String
-        modifyCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, id: Int!) : String
+        createCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, file: Upload) : String
+        modifyCocktail(nom: String!, gout_array: [Int!]!, difficulty : String!, file: Upload, id: Int!) : String
         deleteCocktail(id: Int!): String
 		setVisibility(id: Int!, is_visible: Boolean!): String
 
