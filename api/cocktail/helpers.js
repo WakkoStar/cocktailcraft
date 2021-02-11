@@ -120,10 +120,9 @@ module.exports.isValidName = nom => {
 };
 
 module.exports.isValidGouts = gout_array => {
+	if (!_.isArray(gout_array)) return false;
 	if (gout_array.length < 1 || gout_array.length > 5) return false;
-	if (gout_array.some(({ gout }) => typeof parseInt(gout) != 'number'))
-		return false;
-
+	if (gout_array.some(gout => _.isNaN(parseInt(gout)))) return false;
 	return true;
 };
 

@@ -1,4 +1,8 @@
-const { getAllIngredients, getOneIngredients } = require('../query');
+const {
+	getAllIngredients,
+	getOneIngredients,
+	searchIngredient,
+} = require('../query');
 const {
 	createIngredient,
 	modifyIngredient,
@@ -73,6 +77,45 @@ describe('Ingredients - queries', () => {
 		} catch (e) {
 			expect(e).toBe('ingredient no founded');
 		}
+	});
+
+	it('should find ingredient without families', async () => {
+		expect.assertions(2);
+		const res = await searchIngredient(null, {
+			search: 'Rhum Ambr',
+			isFamilyIncluded: false,
+		});
+		expect(res.length).toBe(1);
+		expect(res[0].nom).toBe('Rhum Ambré');
+	});
+
+	it('should find ingredient with families', async () => {
+		expect.assertions(2);
+		const res = await searchIngredient(null, {
+			search: 'Rhu',
+			isFamilyIncluded: false,
+		});
+		expect(res.length).toBe(2);
+		expect(res[0].nom).toBe('Rhum Ambré');
+	});
+
+	it('should find ingredient with alias', async () => {
+		expect.assertions(2);
+		const res = await searchIngredient(null, {
+			search: 'Negri',
+			isFamilyIncluded: false,
+		});
+		expect(res.length).toBe(1);
+		expect(res[0].nom).toBe('Rhum Ambré');
+	});
+
+	it('should not find ingredient with alias', async () => {
+		expect.assertions(1);
+		const res = await searchIngredient(null, {
+			search: 'Blabalbalbla',
+			isFamilyIncluded: false,
+		});
+		expect(res.length).toBe(0);
 	});
 
 	//TODO : getBestIngredients, inventorySelection
