@@ -4,13 +4,13 @@ const {
 	getUser,
 	updateUserExp,
 } = require('../../users/data');
-const { getCreatedCocktailByUser, getAllCocktails } = require('../data');
+const { getCreatedCocktailsByUser } = require('../data');
+const { getHelpersCocktails } = require('../../utils/finder');
 
 module.exports.addToHistory = async (_, { cocktail_id }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		const cocktails = await getAllCocktails(true);
-
-		if (!cocktails.find(cocktail => cocktail.id == cocktail_id)) {
+		const cocktail = await getHelpersCocktails(cocktail_id, [true]);
+		if (!cocktail.isExist) {
 			reject('Cocktail not found');
 			return;
 		}
@@ -36,7 +36,9 @@ module.exports.addToHistory = async (_, { cocktail_id }, ctx) => {
 				ctx.user.id
 			);
 
-			const cocktailCreated = await getCreatedCocktailByUser(ctx.user.id);
+			const cocktailCreated = await getCreatedCocktailsByUser(
+				ctx.user.id
+			);
 			const isCreator = cocktailCreated.find(
 				cocktail => cocktail.id == cocktail_id
 			);

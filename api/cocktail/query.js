@@ -1,23 +1,24 @@
 const {
 	getAllCocktails: getCocktails,
-	getCreatedCocktailByUser,
+	getCreatedCocktailsByUser: getCreatedCocktailsByUserDb,
 } = require('./data');
-
+const _ = require('lodash');
 const { getHelpersCocktails } = require('../utils/finder');
 
-module.exports.getAllCocktails = async (_, { is_visible }, ctx) => {
+module.exports.getAllCocktails = async (__, { is_visible }, ctx) => {
+	const isVisible = _.isNil(is_visible) ? true : is_visible;
 	return new Promise(async (resolve, reject) => {
 		if (!is_visible && !ctx.user.is_admin) {
 			reject('Not admin');
 			return;
 		}
-		const cocktails = await getCocktails(is_visible);
+		const cocktails = await getCocktails(isVisible);
 		resolve(cocktails);
 	});
 };
 
-module.exports.getOneCocktails = async (_, { id, is_visible }, ctx) => {
-	const isVisible = is_visible == undefined ? true : is_visible;
+module.exports.getOneCocktails = async (__, { id, is_visible = true }, ctx) => {
+	const isVisible = _.isNil(is_visible) ? true : is_visible;
 	return new Promise(async (resolve, reject) => {
 		if (!is_visible && !ctx.user.is_admin) {
 			reject('Not admin');
@@ -63,6 +64,6 @@ module.exports.getCraftedCocktails = async (_, { cluster }) => {
 };
 
 module.exports.getCreatedCocktailsByUser = async (_, {}, ctx) => {
-	const cocktails = await getCreatedCocktailByUser(ctx.user.id);
+	const cocktails = await getCreatedCocktailsByUserDb(ctx.user.id);
 	return cocktails;
 };

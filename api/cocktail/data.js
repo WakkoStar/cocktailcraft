@@ -44,7 +44,7 @@ module.exports.getAllCocktails = async (is_visible = true) => {
 	return concatElementsIntoCocktails(cocktails, descriptions, ingredients);
 };
 
-module.exports.getCreatedCocktailByUser = async id => {
+module.exports.getCreatedCocktailsByUser = async id => {
 	const text =
 		'SELECT * FROM cocktails WHERE user_id = $1 AND is_visible = true ORDER BY creation_date DESC';
 	const values = [id];

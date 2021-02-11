@@ -7,12 +7,11 @@ const _ = require('lodash');
 
 const executeRequestInDb = async (params, callback, msg, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		if (_.some(params, _.isNil) && _.isNil(ctx.user.id)) {
+		if (_.some(params, _.isNil) || _.isNil(ctx.user.id)) {
 			reject('empty fields');
 			return;
 		}
 		const cocktail = await getHelpersCocktails(params.cocktail_id, [true]);
-
 		if (cocktail.isExist) {
 			callback(params.cocktail_id, ctx.user.id);
 			resolve(`${msg} (cocktail enregistré : ${cocktail.nom})`);

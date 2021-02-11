@@ -18,41 +18,19 @@ const {
 } = require('./helpers');
 
 const { getHelpersCocktails } = require('../utils/finder');
-
-const executeRequestInDb = async (params, callback, msg, ctx) => {
-	return new Promise(async (resolve, reject) => {
-		if (!ctx.user.is_admin) {
-			reject('Not admin');
-			return;
-		}
-		//execute callback
-		if (_.some(params, _.isUndefined)) {
-			reject('empty fields');
-			return;
-		}
-		const cocktail = await getHelpersCocktails(params.id, [true, false]);
-		if (cocktail.isExist) {
-			callback({ ...params });
-			resolve(`${msg} (cocktail: ${cocktail.nom})`);
-		} else {
-			reject('ID no founded');
-		}
-	});
-};
+const { reject } = require('lodash');
 
 module.exports.createCocktail = async (
-	_,
+	__,
 	{ nom, gout_array, difficulty, file },
 	ctx
 ) => {
 	return new Promise(async (resolve, reject) => {
-		// 	//Check fields
-
-		if (!nom || !gout_array || !difficulty) {
+		//Check fields
+		if (_.isNil(nom) || _.isNil(gout_array) || _.isNil(difficulty)) {
 			reject('empty fields');
 			return;
 		}
-
 		if (
 			!isValidDifficulty(difficulty) ||
 			!isValidName(nom) ||
@@ -84,10 +62,10 @@ module.exports.createCocktail = async (
 				user_id: ctx.user.id,
 			});
 
-			if (file != null) {
+			if (!_.isNil(file)) {
 				file.then(async ({ createReadStream }) => {
 					const filename = `${nom.trim()}.jpg`;
-					uploadFile(createReadStream, filename).then(result => {
+					uploadFile(createReadStream, filename).then(() => {
 						modifyCocktailImage(filename, getId);
 					});
 				});
@@ -98,58 +76,81 @@ module.exports.createCocktail = async (
 	});
 };
 
+const executeRequestInDb = async (params, callback) => {
+	//execute callback
+	if (_.some(params, _.isNil)) {
+		return false;
+	}
+	const cocktail = await getHelpersCocktails(params.id, [true, false]);
+	if (cocktail.isExist) {
+		callback({ ...params });
+		return true;
+	} else {
+		return false;
+	}
+};
+
 module.exports.modifyCocktail = async (
-	_,
+	__,
 	{ nom, gout_array, difficulty, file, id },
 	ctx
 ) => {
 	return new Promise(async (resolve, reject) => {
-		const cocktail = await getHelpersCocktails(null, [true, false], nom);
-		if (cocktail.isExist || cocktail.id != id) {
-			reject("Cocktail already exists or you can't create new cocktail");
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
 			return;
 		}
-		if (file != null) {
-			file.then(async ({ createReadStream }) => {
-				const filename = `${nom.trim()}.jpg`;
 
-				const src = 'assets/' + filename;
-				if (fs.existsSync(src)) fs.unlinkSync(src);
-
-				uploadFile(createReadStream, filename).then(result => {
-					modifyCocktailImage(filename, id);
-				});
-			});
-		}
-		const msg = await executeRequestInDb(
+		const isSucceed = await executeRequestInDb(
 			{ nom, gout_array, difficulty, id },
-			modifyCocktailInDb,
-			`Le cocktail vient d'être modifié avec succès`,
-			ctx
+			modifyCocktailInDb
 		);
-		resolve(msg);
+
+		if (isSucceed) {
+			if (!_.isNil(file)) {
+				file.then(async ({ createReadStream }) => {
+					const filename = `${nom.trim()}.jpg`;
+
+					const src = 'assets/' + filename;
+					if (fs.existsSync(src)) fs.unlinkSync(src);
+
+					uploadFile(createReadStream, filename).then(result => {
+						modifyCocktailImage(filename, id);
+					});
+				});
+			}
+			resolve('Cocktail modified');
+		} else {
+			reject('Cocktail not modified');
+		}
 	});
 };
 
 module.exports.deleteCocktail = async (_, { id }, ctx) => {
-	const cocktail = await getHelpersCocktails(id, [true, false]);
+	return new Promise(async (resolve, reject) => {
+		if (!ctx.user.is_admin) {
+			reject('Not admin');
+			return;
+		}
+		const isSucceed = await executeRequestInDb({ id }, deleteCocktailInDb);
 
-	const src = 'assets/' + cocktail.image;
-	if (fs.existsSync(src)) fs.unlinkSync(src);
+		if (isSucceed) {
+			const cocktail = await getHelpersCocktails(id, [true, false]);
 
-	return await executeRequestInDb(
-		{ id },
-		deleteCocktailInDb,
-		`Le cocktail vient d'être supprimé avec succès`,
-		ctx
-	);
+			const src = 'assets/' + cocktail.image;
+			if (fs.existsSync(src)) fs.unlinkSync(src);
+
+			resolve('Cocktail deleted');
+		} else {
+			reject('Cocktail not deleted');
+		}
+	});
 };
 
 module.exports.setVisibility = async (_, { is_visible, id }, ctx) => {
-	return await executeRequestInDb(
-		{ is_visible, id },
-		setVisibilityInDb,
-		`Le cocktail vient de changer de vue avec succès`,
-		ctx
-	);
+	if (!ctx.user.is_admin) {
+		reject('Not admin');
+		return;
+	}
+	return await executeRequestInDb({ is_visible, id }, setVisibilityInDb);
 };

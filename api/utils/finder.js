@@ -1,6 +1,6 @@
 const { getAllCocktails } = require('../cocktail/data');
 const { getAllIngredients } = require('../ingredient/data');
-
+const _ = require('lodash');
 module.exports.getHelpersCocktails = async (
 	cocktail_id,
 	visibilities = [true],
@@ -14,7 +14,7 @@ module.exports.getHelpersCocktails = async (
 
 	const cocktails = cocktailsArray.flat();
 
-	const cocktail = nom
+	const cocktail = !_.isUndefined(nom)
 		? cocktails.find(c => c.nom === nom)
 		: cocktails.find(({ id }) => parseInt(id) === parseInt(cocktail_id));
 
@@ -30,7 +30,7 @@ module.exports.getHelpersIngredient = async (
 ) => {
 	const ingredients = await getAllIngredients();
 
-	const ingredient = nom
+	const ingredient = !_.isUndefined(nom)
 		? ingredients.find(i => i.nom === nom)
 		: ingredients.find(
 				({ id }) => parseInt(id) === parseInt(ingredient_id)

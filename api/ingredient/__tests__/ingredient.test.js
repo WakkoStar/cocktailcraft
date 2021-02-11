@@ -74,6 +74,8 @@ describe('Ingredients - queries', () => {
 			expect(e).toBe('ingredient no founded');
 		}
 	});
+
+	//TODO : getBestIngredients, inventorySelection
 });
 
 describe('Ingredients - mutations', () => {

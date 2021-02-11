@@ -60,13 +60,13 @@ module.exports.getElementsOfCocktail = async (
 
 module.exports.isValidDifficulty = difficulty => {
 	const difficulties = ['Très facile', 'Facile', 'Moyen', 'Difficile'];
-	return difficulties.includes(difficulty);
+	return !!difficulties.includes(difficulty);
 };
 
 module.exports.isValidPreparation = preparation => {
 	const preparations = ['Directement dans le verre', 'Au shaker'];
 
-	return preparations.includes(preparation);
+	return !!preparations.includes(preparation);
 };
 
 module.exports.isValidDescription = description => {

@@ -124,7 +124,14 @@ module.exports.mockLevels = [
 	{ id: 3, rank: 'Aspirant', experience: 300 },
 ];
 
-module.exports.mockCtx = { user: { is_admin: true, id: 0 } };
+module.exports.mockCtx = {
+	user: {
+		is_admin: true,
+		id: 0,
+		cocktail_created_in_day: 2,
+		experience: 100,
+	},
+};
 
 module.exports.mockGouts = [
 	{ id: 0, nom: 'Menthe' },
