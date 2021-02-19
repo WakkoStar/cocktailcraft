@@ -92,7 +92,7 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 			return;
 		}
 
-		const isSucceed = await executeRequestElementInDb(
+		const isSucceed = executeRequestElementInDb(
 			{ input },
 			createIngredientOfCocktail,
 			ctx,
@@ -112,7 +112,7 @@ module.exports.modifyDescriptionCocktail = async (_, { input }, ctx) => {
 			return;
 		}
 
-		const isSucceed = await executeRequestElementInDb(
+		const isSucceed = executeRequestElementInDb(
 			{ input },
 			updateDescriptionOfCocktail,
 			ctx

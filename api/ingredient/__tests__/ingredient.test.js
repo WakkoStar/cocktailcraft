@@ -117,8 +117,6 @@ describe('Ingredients - queries', () => {
 		});
 		expect(res.length).toBe(0);
 	});
-
-	//TODO : getBestIngredients, inventorySelection
 });
 
 describe('Ingredients - mutations', () => {

@@ -51,33 +51,44 @@ module.exports.searchIngredient = async (
 	return results;
 };
 
-//inventory = {2, 4, 5, 9} => id of ingredient
 module.exports.getBestIngredients = async (_, { inventory }) => {
 	const ingredients = await getIngredients();
 	const cocktails = await getAllCocktails(true);
+
+	let inventoryWithFamilyIncluded = [];
+	inventory.forEach(elId => {
+		const element = ingredients.find(({ id }) => id == elId);
+		inventoryWithFamilyIncluded.push(elId);
+		element.family_of.map(el =>
+			inventoryWithFamilyIncluded.push(parseInt(el))
+		);
+	});
+
 	let availableCocktails;
-	//get cocktail includes inventory
-	if (inventory.length > 0) {
+	const isInventory = inventoryWithFamilyIncluded.length > 0;
+	if (isInventory) {
 		availableCocktails = cocktails.filter(({ ingredients }) => {
 			const ingredientArray = ingredients.map(({ ingredient_id }) =>
 				parseInt(ingredient_id)
 			);
-			return inventory.some(id => ingredientArray.includes(id));
+			return inventoryWithFamilyIncluded.some(id =>
+				ingredientArray.includes(id)
+			);
 		});
-		//all cocktails
 	} else {
 		availableCocktails = cocktails;
 	}
-	//add count property
 	let countedIng = ingredients.map(ingredient => {
 		return {
 			...ingredient,
-			count: getIngredientCount(availableCocktails, ingredient.id),
+			count: getIngredientCount(
+				availableCocktails,
+				ingredient.id,
+				ingredient.family_of
+			),
 		};
 	});
-	//sort by count
 	let sortedIng = countedIng.sort((a, b) => b.count - a.count);
-	//filter ingredient which already in inventory
 	return sortedIng.filter(
 		ingredient =>
 			!inventory.includes(parseInt(ingredient.id)) &&
@@ -89,47 +100,59 @@ module.exports.inventorySelection = async (
 	_,
 	{ inventory, cluster, preparations }
 ) => {
-	//get ingredients of the inventory
-	const ingredients = await getIngredients();
-	const inventoryIng = ingredients.filter(({ id }) =>
+	const ingredientsInDb = await getIngredients();
+	const inventoryIng = ingredientsInDb.filter(({ id }) =>
 		inventory.includes(parseInt(id))
 	);
-	//get cocktails filtered by the cluster
 	const cocktails = await getAllCocktails(true);
 
-	//select only cocktail available with the cluster
 	let clusterCocktails = cocktails.filter(({ ingredients, descriptions }) => {
 		const ingredientArray = ingredients.map(({ ingredient_id }) =>
 			parseInt(ingredient_id)
 		);
-		//tous les ingrédients du cluster sont dans le cocktail
-		let inCluster = true;
-		//si le cluster est supérieur à 0, on séléctionne les cocktails avec TOUT les ingrédients séléctionnés
+
+		let isInCluster = true;
 		if (cluster) {
-			if (cluster.length > 0)
-				inCluster = cluster.every(id => ingredientArray.includes(id));
+			if (cluster.length > 0) {
+				isInCluster = cluster.every(id => {
+					const { family_of } = inventoryIng.find(
+						({ id: elId }) => parseInt(elId) == id
+					);
+					const isInFamily = family_of.some(element =>
+						ingredientArray.includes(parseInt(element))
+					);
+					return ingredientArray.includes(id) || isInFamily;
+				});
+			}
 		}
-		//tous les ingrédients du cocktail sont dans l'inventaire
-		const inInventory = ingredientArray.every(id => inventory.includes(id));
-		const inPreparation = descriptions.some(({ preparation }) =>
+
+		const isInInventory = ingredientArray.every(id => {
+			const isInFamily = inventoryIng.find(({ family_of }) =>
+				family_of.map(el => parseInt(el)).includes(id)
+			);
+			return inventory.includes(parseInt(id)) || isInFamily;
+		});
+
+		const isInPreparation = descriptions.some(({ preparation }) =>
 			preparations.includes(preparation)
 		);
-		return inCluster && inInventory && inPreparation;
-	});
 
-	//add count property for the cocktails available
+		return isInCluster && isInInventory && isInPreparation;
+	});
 	let countedIng = inventoryIng.map(ingredient => {
 		return {
 			...ingredient,
-			count: getIngredientCount(clusterCocktails, ingredient.id),
+			count: getIngredientCount(
+				clusterCocktails,
+				ingredient.id,
+				ingredient.family_of
+			),
 		};
 	});
-	//sort by count
 	let sortedIng = countedIng.sort((a, b) => b.count - a.count);
 	return sortedIng.filter(ingredient => {
 		const ingredientAlreadyInCluster = !cluster.includes(ingredient.id);
-		const occurences = ingredient.count;
-		//remove cluster ingredients and no counted ingredients
-		return ingredientAlreadyInCluster && occurences;
+		const isCounted = ingredient.count;
+		return ingredientAlreadyInCluster && isCounted;
 	});
 };

@@ -2,6 +2,7 @@ const {
 	getAllCocktails: getCocktails,
 	getCreatedCocktailsByUser: getCreatedCocktailsByUserDb,
 } = require('./data');
+const { getAllIngredients } = require('../ingredient/data');
 const _ = require('lodash');
 const { getHelpersCocktails } = require('../utils/finder');
 
@@ -33,31 +34,47 @@ module.exports.getOneCocktails = async (__, { id, is_visible = true }, ctx) => {
 	});
 };
 
-module.exports.getAvailableCocktails = async (_, { ingredient_array }) => {
+module.exports.getAvailableCocktails = async (
+	_,
+	{ ingredient_array: inventory }
+) => {
 	const cocktails = await getCocktails(true);
-	const availCocktails = cocktails.filter(
-		//For each cocktail
-		cocktail => {
-			//check if all ingredients of the cocktail
-			return cocktail.ingredients.every(({ ingredient_id }) => {
-				//is included within the parameter
-				return ingredient_array.includes(parseInt(ingredient_id));
-			});
-		}
+	const ingredientsInDb = await getAllIngredients();
+	const inventoryIng = ingredientsInDb.filter(({ id }) =>
+		inventory.includes(parseInt(id))
 	);
+
+	const availCocktails = cocktails.filter(cocktail => {
+		return cocktail.ingredients.every(({ ingredient_id: id }) => {
+			const isInFamily = inventoryIng.find(({ family_of }) => {
+				return family_of.map(el => parseInt(el)).includes(parseInt(id));
+			});
+			return inventory.includes(parseInt(id)) || !!isInFamily;
+		});
+	});
 	return availCocktails;
 };
 
 module.exports.getCraftedCocktails = async (_, { cluster }) => {
 	const cocktails = await getCocktails(true);
+	const ingredientsInDb = await getAllIngredients();
+	const clusterIng = ingredientsInDb.filter(({ id }) =>
+		cluster.includes(parseInt(id))
+	);
+
 	const createdCocktails = cocktails.filter(({ ingredients }) => {
 		const ingredientArray = ingredients.map(({ ingredient_id }) =>
 			parseInt(ingredient_id)
 		);
-		const inCocktail = ingredientArray.every(id => cluster.includes(id));
-		const inCluster = cluster.every(id => ingredientArray.includes(id));
 
-		return inCocktail && inCluster;
+		const isInCocktail = ingredientArray.every(id => {
+			const isInFamily = clusterIng.find(({ family_of }) =>
+				family_of.map(el => parseInt(el)).includes(id)
+			);
+			return cluster.includes(id) || !!isInFamily;
+		});
+
+		return isInCocktail;
 	});
 
 	return createdCocktails;

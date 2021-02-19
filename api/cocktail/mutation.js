@@ -111,8 +111,9 @@ module.exports.modifyCocktail = async (
 				file.then(async ({ createReadStream }) => {
 					const filename = `${nom.trim()}.jpg`;
 
-					const src = 'assets/' + filename;
-					if (fs.existsSync(src)) fs.unlinkSync(src);
+					const src = 'assets/' + cocktail.image;
+					if (fs.existsSync(src) && cocktail.image != 'default.jpg')
+						fs.unlinkSync(src);
 
 					uploadFile(createReadStream, filename).then(result => {
 						modifyCocktailImage(filename, id);
@@ -138,7 +139,8 @@ module.exports.deleteCocktail = async (_, { id }, ctx) => {
 			const cocktail = await getHelpersCocktails(id, [true, false]);
 
 			const src = 'assets/' + cocktail.image;
-			if (fs.existsSync(src)) fs.unlinkSync(src);
+			if (fs.existsSync(src) && cocktail.image != 'default.jpg')
+				fs.unlinkSync(src);
 
 			resolve('Cocktail deleted');
 		} else {

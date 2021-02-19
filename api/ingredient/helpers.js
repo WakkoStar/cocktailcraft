@@ -8,13 +8,17 @@ module.exports.getHasFamily = ingredients => {
 	});
 };
 
-//count amount of ingredients
-module.exports.getIngredientCount = (res, id) => {
-	let filteredCocktails = res.filter(({ ingredients }) => {
+module.exports.getIngredientCount = (cocktails, id, family_of) => {
+	let filteredCocktails = cocktails.filter(({ ingredients }) => {
 		const ingredientArray = ingredients.map(({ ingredient_id }) =>
 			parseInt(ingredient_id)
 		);
-		return ingredientArray.includes(parseInt(id));
+		return (
+			ingredientArray.includes(parseInt(id)) ||
+			family_of.some(element =>
+				ingredientArray.includes(parseInt(element))
+			)
+		);
 	});
 	return filteredCocktails.length;
 };

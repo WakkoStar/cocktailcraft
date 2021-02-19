@@ -106,8 +106,6 @@ describe('cocktails - queries', () => {
 		const res = await getCreatedCocktailsByUser(null, {}, ctx);
 		expect(res[0].id).toBe('18');
 	});
-
-	//TO DO : get available cocktails, getCraftedCocktails
 });
 
 let input = {

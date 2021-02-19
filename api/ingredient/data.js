@@ -37,16 +37,3 @@ module.exports.deleteIngredient = ({ id }) => {
 		if (err) throw err;
 	});
 };
-
-/*
-
-Automatiser la description : 
-Directement au verre : 
-Remplir de 6 à 8 glacons un verre. Ajouter igredient_array[0].vol cl  de ingredient_array[0].nom, ..., 
-et igredient_array[last].vol cl de ingredient_array[last].nom. Touiller. Boire très frais.
-
-Au shaker : 
-Dans un shaker rempli de glaçons. Ajouter igredient_array[0].vol cl  de ingredient_array[0].nom, ..., 
-et igredient_array[last].vol cl de ingredient_array[last].nom. Agiter fortement, verser dans un verre.
-
- */

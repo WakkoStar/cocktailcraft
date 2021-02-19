@@ -1,4 +1,7 @@
 //bdd
+
+require('dotenv').config();
+
 const { Client } = require('pg');
 const client = new Client({
 	host: 'localhost',
@@ -7,11 +10,11 @@ const client = new Client({
 	database: 'cocktailcraft',
 });
 // const client = new Client({
-//     host: "node67901-env-8002935.hidora.com",
-//     user: "webadmin",
-//     port: "11127",
-//     password: "vtrajAEID5",
-//     database: "cocktails"
-// })
+// 	host: process.env.DB_HOST,
+// 	user: process.env.DB_USER,
+// 	port: process.env.DB_PORT,
+// 	password: process.env.DB_PASSWORD,
+// 	database: process.env.DB_NAME,
+// });
 
 module.exports = client;
