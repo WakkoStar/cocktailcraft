@@ -1,13 +1,20 @@
-# CocktailMania ( project : cocktailcraft )
+# Cocktail craft API GRAPHQL
 
-## Description
+## API documentation
 
-CocktailMania est un réseau social de cocktails.
+## Présentation du projet
 
-1. On séléctionne des "ingrédients" pour nos cocktails, ceux ci sont triés par occurence décroissante ( nombre de fois que l'ingrédient est affiché parmi les cocktails ).
-2. Les ingrédients sont placés dans un inventaire, la séléction des autres ingrédients se fait par rapport à l'inventaire. L'application prends tout les cocktails réalisables avec les ingrédients sélectionnnés dans notre inventaire et séléctionne les ingrédients avec le plus grand d'occurences parmi cette séléction.
-3. Une fois l'inventaire, rempli, on "crafte" les cocktails. On place l'ingrédient dans le craft. L'inventaire est directement filtré laissant les choix uniquement possibles.
-4. Lorsque on séléctionne plusieurs ingrédients, l'application nous notifie qu'un cocktail est possible, la séléction peut etre continué en fonction de nos choix ( par ex : Mojito => Mojito Fraise )
-5. Le cocktail est prêt, une liste du cocktail sous différentes préparations s'affiche, on séléctionne la préparation qui nous plait puis on suit les différentes instructions pour composer son cocktail
+### A quoi ca sert ?
 
-## Fonctionnalités
+CocktailCraft est une application mobile dans l'objectif de créer des cocktails. Elle permet de découvrir plus facilement de nombreux cocktails à partir des ingrédients que vous aimez. L'application vous accompagne pour choisir les meilleurs ingrédients et faire le plus de cocktails possible. Réussissez vos soirées cocktails avec brio.
+
+### Comment faire ?
+
+Choisissez vos ingrédients, composez vos cocktails à partir de votre sélection, suivez la recette et buvez ! Tout plein de cocktails sont disponibles, des plus simples au plus ardus.
+
+Un cocktail que vous aimez manque ou vous avez composé votre propre cocktail ?
+Vous pouvez l'ajouter à nos cocktails existants et le faire partager aux autres utilisateurs. Ces derniers pourront vous laisser un retour en notant votre cocktail
+
+### Autres informations
+
+Depuis votre compte, vous pouvez voir votre avancée sur CocktailCraft : vous pouvez enregistrer les cocktails qui vous ont marqués et voir ceux que vous avez ajouter à l'application. Utilisez l'application afin de gagner des niveaux et monter en rang !
