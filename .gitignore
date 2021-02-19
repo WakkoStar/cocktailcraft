@@ -25,3 +25,4 @@ yarn-error.log*
 admin_key.json
 /src
 /assets/*
+/public
