@@ -20,6 +20,15 @@ module.exports.schema = `
 		family_of: [Int]
 		hasFamily: Boolean
     }
+
+	type BestIngredients {
+        id: Int
+        nom: String
+        alias: [String]
+		family_of: [Int]
+		hasFamily: Boolean
+		count: Int
+    }
 `;
 
 module.exports.resolvers = {

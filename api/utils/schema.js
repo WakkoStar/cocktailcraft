@@ -37,7 +37,7 @@ module.exports.schema = `
         ingredient(id: Int!): Ingredients
 		ingredients: [Ingredients]
 		ingredientsFamily(family_of:[Int!]!): [Ingredients]
-        bestIngredients(inventory:[Int]): [Ingredients]
+        bestIngredients(inventory:[Int]): [BestIngredients]
         inventorySelection(cluster:[Int], inventory:[Int], preparations:[String]): [Ingredients]
         searchIngredient(search: String, isFamilyIncluded: Boolean): [Ingredients]
 

@@ -126,13 +126,11 @@ module.exports.isValidGouts = gout_array => {
 	return true;
 };
 
-module.exports.uploadFile = (createReadStream, filename) => {
+module.exports.uploadFile = (myReadable, filename) => {
 	return new Promise(async (resolve, reject) => {
 		const tempFileCompress = path.join('tmp/to_compress/', filename);
 		const tempFileCrop = path.join('tmp/to_crop/', filename);
 		const pathFile = path.join('assets/', filename);
-
-		const myReadable = createReadStream();
 
 		const type = await mime(myReadable);
 		if (type.ext !== 'jpg' && type.ext !== 'png') {

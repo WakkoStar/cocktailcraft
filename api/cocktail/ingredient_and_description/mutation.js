@@ -33,7 +33,7 @@ const executeRequestElementInDb = (
 };
 
 const canModifyCocktail = async (id, ctx) => {
-	const cocktail = await getHelpersCocktails(id, [false, true]);
+	const cocktail = await getHelpersCocktails(id, [false]);
 	if (!cocktail.isExist) return false;
 	if (!ctx.user.is_admin) {
 		if (cocktail.is_visible == true || cocktail.is_visible == undefined) {
@@ -79,7 +79,7 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 			true,
 			false,
 		]);
-		const canAddIngredient = cocktail.ingredients.length < 20;
+		const canAddIngredient = cocktail.ingredients.length < 15;
 
 		const ingredient = await getHelpersIngredient(input.ingredient_id);
 		if (

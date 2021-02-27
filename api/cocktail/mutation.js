@@ -61,16 +61,18 @@ module.exports.createCocktail = async (
 				message: `Votre cocktail "${nom}" a été soumis, nous traitons votre demande...`,
 				user_id: ctx.user.id,
 			});
-
 			if (!_.isNil(file)) {
-				file.then(async ({ createReadStream }) => {
-					const filename = `${nom.trim()}.jpg`;
-					uploadFile(createReadStream, filename).then(() => {
+				const { createReadStream } = await file;
+				const filename = `${nom.trim()}.jpg`;
+				const stream = createReadStream();
+				await uploadFile(stream, filename)
+					.then(() => {
 						modifyCocktailImage(filename, getId);
+					})
+					.catch(e => {
+						console.log(e);
 					});
-				});
 			}
-
 			resolve(`${getId}`);
 		}
 	});
@@ -108,17 +110,22 @@ module.exports.modifyCocktail = async (
 
 		if (isSucceed) {
 			if (!_.isNil(file)) {
-				file.then(async ({ createReadStream }) => {
-					const filename = `${nom.trim()}.jpg`;
+				const { createReadStream } = await file;
+				const filename = `${nom.trim()}.jpg`;
+				const stream = createReadStream();
 
-					const src = 'assets/' + cocktail.image;
-					if (fs.existsSync(src) && cocktail.image != 'default.jpg')
-						fs.unlinkSync(src);
+				const cocktail = await getHelpersCocktails(id, [true, false]);
+				const src = 'assets/' + cocktail.image;
+				if (fs.existsSync(src) && cocktail.image != 'default.jpg')
+					fs.unlinkSync(src);
 
-					uploadFile(createReadStream, filename).then(result => {
+				await uploadFile(stream, filename)
+					.then(() => {
 						modifyCocktailImage(filename, id);
+					})
+					.catch(e => {
+						console.log(e);
 					});
-				});
 			}
 			resolve('Cocktail modified');
 		} else {

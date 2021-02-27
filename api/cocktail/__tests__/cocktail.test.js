@@ -116,7 +116,7 @@ let input = {
 };
 
 const mockFile = new Promise((resolve, reject) => {
-	resolve({ createReadStream: null });
+	resolve({ createReadStream: () => {} });
 });
 describe('cocktails - mutations', () => {
 	it('should create cocktail without upload', async () => {

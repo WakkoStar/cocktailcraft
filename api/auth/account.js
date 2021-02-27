@@ -7,6 +7,10 @@ const isLogged = async req => {
 	if (req.headers.authorization) {
 		token = req.headers.authorization.replace('Bearer ', '');
 	}
+	if (token == undefined) {
+		throw new AuthenticationError('You must be logged in');
+	}
+
 	let user = await getGoogleUser(token);
 	if (!user) throw new AuthenticationError('You must be logged in');
 	if (user.has_ban)

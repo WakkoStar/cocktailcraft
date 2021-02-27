@@ -16,9 +16,12 @@ app.use(bodyParser.json());
 app.use('/assets', express.static('assets'));
 
 const corsOptions = {
+	// origin: 'http://localhost:4001',
+	// credentials: true,
 	origin: '*',
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	preflightContinue: false,
+
 	optionsSuccessStatus: 204,
 };
 
@@ -40,7 +43,7 @@ const server = new ApolloServer({
 	`,
 	resolvers: root,
 	context: async ({ req }) => ({
-		user: await isLogged(req),
+		user: await isLogged(req) /* { id: 0, is_admin: true }*/,
 	}),
 });
 server.applyMiddleware({ app, cors: corsOptions });
