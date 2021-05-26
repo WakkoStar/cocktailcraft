@@ -62,7 +62,7 @@ module.exports.deleteUser = ({ id }) => {
 
 //USER INFO
 module.exports.getAllLevels = async () => {
-	const text = 'SELECT * FROM levels';
+	const text = 'SELECT * FROM levels ORDER BY id';
 	const res = await client.query(text);
 	return res.rows;
 };

@@ -30,6 +30,11 @@ module.exports.schema = `
 		username: String
 		image: String
     }
+	
+	type AvailCocktails {
+		cocktails: [Cocktails]
+		unusedIngredients: [Int]
+	}
 `;
 
 module.exports.resolvers = {

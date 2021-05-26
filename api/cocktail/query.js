@@ -2,6 +2,7 @@ const {
 	getAllCocktails: getCocktails,
 	getCreatedCocktailsByUser: getCreatedCocktailsByUserDb,
 } = require('./data');
+const { updateCocktailCrafted, getUser } = require('../users/data');
 const { getAllIngredients } = require('../ingredient/data');
 const _ = require('lodash');
 const { getHelpersCocktails } = require('../utils/finder');
@@ -9,7 +10,7 @@ const { getHelpersCocktails } = require('../utils/finder');
 module.exports.getAllCocktails = async (__, { is_visible }, ctx) => {
 	const isVisible = _.isNil(is_visible) ? true : is_visible;
 	return new Promise(async (resolve, reject) => {
-		if (!is_visible && !ctx.user.is_admin) {
+		if (!isVisible && !ctx.user.is_admin) {
 			reject('Not admin');
 			return;
 		}
@@ -49,13 +50,33 @@ module.exports.getAvailableCocktails = async (
 			const isInFamily = inventoryIng.find(({ family_of }) => {
 				return family_of.map(el => parseInt(el)).includes(parseInt(id));
 			});
-			return inventory.includes(parseInt(id)) || !!isInFamily;
+			const isInInventory = inventory.includes(parseInt(id));
+			return isInInventory || !!isInFamily;
 		});
 	});
-	return availCocktails;
+
+	const usedIngredients = inventoryIng.filter(ingredient => {
+		const isUsed = availCocktails.some(({ ingredients }) => {
+			return ingredients.some(({ ingredient_id }) => {
+				const isInInventory = ingredient.id === ingredient_id;
+				const isInFamily = ingredient.family_of.includes(ingredient_id);
+				return isInInventory || isInFamily;
+			});
+		});
+		return isUsed;
+	});
+	const usedIngredientsId = usedIngredients.map(el => parseInt(el.id));
+	const unusedIngredients = inventory.filter(
+		el => !usedIngredientsId.includes(el)
+	);
+
+	return {
+		cocktails: availCocktails,
+		unusedIngredients,
+	};
 };
 
-module.exports.getCraftedCocktails = async (_, { cluster }) => {
+module.exports.getCraftedCocktails = async (_, { cluster }, ctx) => {
 	const cocktails = await getCocktails(true);
 	const ingredientsInDb = await getAllIngredients();
 	const clusterIng = ingredientsInDb.filter(({ id }) =>
@@ -76,6 +97,12 @@ module.exports.getCraftedCocktails = async (_, { cluster }) => {
 
 		return isInCocktail;
 	});
+
+	const user = await getUser(ctx.user.id);
+	updateCocktailCrafted(
+		Number(user.cocktail_crafted_count) + createdCocktails.length,
+		ctx.user.id
+	);
 
 	return createdCocktails;
 };

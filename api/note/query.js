@@ -9,8 +9,16 @@ module.exports.getNoteOfCocktail = async (__, { cocktail_id }) => {
 			return;
 		}
 		const notes = await getAllNotesByCocktailId(cocktail_id);
+		if (!notes.length) {
+			resolve({
+				rate: 0,
+				count: 0,
+			});
+		}
 		const count = notes.length;
-		const rate = notes.reduce((acc, note) => (acc += note.rate), 0) / count;
+		const rate = parseFloat(
+			notes.reduce((acc, note) => (acc += note.rate), 0) / count
+		).toFixed(1);
 		resolve({
 			rate,
 			count,

@@ -16,6 +16,7 @@ const {
 	isValidPreparation,
 	isValidDescription,
 	isValidVolume,
+	parseVolume,
 } = require('../helpers');
 
 const executeRequestElementInDb = (
@@ -35,25 +36,31 @@ const executeRequestElementInDb = (
 const canModifyCocktail = async (id, ctx) => {
 	const cocktail = await getHelpersCocktails(id, [false]);
 	if (!cocktail.isExist) return false;
-	if (!ctx.user.is_admin) {
-		if (cocktail.is_visible == true || cocktail.is_visible == undefined) {
-			return false;
-		}
-
-		if (ctx.user.id != cocktail.user_id) return false;
-	}
-
+	if (
+		ctx.user.is_admin === false &&
+		parseInt(ctx.user.id) !== parseInt(cocktail.user_id)
+	)
+		return false;
 	return true;
 };
 
 module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
+		const cocktail = await getHelpersCocktails(input.id_cocktail, [false]);
+		const isPrepararation = cocktail.descriptions?.find(
+			({ preparation }) => preparation === input.preparation
+		);
+		if (isPrepararation) {
+			reject('Preparation already added');
+			return;
+		}
+
 		if (
 			!isValidDescription(input.content) ||
 			!isValidPreparation(input.preparation) ||
 			!(await canModifyCocktail(input.id_cocktail, ctx))
 		) {
-			reject("Can't create description");
+			reject("Can't create description, no valid");
 			return;
 		}
 		const isSucceed = executeRequestElementInDb(
@@ -75,11 +82,8 @@ module.exports.createDescriptionCocktail = async (_, { input }, ctx) => {
 
 module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 	return new Promise(async (resolve, reject) => {
-		const cocktail = await getHelpersCocktails(input.id_cocktail, [
-			true,
-			false,
-		]);
-		const canAddIngredient = cocktail.ingredients.length < 15;
+		const cocktail = await getHelpersCocktails(input.id_cocktail, [false]);
+		const canAddIngredient = cocktail?.ingredients?.length < 15;
 
 		const ingredient = await getHelpersIngredient(input.ingredient_id);
 		if (
@@ -88,12 +92,12 @@ module.exports.createIngredientCocktail = async (_, { input }, ctx) => {
 			!isValidVolume(input.volume) ||
 			!(await canModifyCocktail(input.id_cocktail, ctx))
 		) {
-			reject('Cant create this ingredient');
+			reject('Cant create this ingredient, no valid');
 			return;
 		}
 
 		const isSucceed = executeRequestElementInDb(
-			{ input },
+			{ input: { ...input, volume: parseVolume(input.volume) } },
 			createIngredientOfCocktail,
 			ctx,
 			false

@@ -18,6 +18,7 @@ module.exports = async token => {
 					decodedToken.email,
 					'google'
 				);
+
 				resolve(user);
 			})
 			.catch(() => {

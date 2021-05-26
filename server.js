@@ -16,9 +16,9 @@ app.use(bodyParser.json());
 app.use('/assets', express.static('assets'));
 
 const corsOptions = {
-	// origin: 'http://localhost:4001',
-	// credentials: true,
-	origin: '*',
+	origin: 'http://192.168.1.14:4001',
+	credentials: true,
+	//origin: '*',
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	preflightContinue: false,
 
@@ -43,10 +43,36 @@ const server = new ApolloServer({
 	`,
 	resolvers: root,
 	context: async ({ req }) => ({
-		user: await isLogged(req) /* { id: 0, is_admin: true }*/,
+		user: {
+			id: '0',
+			is_admin: true,
+			cocktail_created_in_day: 0,
+			username: 'Cocktail Craft',
+			experience: '23000',
+			provider_name: 'google',
+			report_count: 0,
+			has_ban: false,
+			cocktail_crafted_count: 80,
+			provider_id: 'n3r0.official@gmail.com',
+		},
+		//user: await isLogged(req),
 	}),
 });
 server.applyMiddleware({ app, cors: corsOptions });
+
+const rateLimit = require('express-rate-limit');
+
+// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+// see https://expressjs.com/en/guide/behind-proxies.html
+// app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+	windowMs: 60 * 100, // 1 seconde
+	max: 30, // 30 requests
+});
+
+//  apply to all requests
+app.use(limiter);
 
 app.listen({ port: process.env.PORT }, () =>
 	console.log(
@@ -54,7 +80,9 @@ app.listen({ port: process.env.PORT }, () =>
 	)
 );
 
-cron.schedule('5 8 * * 0', function () {
+module.exports = app;
+
+cron.schedule('0 0 0 * * *', function () {
 	const text = 'DELETE FROM notifications WHERE time < $1';
 	const values = [moment().subtract(7, 'days').format()];
 	console.log('old notifications reset');

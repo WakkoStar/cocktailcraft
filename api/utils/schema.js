@@ -38,7 +38,7 @@ module.exports.schema = `
 		ingredients: [Ingredients]
 		ingredientsFamily(family_of:[Int!]!): [Ingredients]
         bestIngredients(inventory:[Int]): [BestIngredients]
-        inventorySelection(cluster:[Int], inventory:[Int], preparations:[String]): [Ingredients]
+        inventorySelection(inventory:[Int], preparations: [String]): [[[Ingredients]]]
         searchIngredient(search: String, isFamilyIncluded: Boolean): [Ingredients]
 
         gout(id: Int!): Gouts
@@ -46,7 +46,7 @@ module.exports.schema = `
 
         cocktail(id : Int!, is_visible: Boolean): Cocktails
         cocktails(is_visible: Boolean) : [Cocktails]
-        availCocktails(ingredient_array : [Int!]!) : [Cocktails]
+        availCocktails(ingredient_array : [Int!]!) : AvailCocktails
 		craftedCocktails(cluster: [Int!]!): [Cocktails]
 		createdCocktailsByUser: [Cocktails]
 

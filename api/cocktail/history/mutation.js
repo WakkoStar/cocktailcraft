@@ -1,9 +1,5 @@
 const { addCocktailToHistory, updateHistory, getHistory } = require('./data');
-const {
-	updateCocktailCrafted,
-	getUser,
-	updateUserExp,
-} = require('../../users/data');
+const { updateUserExp } = require('../../users/data');
 const { getCreatedCocktailsByUser } = require('../data');
 const { getHelpersCocktails } = require('../../utils/finder');
 
@@ -29,12 +25,6 @@ module.exports.addToHistory = async (_, { cocktail_id }, ctx) => {
 			} else {
 				addCocktailToHistory(cocktail_id, ctx.user.id);
 			}
-
-			const user = await getUser(ctx.user.id);
-			updateCocktailCrafted(
-				Number(user.cocktail_crafted_count) + 1,
-				ctx.user.id
-			);
 
 			const cocktailCreated = await getCreatedCocktailsByUser(
 				ctx.user.id

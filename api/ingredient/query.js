@@ -51,7 +51,7 @@ module.exports.searchIngredient = async (
 	return results;
 };
 
-module.exports.getBestIngredients = async (_, { inventory }) => {
+module.exports.getBestIngredients = async (_, { inventory = [] }) => {
 	const ingredients = await getIngredients();
 	const cocktails = await getAllCocktails(true);
 
@@ -78,7 +78,8 @@ module.exports.getBestIngredients = async (_, { inventory }) => {
 	} else {
 		availableCocktails = cocktails;
 	}
-	let countedIng = ingredients.map(ingredient => {
+
+	const countedbestIngredients = ingredients.map(ingredient => {
 		return {
 			...ingredient,
 			count: getIngredientCount(
@@ -88,18 +89,68 @@ module.exports.getBestIngredients = async (_, { inventory }) => {
 			),
 		};
 	});
-	let sortedIng = countedIng.sort((a, b) => b.count - a.count);
-	return sortedIng.filter(
-		ingredient =>
-			!inventory.includes(parseInt(ingredient.id)) &&
-			!ingredient.hasFamily
+
+	const bestIngredients = countedbestIngredients
+		.sort((a, b) => b.count - a.count)
+		.filter(
+			ingredient =>
+				!inventory.includes(parseInt(ingredient.id)) &&
+				!ingredient.hasFamily
+		);
+
+	const ingredientCocktails = cocktails.map(({ ingredients }) =>
+		ingredients.map(({ ingredient_id }) => parseInt(ingredient_id))
 	);
+
+	const countFinisherIngredient = ingredients.map(ingredient => {
+		let count = 0;
+		const inventoryWithCurrentId = inventoryWithFamilyIncluded.concat([
+			parseInt(ingredient.id),
+			parseInt(ingredient.family_of),
+		]);
+		const isInInventory = inventoryWithFamilyIncluded.includes(
+			parseInt(ingredient.id)
+		);
+		ingredientCocktails.forEach(element => {
+			const isFinisher = element.every(id =>
+				inventoryWithCurrentId.includes(parseInt(id))
+			);
+
+			const isAlreadyCocktailTaken = element.every(id =>
+				inventoryWithFamilyIncluded.includes(parseInt(id))
+			);
+			if (
+				isFinisher &&
+				!isInInventory &&
+				!isAlreadyCocktailTaken &&
+				!ingredient.hasFamily
+			) {
+				count += 1000;
+			}
+		});
+
+		return { ...ingredient, count };
+	});
+
+	const finisherIngredients = countFinisherIngredient
+		.sort((a, b) => b.count - a.count)
+		.filter(({ count }) => !!count);
+
+	const allBestIngredients = finisherIngredients.concat(bestIngredients);
+
+	const filteredBestIngredients = allBestIngredients.filter(
+		(ingredient, index) => {
+			const isNotAlreadyIn =
+				allBestIngredients.findIndex(el => el.id == ingredient.id) ==
+				index;
+			return isNotAlreadyIn;
+		}
+	);
+
+	return filteredBestIngredients;
 };
 
-module.exports.inventorySelection = async (
-	_,
-	{ inventory, cluster, preparations }
-) => {
+module.exports.inventorySelection = async (_, { inventory, preparations }) => {
 	const ingredientsInDb = await getIngredients();
 	const inventoryIng = ingredientsInDb.filter(({ id }) =>
 		inventory.includes(parseInt(id))
@@ -111,21 +162,6 @@ module.exports.inventorySelection = async (
 			parseInt(ingredient_id)
 		);
 
-		let isInCluster = true;
-		if (cluster) {
-			if (cluster.length > 0) {
-				isInCluster = cluster.every(id => {
-					const { family_of } = inventoryIng.find(
-						({ id: elId }) => parseInt(elId) == id
-					);
-					const isInFamily = family_of.some(element =>
-						ingredientArray.includes(parseInt(element))
-					);
-					return ingredientArray.includes(id) || isInFamily;
-				});
-			}
-		}
-
 		const isInInventory = ingredientArray.every(id => {
 			const isInFamily = inventoryIng.find(({ family_of }) =>
 				family_of.map(el => parseInt(el)).includes(id)
@@ -136,23 +172,18 @@ module.exports.inventorySelection = async (
 		const isInPreparation = descriptions.some(({ preparation }) =>
 			preparations.includes(preparation)
 		);
+		return isInInventory && isInPreparation;
+	});
 
-		return isInCluster && isInInventory && isInPreparation;
-	});
-	let countedIng = inventoryIng.map(ingredient => {
-		return {
-			...ingredient,
-			count: getIngredientCount(
-				clusterCocktails,
-				ingredient.id,
-				ingredient.family_of
-			),
-		};
-	});
-	let sortedIng = countedIng.sort((a, b) => b.count - a.count);
-	return sortedIng.filter(ingredient => {
-		const ingredientAlreadyInCluster = !cluster.includes(ingredient.id);
-		const isCounted = ingredient.count;
-		return ingredientAlreadyInCluster && isCounted;
-	});
+	const parsedIngredients = clusterCocktails.map(({ ingredients }) =>
+		ingredients.map(({ ingredient_id, nom }) => {
+			const childrenIng = inventoryIng.filter(({ family_of }) =>
+				family_of.includes(ingredient_id)
+			);
+			return childrenIng.length
+				? childrenIng.map(({ id, nom }) => ({ id: parseInt(id), nom }))
+				: [{ id: parseInt(ingredient_id), nom }];
+		})
+	);
+	return parsedIngredients;
 };

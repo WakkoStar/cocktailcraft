@@ -12,12 +12,6 @@ const {
 } = require('../../../utils/finder');
 
 const {
-	isValidPreparation,
-	isValidDescription,
-	isValidVolume,
-} = require('../../helpers');
-
-const {
 	createDescriptionCocktail,
 	createIngredientCocktail,
 	modifyDescriptionCocktail,
@@ -51,7 +45,7 @@ const inputDesc = {
 
 const inputIngr = {
 	ingredient_id: 0,
-	volume: '3 cL',
+	volume: '0.5 cL',
 	id_cocktail: 0,
 };
 
@@ -113,7 +107,7 @@ describe('Element cocktail - mutations', () => {
 		try {
 			await modifyDescriptionCocktail(null, { input: inputDesc }, ctx);
 		} catch (e) {
-			expect(e).toBe(`Cant modify this description`);
+			expect(e).toBe(`invalid cocktail`);
 		}
 	});
 
@@ -175,7 +169,7 @@ describe('Element cocktail - mutations', () => {
 		try {
 			await modifyIngredientCocktail(null, { input: inputIngr }, ctx);
 		} catch (e) {
-			expect(e).toBe(`Cant modify this ingredient`);
+			expect(e).toBe(`invalid cocktail`);
 		}
 	});
 
@@ -185,7 +179,7 @@ describe('Element cocktail - mutations', () => {
 		try {
 			await deleteIngredientCocktail(null, { input: inputIngr }, ctx);
 		} catch (e) {
-			expect(e).toBe(`Cant delete this ingredient`);
+			expect(e).toBe(`invalid cocktail`);
 		}
 	});
 

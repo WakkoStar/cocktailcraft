@@ -18,7 +18,6 @@ const {
 } = require('./helpers');
 
 const { getHelpersCocktails } = require('../utils/finder');
-const { reject } = require('lodash');
 
 module.exports.createCocktail = async (
 	__,
@@ -158,8 +157,7 @@ module.exports.deleteCocktail = async (_, { id }, ctx) => {
 
 module.exports.setVisibility = async (_, { is_visible, id }, ctx) => {
 	if (!ctx.user.is_admin) {
-		reject('Not admin');
-		return;
+		return 'Not admin';
 	}
 	return await executeRequestInDb({ is_visible, id }, setVisibilityInDb);
 };

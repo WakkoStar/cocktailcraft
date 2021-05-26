@@ -64,7 +64,11 @@ module.exports.isValidDifficulty = difficulty => {
 };
 
 module.exports.isValidPreparation = preparation => {
-	const preparations = ['Directement dans le verre', 'Au shaker'];
+	const preparations = [
+		'Directement dans le verre',
+		'Au shaker',
+		'Au blender',
+	];
 
 	return !!preparations.includes(preparation);
 };
@@ -76,36 +80,42 @@ module.exports.isValidDescription = description => {
 	return true;
 };
 
+const volumes = [
+	'cL',
+	'demi(e)',
+	'quart',
+	'tiers',
+	'gramme(s)',
+	'trait(s)',
+	'cuil. à café',
+	'cuil. à soupe',
+	'verre(s) à liqueur',
+	'mug(s)',
+	'morceau(x)',
+	'boule(s)',
+	'tranche(s)',
+	'demi-tranche(s)',
+	'boite(s)',
+	'Aucune unité',
+];
+
+module.exports.parseVolume = volume => {
+	const unit = volumes.find(el => volume.includes(el));
+	const number = volume.replace(unit, '');
+	const parsedNumber = parseFloat(number) * 1;
+
+	return `${parsedNumber} ${unit}`;
+};
+
 module.exports.isValidVolume = volume => {
-	const volumes = [
-		'mL',
-		'cL',
-		'Litre(s)',
-		'demi(e)',
-		'quart',
-		'gramme(s)',
-		'trait(s)',
-		'cuil. à café',
-		'cuil. à soupe',
-		'verre(s) à liqueur',
-		'mug(s)',
-		'morceau(x)',
-		'boule(s)',
-		'tranche(s)',
-		'demi-tranche(s)',
-		'boite(s)',
-		'Aucune unité',
-	];
-
-	const isValidUnit = volumes.some(el => volume.includes(el));
-
-	const number = volume.replace(/^\D+/g, '');
+	const unit = volumes.find(el => volume.includes(el));
+	const number = volume.replace(unit, '');
 	const isValidNumber =
-		typeof parseInt(number) === 'number' &&
-		parseInt(number) > 0 &&
-		parseInt(number) <= 1000;
+		typeof parseFloat(number) === 'number' &&
+		parseFloat(number) * 1 > 0 &&
+		parseFloat(number) * 1 <= 1000;
 
-	return isValidNumber && isValidUnit;
+	return isValidNumber && unit !== undefined;
 };
 
 module.exports.isValidName = nom => {
