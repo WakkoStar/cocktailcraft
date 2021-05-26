@@ -1,5 +1,6 @@
 var _ = require('lodash');
 const fs = require('fs');
+var path = require('path');
 const {
 	createCocktail: createCocktailInDb,
 	modifyCocktail: modifyCocktailInDb,
@@ -62,7 +63,7 @@ module.exports.createCocktail = async (
 			});
 			if (!_.isNil(file)) {
 				const { createReadStream } = await file;
-				const filename = `${nom.trim()}.jpg`;
+				const filename = `${nom.split(' ').join('-').trim()}.jpg`;
 				const stream = createReadStream();
 				await uploadFile(stream, filename)
 					.then(() => {
@@ -139,12 +140,11 @@ module.exports.deleteCocktail = async (_, { id }, ctx) => {
 			reject('Not admin');
 			return;
 		}
+		const cocktail = await getHelpersCocktails(id, [true, false]);
 		const isSucceed = await executeRequestInDb({ id }, deleteCocktailInDb);
 
 		if (isSucceed) {
-			const cocktail = await getHelpersCocktails(id, [true, false]);
-
-			const src = 'assets/' + cocktail.image;
+			const src = path.join('assets/', cocktail.image);
 			if (fs.existsSync(src) && cocktail.image != 'default.jpg')
 				fs.unlinkSync(src);
 

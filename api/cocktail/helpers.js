@@ -169,7 +169,7 @@ module.exports.uploadFile = (myReadable, filename) => {
 				totalLength += chunk.length;
 				if (totalLength > 3000000) {
 					handleError();
-					fs.unlinkSync(tempFile);
+					fs.unlinkSync(tempFileCompress);
 					reject('File too large');
 					return;
 				}

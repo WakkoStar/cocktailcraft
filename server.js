@@ -16,12 +16,9 @@ app.use(bodyParser.json());
 app.use('/assets', express.static('assets'));
 
 const corsOptions = {
-	origin: 'http://192.168.1.14:4001',
-	credentials: true,
-	//origin: '*',
+	origin: '*',
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	preflightContinue: false,
-
 	optionsSuccessStatus: 204,
 };
 
@@ -43,19 +40,7 @@ const server = new ApolloServer({
 	`,
 	resolvers: root,
 	context: async ({ req }) => ({
-		user: {
-			id: '0',
-			is_admin: true,
-			cocktail_created_in_day: 0,
-			username: 'Cocktail Craft',
-			experience: '23000',
-			provider_name: 'google',
-			report_count: 0,
-			has_ban: false,
-			cocktail_crafted_count: 80,
-			provider_id: 'n3r0.official@gmail.com',
-		},
-		//user: await isLogged(req),
+		user: await isLogged(req),
 	}),
 });
 server.applyMiddleware({ app, cors: corsOptions });
